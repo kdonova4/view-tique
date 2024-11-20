@@ -25,6 +25,19 @@ each game will include the following
 - **Total User Score**: The score from averaging the rating from all user reviews
 - **Total Critic Score**: The score from averaging the rating from all critic reviews
 
+### Validation
+
+To maintain data integrity and ensure usability, the following validation rules should apply:
+
+- **Game Title**: REQUIRED
+- **Game Description**: REQUIRED
+- **Platforms**: REQUIRED
+- **Release Date**: REQUIRED, MUST BE IN THE PAST
+- **Genres**: REQUIRED
+- **Developer**: REQUIRED
+- **Total User Score**: REQUIRED, MUST BE BETWEEN 0 - 100
+- **Total Critic Score**: REQUIRED, MUST BE BETWEEN 0 - 100
+
 ## Review Data
 
 ### Data
@@ -37,6 +50,16 @@ each review will include the following data
 - **Likes**
 - **Dislikes**
 
+### Validation
+
+To maintain data integrity and ensure usability, the following validation rules should apply:
+
+- **Review Score**: REQUIRED
+- **Timestamp**: MUST BE IN THE PRESENT OR PAST
+- **Review Body**: REQUIRED
+- **Likes**: MUST BE POSITIVE
+- **Dislikes**: MUST BE POSITIVE
+
 ## Comment Data
 
 ### Data
@@ -46,6 +69,13 @@ each comment will include the following data
 - **Comment Body**: The text of the comment
 - **Timestamp**: DAte and time the comment was made.
 
+### Validation
+
+To maintain data integrity and ensure usability, the following validation rules should apply:
+
+- **Comment Body**: REQUIRED
+- **Timestamp**: MUST BE IN THE PRESENT OR PAST
+
 ## Genre Data
 
 ### Data
@@ -53,6 +83,12 @@ each comment will include the following data
 each Genre will include the following data
 
 - **Genre Name**: The name of the genre.
+
+### Validation
+
+To maintain data integrity and ensure usability, the following validation rules should apply:
+
+- **Genre Name**: REQUIRED
 
 ## Platform Data
 
@@ -62,6 +98,12 @@ each platform will have the following data
 
 - **Platform Name**: The platform name
 
+### Validation
+
+To maintain data integrity and ensure usability, the following validation rules should apply:
+
+- **Platform Name**: REQUIRED
+
 ## Developer Data
 
 ### Data
@@ -69,6 +111,12 @@ each platform will have the following data
 each Developer will have the following data
 
 - **Developer Name**
+
+### Validation
+
+To maintain data integrity and ensure usability, the following validation rules should apply:
+
+- **Developer Name**: REQUIRED
 
 ## Wishlist
 
@@ -78,6 +126,14 @@ each wishlist will have the following data
 
 - **Game ID**
 - **User ID**
+
+### Validation
+
+To maintain data integrity and ensure usability, the following validation rules should apply:
+
+- **Game ID**: REQUIRED
+- **User ID**: REQUIRED
+
 
 # Tables
 
@@ -90,6 +146,7 @@ each wishlist will have the following data
 - **Game_Platform Table**
 - **Developer Table**
 - **Wishlist Table**
+
 
 # Class Details
 

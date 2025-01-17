@@ -10,6 +10,9 @@ public class Review {
     private String reviewBody;
     private int likes;
     private int dislikes;
+    private int userId;
+    private int gameId;
+
 
     public int getReviewId() {
         return reviewId;
@@ -57,5 +60,21 @@ public class Review {
 
     public void setDislikes(int dislikes) {
         this.dislikes = dislikes;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 }

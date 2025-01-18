@@ -22,14 +22,14 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
     @Override
     public List<Review> findAll() {
         final String sql = "select review_id, score, timestamp, review_body, likes, dislikes"
-                + "from reviews;";
+                + "from review;";
         return jdbcTemplate.query(sql, new ReviewMapper());
     }
 
     @Override
     public Review findById(int reviewId) {
         final String sql = "select review_id, score, timestamp, review_body, likes, dislikes"
-                + "from reviews "
+                + "from review "
                 + "where review_id = ?;";
         return jdbcTemplate.query(sql, new ReviewMapper(), reviewId).stream().findFirst().orElse(null);
     }
@@ -37,7 +37,7 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
     @Override
     public List<Review> findByUserId(int userId) {
         final String sql = "select review_id, score, timestamp, review_body, likes, dislikes, r.app_user_id, r.game_id, g.title "
-                + "from reviews r "
+                + "from review r "
                 + "inner join games g on g.game_id = r.game_id "
                 + "where r.app_user_id = ?;";
 
@@ -47,7 +47,7 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
     @Override
     public List<Review> findByGameId(int gameId) {
         final String sql = "select review_id, score, timestamp, review_body, likes, dislikes, r.app_user_id, r.game_id, g.title "
-                + "from reviews r "
+                + "from review r "
                 + "inner join games g on g.game_id = r.game_id "
                 + "where g.game_id = ?;";
 
@@ -56,7 +56,7 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
 
     @Override
     public Review add(Review review) {
-        final String sql = "insert into reviews (score, timestamp, review_body, likes, dislikes, app_user_id, game_id)"
+        final String sql = "insert into review (score, timestamp, review_body, likes, dislikes, app_user_id, game_id)"
                 + " values(?,?,?,?,?,?,?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -82,7 +82,7 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
 
     @Override
     public boolean update(Review review) {
-        final String sql = "update reviews set "
+        final String sql = "update review set "
                 + "score = ?, "
                 + "timestamp = ?, "
                 + "review_body = ?, "
@@ -104,7 +104,7 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
 
     @Override
     public boolean deleteById(int reviewId) {
-        final String sql = "delete from reviews where review_id = ?;";
+        final String sql = "delete from review where review_id = ?;";
 
         return jdbcTemplate.update(sql, reviewId) > 0;
     }

@@ -8,10 +8,8 @@ public class Game {
     private int gameId;
     private String title;
     private String description;
-    private List<Platform> platforms;
     private LocalDate releaseDate;
     private Developer developer;
-    private List<Genre> genres;
     private double totalUserScore;
     private double totalCriticScore;
 
@@ -40,14 +38,6 @@ public class Game {
         this.description = description;
     }
 
-    public List<Platform> getPlatforms() {
-        return platforms;
-    }
-
-    public void setPlatforms(List<Platform> platforms) {
-        this.platforms = platforms;
-    }
-
     public LocalDate getReleaseDate() {
         return releaseDate;
     }
@@ -62,14 +52,6 @@ public class Game {
 
     public void setDeveloper(Developer developer) {
         this.developer = developer;
-    }
-
-    public List<Genre> getGenres() {
-        return genres;
-    }
-
-    public void setGenres(List<Genre> genres) {
-        this.genres = genres;
     }
 
     public double getTotalUserScore() {

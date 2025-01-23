@@ -33,6 +33,11 @@ public class GenreJdbcTemplateRepository implements GenreRepository {
     }
 
     @Override
+    public List<Genre> searchByName(String genreName) {
+        return List.of();
+    }
+
+    @Override
     public Genre add(Genre genre) {
         final String sql = "insert into genre (genre_name) "
                 + "values (?);";

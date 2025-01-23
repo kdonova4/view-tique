@@ -34,6 +34,11 @@ public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
     }
 
     @Override
+    public List<Developer> searchByName(String developerName) {
+        return List.of();
+    }
+
+    @Override
     public Developer add(Developer developer) {
         final String sql = "insert into developer (developer_name)"
                 + " values (?);";

@@ -10,8 +10,10 @@ public class Game {
     private String description;
     private LocalDate releaseDate;
     private Developer developer;
-    private double totalUserScore;
-    private double totalCriticScore;
+    private double avgUserScore;
+    private double avgCriticScore;
+    private int userReviewCount;
+    private int criticReviewCount;
 
 
     public int getGameId() {
@@ -54,19 +56,35 @@ public class Game {
         this.developer = developer;
     }
 
-    public double getTotalUserScore() {
-        return totalUserScore;
+    public double getAvgUserScore() {
+        return avgUserScore;
     }
 
-    public void setTotalUserScore(double totalUserScore) {
-        this.totalUserScore = totalUserScore;
+    public void setAvgUserScore(double avgUserScore) {
+        this.avgUserScore = avgUserScore;
     }
 
-    public double getTotalCriticScore() {
-        return totalCriticScore;
+    public double getAvgCriticScore() {
+        return avgCriticScore;
     }
 
-    public void setTotalCriticScore(double totalCriticScore) {
-        this.totalCriticScore = totalCriticScore;
+    public void setAvgCriticScore(double avgCriticScore) {
+        this.avgCriticScore = avgCriticScore;
+    }
+
+    public int getUserReviewCount() {
+        return userReviewCount;
+    }
+
+    public void setUserReviewCount(int userReviewCount) {
+        this.userReviewCount = userReviewCount;
+    }
+
+    public int getCriticReviewCount() {
+        return criticReviewCount;
+    }
+
+    public void setCriticReviewCount(int criticReviewCount) {
+        this.criticReviewCount = criticReviewCount;
     }
 }

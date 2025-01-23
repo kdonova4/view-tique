@@ -11,6 +11,8 @@ public interface GenreRepository {
 
     Genre findById(int genreId);
 
+    List<Genre> searchByName(String genreName);
+
     Genre add(Genre genre);
 
     boolean update(Genre genre);

@@ -34,6 +34,11 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
     }
 
     @Override
+    public List<Platform> searcByName(String platformName) {
+        return List.of();
+    }
+
+    @Override
     public Platform add(Platform platform) {
         final String sql = "insert into platform (platform_name) "
                 + "values (?);";

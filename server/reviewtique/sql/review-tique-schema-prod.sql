@@ -49,8 +49,8 @@ create table game (
     title varchar(150) not null,
     game_description varchar(1000) not null,
     release_date date not null,
-    total_user_score decimal(4, 1) not null default(0.0),
-    total_critic_score decimal(4, 1) not null default(0.0),
+    avg_user_score decimal(4, 1) not null default(0.0),
+    avg_critic_score decimal(4, 1) not null default(0.0),
     user_review_count int default (0), 
     critic_review_count int default (0), 
     developer_id int not null,
@@ -93,6 +93,8 @@ create table review_reaction (
 create table game_genre (
     game_id int not null,
     genre_id int not null,
+    constraint pk_game_genre
+		primary key(game_id, genre_id),
     constraint fk_game_genre_game_id
         foreign key (game_id)
         references game(game_id),
@@ -104,6 +106,8 @@ create table game_genre (
 create table game_platform (
     game_id int not null,
     platform_id int not null,
+    constraint pk_game_platform
+		primary key(game_id, platform_id),
     constraint fk_game_platform_game_id
         foreign key (game_id)
         references game(game_id),

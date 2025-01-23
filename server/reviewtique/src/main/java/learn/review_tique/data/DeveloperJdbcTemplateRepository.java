@@ -1,6 +1,7 @@
 package learn.review_tique.data;
 
 import learn.review_tique.data.mappers.DeveloperMapper;
+import learn.review_tique.data.mappers.GenreMapper;
 import learn.review_tique.models.Developer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -35,7 +36,11 @@ public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
 
     @Override
     public List<Developer> searchByName(String developerName) {
-        return List.of();
+        final String sql = "select developer_id, developer_name"
+                + " from developer"
+                + " where soundex(developer_name) = soundex(?);";
+
+        return jdbcTemplate.query(sql, new DeveloperMapper(), developerName);
     }
 
     @Override

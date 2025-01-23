@@ -34,7 +34,11 @@ public class GenreJdbcTemplateRepository implements GenreRepository {
 
     @Override
     public List<Genre> searchByName(String genreName) {
-        return List.of();
+        final String sql = "select genre_id, genre_name"
+                + " from genre"
+                + " where soundex(genre_name) = soundex(?);";
+
+        return jdbcTemplate.query(sql, new GenreMapper(), genreName);
     }
 
     @Override

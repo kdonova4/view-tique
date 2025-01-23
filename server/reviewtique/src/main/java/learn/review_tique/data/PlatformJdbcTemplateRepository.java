@@ -35,7 +35,11 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
 
     @Override
     public List<Platform> searcByName(String platformName) {
-        return List.of();
+        final String sql = "select platform_id, platform_name"
+                + " from platform"
+                + " where soundex(platform_name) = soundex(?);";
+
+        return jdbcTemplate.query(sql, new PlatformMapper(), platformName);
     }
 
     @Override

@@ -86,7 +86,8 @@ create table review_reaction (
         references review(review_id),
     constraint fk_review_reaction_app_user_id
         foreign key (app_user_id)
-        references app_user(app_user_id)
+        references app_user(app_user_id),
+	constraint uq_review_reaction unique (review_id, app_user_id)
 );
 
 create table game_genre (

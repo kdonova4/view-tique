@@ -5,6 +5,7 @@ import learn.review_tique.models.Game;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@Repository
 public class GameJdbcTemplateRepository implements GameRepository {
 
     private final JdbcTemplate jdbcTemplate;

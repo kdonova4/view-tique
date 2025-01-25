@@ -125,7 +125,8 @@ create table wishlist (
         references game(game_id),
     constraint fk_wishlist_app_user_id
         foreign key (app_user_id)
-        references app_user(app_user_id)
+        references app_user(app_user_id),
+    constraint uq_wishlist unique (game_id, app_user_id)
 );
 
 insert into developer (developer_name) values ('Developer A');

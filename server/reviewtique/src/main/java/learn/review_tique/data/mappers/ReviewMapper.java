@@ -13,7 +13,7 @@ public class ReviewMapper implements RowMapper<Review> {
         Review review = new Review();
         review.setReviewId((resultSet.getInt("review_id")));
         review.setScore(resultSet.getDouble("score"));
-        review.setTimestamp(resultSet.getTimestamp("timestamp"));
+        review.setTimestamp(resultSet.getTimestamp("review_time"));
         review.setReviewBody(resultSet.getString("review_body"));
         review.setLikes(resultSet.getInt("likes"));
         review.setDislikes((resultSet.getInt("dislikes")));

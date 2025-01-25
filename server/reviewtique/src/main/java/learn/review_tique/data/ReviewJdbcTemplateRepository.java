@@ -5,11 +5,13 @@ import learn.review_tique.models.Review;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+@Repository
 public class ReviewJdbcTemplateRepository implements ReviewRepository{
 
     private final JdbcTemplate jdbcTemplate;
@@ -21,15 +23,15 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
 
     @Override
     public List<Review> findAll() {
-        final String sql = "select review_id, score, review_time, review_body, likes, dislikes"
-                + "from review;";
+        final String sql = "select review_id, score, review_time, review_body, likes, dislikes, app_user_id, game_id"
+                + " from review;";
         return jdbcTemplate.query(sql, new ReviewMapper());
     }
 
     @Override
     public Review findById(int reviewId) {
-        final String sql = "select review_id, score, review_time, review_body, likes, dislikes"
-                + "from review "
+        final String sql = "select review_id, score, review_time, review_body, likes, dislikes, app_user_id, game_id"
+                + " from review "
                 + "where review_id = ?;";
         return jdbcTemplate.query(sql, new ReviewMapper(), reviewId).stream().findFirst().orElse(null);
     }

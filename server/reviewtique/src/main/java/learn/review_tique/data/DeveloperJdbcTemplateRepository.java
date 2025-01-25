@@ -6,11 +6,13 @@ import learn.review_tique.models.Developer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+@Repository
 public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
 
     private final JdbcTemplate jdbcTemplate;

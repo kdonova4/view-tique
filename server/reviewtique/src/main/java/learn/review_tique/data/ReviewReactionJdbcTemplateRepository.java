@@ -6,10 +6,12 @@ import learn.review_tique.models.ReviewReaction;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
+@Repository
 public class ReviewReactionJdbcTemplateRepository implements ReviewReactionRepository {
 
     private final JdbcTemplate jdbcTemplate;

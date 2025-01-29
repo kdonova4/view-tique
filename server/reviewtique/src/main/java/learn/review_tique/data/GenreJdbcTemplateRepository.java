@@ -5,11 +5,13 @@ import learn.review_tique.models.Genre;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+@Repository
 public class GenreJdbcTemplateRepository implements GenreRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -30,6 +32,15 @@ public class GenreJdbcTemplateRepository implements GenreRepository {
         final String sql = "select genre_id, genre_name from genre where genre_id = ?;";
 
         return jdbcTemplate.query(sql, new GenreMapper(), genreId).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public List<Genre> searchByName(String genreName) {
+        final String sql = "select genre_id, genre_name"
+                + " from genre"
+                + " where soundex(genre_name) = soundex(?);";
+
+        return jdbcTemplate.query(sql, new GenreMapper(), genreName);
     }
 
     @Override

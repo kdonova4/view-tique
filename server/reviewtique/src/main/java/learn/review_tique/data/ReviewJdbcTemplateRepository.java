@@ -5,12 +5,13 @@ import learn.review_tique.models.Review;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class ReviewJdbcTemplateRepository implements ReviewRepository{
 
     private final JdbcTemplate jdbcTemplate;
@@ -22,15 +23,15 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
 
     @Override
     public List<Review> findAll() {
-        final String sql = "select review_id, score, review_time, review_body, likes, dislikes"
-                + "from review;";
+        final String sql = "select review_id, score, review_time, review_body, likes, dislikes, app_user_id, game_id"
+                + " from review;";
         return jdbcTemplate.query(sql, new ReviewMapper());
     }
 
     @Override
     public Review findById(int reviewId) {
-        final String sql = "select review_id, score, review_time, review_body, likes, dislikes"
-                + "from review "
+        final String sql = "select review_id, score, review_time, review_body, likes, dislikes, app_user_id, game_id"
+                + " from review "
                 + "where review_id = ?;";
         return jdbcTemplate.query(sql, new ReviewMapper(), reviewId).stream().findFirst().orElse(null);
     }
@@ -39,7 +40,7 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
     public List<Review> findByUserId(int userId) {
         final String sql = "select review_id, score, review_time, review_body, likes, dislikes, r.app_user_id, r.game_id, g.title "
                 + "from review r "
-                + "inner join games g on g.game_id = r.game_id "
+                + "inner join game g on g.game_id = r.game_id "
                 + "where r.app_user_id = ?;";
 
         return jdbcTemplate.query(sql, new ReviewMapper(), userId);
@@ -49,7 +50,7 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
     public List<Review> findByGameId(int gameId) {
         final String sql = "select review_id, score, review_time, review_body, likes, dislikes, r.app_user_id, r.game_id, g.title "
                 + "from review r "
-                + "inner join games g on g.game_id = r.game_id "
+                + "inner join game g on g.game_id = r.game_id "
                 + "where g.game_id = ?;";
 
         return jdbcTemplate.query(sql, new ReviewMapper(), gameId);
@@ -105,8 +106,10 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
 
     @Override
     public boolean deleteById(int reviewId) {
-        final String sql = "delete from review where review_id = ?;";
+        final String reviewReactionSql = "delete from review_reaction where review_id = ?;";
+        jdbcTemplate.update(reviewReactionSql, reviewId);
+        final String reviewSql = "delete from review where review_id = ?;";
 
-        return jdbcTemplate.update(sql, reviewId) > 0;
+        return jdbcTemplate.update(reviewSql, reviewId) > 0;
     }
 }

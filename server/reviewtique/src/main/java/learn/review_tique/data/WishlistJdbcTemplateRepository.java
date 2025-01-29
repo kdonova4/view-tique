@@ -5,17 +5,19 @@ import learn.review_tique.models.Wishlist;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
-public class WIshlistJdbcTemplateRepository implements WishlistRepository {
+@Repository
+public class WishlistJdbcTemplateRepository implements WishlistRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
 
-    public WIshlistJdbcTemplateRepository(JdbcTemplate jdbcTemplate) {
+    public WishlistJdbcTemplateRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -3,9 +3,11 @@ package learn.review_tique.data;
 import learn.review_tique.data.mappers.GamePlatformMapper;
 import learn.review_tique.models.GamePlatform;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class GamePlatformJdbcTemplateRepository implements GamePlatformRepository {
 
     private final JdbcTemplate jdbcTemplate;

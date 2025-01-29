@@ -13,6 +13,20 @@ public class Review {
     private int userId;
     private int gameId;
 
+    public Review() {
+
+    }
+
+    public Review(int reviewId, double score, Timestamp timestamp, String reviewBody, int likes, int dislikes, int userId, int gameId) {
+        this.reviewId = reviewId;
+        this.score = score;
+        this.timestamp = timestamp;
+        this.reviewBody = reviewBody;
+        this.likes = likes;
+        this.dislikes = dislikes;
+        this.userId = userId;
+        this.gameId = gameId;
+    }
 
     public int getReviewId() {
         return reviewId;

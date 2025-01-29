@@ -74,6 +74,21 @@ public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
 
     @Override
     public boolean deleteById(int developerId) {
+        final String gameGenreSql = "delete from game_genre where game_id in (select game_id from game where developer_id = ?);";
+        final String gamePlatformSql = "delete from game_platform where game_id in (select game_id from game where developer_id = ?);";
+        final String gameSql = "delete from game where developer_id = ?;";
+        final String reviewSql = "delete from review where game_id in (select game_id from game where developer_id = ?);";
+        final String reviewReactionSql = "delete from review_reaction where review_id in (select review_id from review where game_id in (select game_id from game where developer_id = ?));";
+        final String wishlistSql = "delete from wishlist where game_id in (select game_id from game where developer_id = ?);";
+
+        jdbcTemplate.update(gameGenreSql, developerId);
+        jdbcTemplate.update(gamePlatformSql, developerId);
+        jdbcTemplate.update(reviewReactionSql, developerId);
+        jdbcTemplate.update(reviewSql, developerId);
+        jdbcTemplate.update(wishlistSql, developerId);
+        jdbcTemplate.update(gameSql, developerId);
+
+
         final String sql = "delete from developer where developer_id = ?;";
 
         return jdbcTemplate.update(sql, developerId) > 0;

@@ -36,7 +36,7 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
     }
 
     @Override
-    public List<Platform> searcByName(String platformName) {
+    public List<Platform> searchByName(String platformName) {
         final String sql = "select platform_id, platform_name"
                 + " from platform"
                 + " where soundex(platform_name) = soundex(?);";
@@ -73,6 +73,10 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
 
     @Override
     public boolean deleteById(int platformId) {
+        final String gamePlatformSql = "delete from game_platform where platform_id = ?;";
+
+        jdbcTemplate.update(gamePlatformSql, platformId);
+
         final String sql = "delete from platform where platform_id = ?;";
 
         return jdbcTemplate.update(sql, platformId) > 0;

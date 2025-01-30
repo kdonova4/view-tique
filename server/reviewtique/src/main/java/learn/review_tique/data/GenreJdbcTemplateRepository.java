@@ -73,6 +73,10 @@ public class GenreJdbcTemplateRepository implements GenreRepository {
 
     @Override
     public boolean deleteById(int genreId) {
+        final String gameGenreSql = "delete from game_genre where genre_id = ?;";
+
+        jdbcTemplate.update(gameGenreSql, genreId);
+
         final String sql = "delete from genre where genre_id = ?;";
 
         return jdbcTemplate.update(sql, genreId) > 0;

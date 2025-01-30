@@ -10,7 +10,7 @@ public interface PlatformRepository {
 
     Platform findById(int platformId);
 
-    List<Platform> searcByName(String platformName);
+    List<Platform> searchByName(String platformName);
 
     Platform add(Platform platform);
 

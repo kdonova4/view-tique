@@ -26,18 +26,21 @@ public class GameJdbcTemplateRepository implements GameRepository {
 
     @Override
     public List<Game> findAll() {
-        final String sql = "select game_id, title, game_description, release_date, avg_user_score, avg_critic_score, "
-                + "user_review_count, critic_review_count, developer_id"
-                + " from game;";
+        final String sql = "select g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score, "
+                + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
+                + " from game g"
+                + " join developer d on g.developer_id = d.developer_id;";
 
         return jdbcTemplate.query(sql, new GameMapper());
     }
 
     @Override
     public Game findById(int gameId) {
-        final String sql = "select game_id, title, game_description, release_date, avg_user_score, avg_critic_score, "
-                + "user_review_count, critic_review_count, developer_id"
-                + " from game where game_id = ?;";
+        final String sql = "select g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score, "
+                + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
+                + " from game g"
+                + " join developer d on g.developer_id = d.developer_id"
+                + " where game_id = ?;";
 
         return jdbcTemplate.query(sql, new GameMapper(), gameId).stream().findFirst().orElse(null);
     }
@@ -46,8 +49,9 @@ public class GameJdbcTemplateRepository implements GameRepository {
     public List<Game> searchGame(String gameName, int[] genreIds, int[] platformIds, Integer developerId) {
         StringBuilder sql = new StringBuilder(
                 "select distinct g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score, "
-                        + "g.user_review_count, g.critic_review_count, g.developer_id"
+                        + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
                         + " from game g "
+                        + " join developer d on g.developer_id = d.developer_id "
 
         );
 
@@ -56,7 +60,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
         if(platformIds != null && platformIds.length > 0)
             sql.append("join game_platform gp on g.game_id = gp.game_id ");
 
-        sql.append("where 1 = 1");
+        sql.append("where 1 = 1 ");
 
         List<Object> params = new ArrayList<>();
 
@@ -73,7 +77,6 @@ public class GameJdbcTemplateRepository implements GameRepository {
                 params.add(genreId);
             }
 
-            params.add(genreIds.length);
         }
 
         if(platformIds != null && platformIds.length > 0) {
@@ -146,6 +149,19 @@ public class GameJdbcTemplateRepository implements GameRepository {
 
     @Override
     public boolean deleteById(int gameId) {
+        final String gameGenreSql = "delete from game_genre where game_id = ?;";
+        final String gamePlatformSql = "delete from game_platform where game_id = ?;";
+        final String wishlistSql = "delete from wishlist where game_id = ?";
+        final String reviewReactionSql = "delete from review_reaction where review_id in (select review_id from review where game_id = ?);";
+        final String reviewSql = "delete from review where game_id = ?;";
+
+        jdbcTemplate.update(gameGenreSql, gameId);
+        jdbcTemplate.update(gamePlatformSql, gameId);
+        jdbcTemplate.update(wishlistSql, gameId);
+        jdbcTemplate.update(reviewReactionSql, gameId);
+        jdbcTemplate.update(reviewSql, gameId);
+
+
         final String sql = "delete from game where game_id = ?;";
 
         return jdbcTemplate.update(sql, gameId) > 0;

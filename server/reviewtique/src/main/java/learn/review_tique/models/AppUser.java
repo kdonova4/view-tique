@@ -16,6 +16,7 @@ public class AppUser extends User {
 
     private int appUserId;
 
+
     public AppUser(int appUserId, String username, String password,
                    boolean disabled, List<String> roles) {
         super(username, password, !disabled,

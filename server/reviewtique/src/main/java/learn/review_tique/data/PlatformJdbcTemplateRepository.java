@@ -5,11 +5,13 @@ import learn.review_tique.models.Platform;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+@Repository
 public class PlatformJdbcTemplateRepository implements PlatformRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -31,6 +33,15 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
                 + " where platform_id = ?;";
 
         return jdbcTemplate.query(sql, new PlatformMapper(), platformId).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public List<Platform> searchByName(String platformName) {
+        final String sql = "select platform_id, platform_name"
+                + " from platform"
+                + " where soundex(platform_name) = soundex(?);";
+
+        return jdbcTemplate.query(sql, new PlatformMapper(), platformName);
     }
 
     @Override
@@ -62,6 +73,10 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
 
     @Override
     public boolean deleteById(int platformId) {
+        final String gamePlatformSql = "delete from game_platform where platform_id = ?;";
+
+        jdbcTemplate.update(gamePlatformSql, platformId);
+
         final String sql = "delete from platform where platform_id = ?;";
 
         return jdbcTemplate.update(sql, platformId) > 0;

@@ -3,9 +3,11 @@ package learn.review_tique.data;
 import learn.review_tique.data.mappers.GameGenreMapper;
 import learn.review_tique.models.GameGenre;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class GameGenreJdbcTemplateRepository implements GameGenreRepository {
 
     private final JdbcTemplate jdbcTemplate;

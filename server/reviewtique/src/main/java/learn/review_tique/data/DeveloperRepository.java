@@ -12,6 +12,8 @@ public interface DeveloperRepository {
 
     Developer add(Developer developer);
 
+    List<Developer> searchByName(String developerName);
+
     boolean update(Developer developer);
 
     boolean deleteById(int developerId);

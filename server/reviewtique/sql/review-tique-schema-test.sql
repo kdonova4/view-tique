@@ -329,3 +329,5 @@ insert into wishlist (game_id, app_user_id) values
 end //
 
 delimiter ;
+
+select * from game;

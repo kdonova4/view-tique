@@ -30,7 +30,7 @@ public class GameJdbcTemplateRepositoryTest {
     void shouldFindAll() {
         List<Game> games = repository.findAll();
 
-        assertEquals(6, games.size());
+        assertEquals(7, games.size());
     }
 
     @Test
@@ -100,7 +100,7 @@ public class GameJdbcTemplateRepositoryTest {
 
     @Test
     void shouldDeleteById() {
-        assertTrue(repository.deleteById(2));
+        assertTrue(repository.deleteById(4));
     }
 
 }

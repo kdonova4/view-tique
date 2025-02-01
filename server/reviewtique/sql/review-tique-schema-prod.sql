@@ -1,6 +1,6 @@
-drop database if exists review_tique;
-create database review_tique;
-use review_tique;
+drop database if exists review_tique_test;
+create database review_tique_test;
+use review_tique_test;
 
 -- creating tables
 
@@ -129,49 +129,159 @@ create table wishlist (
     constraint uq_wishlist unique (game_id, app_user_id)
 );
 
-insert into developer (developer_name) values ('Developer A');
-insert into developer (developer_name) values ('Developer B');
-insert into developer (developer_name) values ('Developer C');
-
-insert into game (title, game_description, release_date, avg_user_score, avg_critic_score, user_review_count, critic_review_count, developer_id) 
-values 
-('Game 1', 'Description of Game 1', '2024-01-01', 8.5, 7.9, 150, 30, 1),
-('Game 2', 'Description of Game 2', '2024-02-01', 9.0, 8.2, 120, 25, 2),
-('Game 3', 'Description of Game 3', '2024-03-01', 7.5, 6.8, 100, 20, 3),
-('Game 4', 'Description of Game 4', '2024-04-01', 8.0, 7.5, 110, 22, 1),
-('Game 5', 'Description of Game 5', '2024-05-01', 8.7, 8.0, 130, 28, 2);
-
-insert into genre (genre_name) values 
+insert into genre (genre_name) values
 ('Action'),
 ('Adventure'),
 ('RPG'),
 ('Strategy'),
 ('Sports'),
+('Shooter'),
+('Story Rich'),
+('Multiplayer'),
+('Singleplayer'),
+('Stealth'),
 ('Simulation');
 
-insert into platform (platform_name) values 
+insert into platform (platform_name) values
 ('PC'),
 ('PlayStation 5'),
+('PlayStation 4'),
 ('Xbox Series X'),
+('Xbox One'),
+('Xbox 360'),
+('Xbox'),
 ('Nintendo Switch'),
 ('PC VR'),
+('Playstation 3'),
 ('Mobile');
 
-insert into game_genre (game_id, genre_id) values 
-(1, 1), -- Game 1 - Action
-(1, 2), -- Game 1 - Adventure
-(2, 3), -- Game 2 - RPG
-(2, 4), -- Game 2 - Strategy
-(3, 5), -- Game 3 - Sports
-(3, 6), -- Game 3 - Simulation
-(4, 1), -- Game 4 - Action
-(5, 2); -- Game 5 - Adventure
+insert into developer (developer_name) values
+('Bungie'),
+('Dice'),
+('Infinity Ward'),
+('CD Project Red'),
+('Eidos Montreal'),
+('Arkane'),
+('Looking Glass Studios');
 
-insert into game_platform (game_id, platform_id) values 
-(1, 1), -- Game 1 - PC
-(1, 2), -- Game 1 - PlayStation 5
-(2, 3), -- Game 2 - Xbox Series X
-(2, 4), -- Game 2 - Nintendo Switch
-(3, 1), -- Game 3 - PC
-(4, 5), -- Game 4 - PC VR
-(5, 6); -- Game 5 - Mobile
+INSERT INTO app_user (username, password_hash, disabled) VALUES
+('test_user1', '$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y', false),
+('admin_user', '$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y', false),
+('guest_user', '$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y', false),
+('power_user', '$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y', false),
+('disabled_user', '$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y', true);
+
+insert into app_role (role_name) values
+('USER'),
+('CRITIC'),
+('ADMIN');
+
+insert into app_user_role values
+(1, 1),
+(2, 3),
+(3, 1),
+(4, 2),
+(5, 2);
+
+insert into game (title, game_description, release_date, avg_user_score, avg_critic_score, user_review_count, critic_review_count, developer_id)
+values
+('Deus Ex: Mankind Divided', 'Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy. ',
+ '2024-08-23', 8.5, 7.9, 150, 30, 5),
+('Halo 2', 'Following the destruction of Halo, humankind experiences a short-lived victory. Eager for revenge, the Covenant launches a surprise attack on Earth, but they find themselves ill-prepared to defeat the UNSC’s home fleet and are forced to flee into slipspace. When the Master Chief pursues his overzealous enemies, they discover yet another Halo ring, uncovering long-buried secrets, including an unlikely ally, that will dramatically alter the course of the Human-Covenant Conflict forever.',
+ '2004-11-09', 9.0, 8.2, 120, 25, 1),
+('Witcher 3', 'You are Geralt of Rivia, mercenary monster slayer. Before you stands a war-torn, monster-infested continent you can explore at will. Your current contract? Tracking down Ciri — the Child of Prophecy, a living weapon that can alter the shape of the world. ',
+ '2015-05-18', 7.5, 6.8, 100, 20, 4),
+('Dishonored', 'Dishonored is an immersive first-person action game that casts you as a supernatural assassin driven by revenge. With Dishonored’s flexible combat system, creatively eliminate your targets as you combine the supernatural abilities, weapons and unusual gadgets at your disposal. ',
+ '2012-10-09', 8.0, 7.5, 110, 22, 6),
+('Battlefield 4', 'Embrace unrivaled destruction in Battlefield 4™. Revel in the glorious chaos of all-out war packed with rewarding, tactical challenges in an interactive environment. ',
+ '2013-10-29', 8.7, 8.0, 130, 28, 2),
+('Battlefield 3', 'Enjoy total freedom to fight the way you want. Explore 29 massive multiplayer maps and use loads of vehicles, weapons, and gadgets to help you turn up the heat. Every second of battle gets you closer to unlocking tons of extras and moving up in the Ranks. So get in the action.',
+  '2011-10-28', 8.7, 8.0, 130, 28, 2);
+
+INSERT INTO review (score, review_time, review_body, likes, dislikes, app_user_id, game_id) VALUES
+(8.5, '2025-01-23 14:35:00', 'Great game with immersive story and excellent gameplay mechanics.', 15, 2, 4, 1),
+(7.0, '2025-01-22 18:20:00', 'Fun game, but the graphics felt outdated.', 10, 5, 1, 4),
+(9.2, '2025-01-21 20:00:00', 'Absolutely loved it! The soundtrack and visuals are stunning.', 25, 1, 1, 3),
+(6.8, '2025-01-20 11:00:00', 'Decent, but the gameplay felt repetitive after a while.', 8, 3, 1, 2),
+(4.5, '2025-01-19 09:15:00', 'Poor experience due to constant bugs and crashes.', 3, 20, 1, 5),
+(8.0, '2025-01-18 16:45:00', 'Solid multiplayer mode, but single-player lacks depth.', 18, 4, 1, 6),
+(7.5, '2025-01-17 12:30:00', 'Good overall, but a bit overpriced for the content.', 12, 6, 1, 1);
+
+INSERT INTO review_reaction (review_id, app_user_id, reaction_type) VALUES
+(1, 1, 'like'),
+(2, 1, 'dislike'),
+(3, 1, 'like'),
+(4, 1, 'like'),
+(5, 1, 'dislike'),
+(6, 1, 'dislike'),
+(7, 1, 'like'),
+(1, 4, 'dislike'),
+(2, 4, 'like'),
+(3, 4, 'dislike'),
+(4, 4, 'like'),
+(5, 4, 'like'),
+(6, 4, 'dislike'),
+(7, 4, 'dislike');
+
+insert into game_genre (game_id, genre_id) values
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 1),
+(2, 6),
+(3, 2),
+(3, 3),
+(4, 9),
+(4, 10),
+(5, 6),
+(5, 8),
+(6, 6),
+(6, 8);
+
+insert into game_platform (game_id, platform_id) values
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+(2, 1),
+(2, 4),
+(2, 5),
+(2, 6),
+(2, 7),
+(3, 1),
+(3, 2),
+(3, 3),
+(3, 4),
+(3, 5),
+(3, 8),
+(4, 1),
+(4, 2),
+(4, 3),
+(4, 4),
+(4, 5),
+(4, 6),
+(5, 1),
+(5, 2),
+(5, 3),
+(5, 4),
+(5, 5),
+(5, 6),
+(6, 1),
+(6, 6),
+(6, 10);
+
+insert into wishlist (game_id, app_user_id) values
+(1, 1),
+(4, 1),
+(5, 2),
+(6, 2),
+(1, 3),
+(2, 3),
+(4, 3),
+(5, 3),
+(2, 4),
+(1, 5),
+(2, 5),
+(3, 5);
+

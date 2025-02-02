@@ -58,6 +58,7 @@ public class ReviewService {
             - NOT NULL
         - Game ID
             - NOT NULL
+            - CANNOT APPEAR MORE THAN ONCE PER USER
 
         public Result<Review> add(Review review)
             // generate timestamp here

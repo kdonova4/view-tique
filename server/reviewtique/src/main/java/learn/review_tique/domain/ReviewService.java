@@ -3,42 +3,13 @@ package learn.review_tique.domain;
 import learn.review_tique.data.AppUserRepository;
 import learn.review_tique.data.GameRepository;
 import learn.review_tique.data.ReviewRepository;
+import learn.review_tique.models.Game;
 import learn.review_tique.models.Review;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
-
-@Service
-public class ReviewService {
-
-    private final ReviewRepository repository;
-    private final GameRepository gameRepository;
-    private final AppUserRepository appUserRepository;
-    public ReviewService(ReviewRepository repository, GameRepository gameRepository, AppUserRepository appUserRepository) {
-        this.repository = repository;
-        this.gameRepository = gameRepository;
-        this.appUserRepository = appUserRepository;
-    }
-
-    public List<Review> findAll() {
-        return repository.findAll();
-    }
-
-    public Review findById(int reviewId) {
-        return repository.findById(reviewId);
-    }
-
-    public List<Review> findByUserId(int userId) {
-        return repository.findByUserId(userId);
-    }
-
-    public List<Review> findByGameId(int gameId) {
-        return repository.findByGameId(gameId);
-    }
-
-    /*
+/*
         Review Data
         ============
         - Review Score
@@ -119,6 +90,133 @@ public class ReviewService {
 
      */
 
+@Service
+public class ReviewService {
+
+    private final ReviewRepository repository;
+    private final GameRepository gameRepository;
+    private final AppUserRepository appUserRepository;
+    public ReviewService(ReviewRepository repository, GameRepository gameRepository, AppUserRepository appUserRepository) {
+        this.repository = repository;
+        this.gameRepository = gameRepository;
+        this.appUserRepository = appUserRepository;
+    }
+
+    public List<Review> findAll() {
+        return repository.findAll();
+    }
+
+    public Review findById(int reviewId) {
+        return repository.findById(reviewId);
+    }
+
+    public List<Review> findByUserId(int userId) {
+        return repository.findByUserId(userId);
+    }
+
+    public List<Review> findByGameId(int gameId) {
+        return repository.findByGameId(gameId);
+    }
+
+    public Result<Review> add(Review review) {
+        Result result = validate(review);
+
+        if(!result.isSuccess()) {
+            return result;
+        }
+
+        if(review.getReviewId() != 0) {
+            result.addMessages("reviewId CANNOT BE SET for 'add' operation", ResultType.INVALID);
+        }
+
+        review = repository.add(review);
+        result.setPayload(review);
+        addDeleteAvgScore(review, true);
+        return result;
+    }
+
+    public Result<Review> update(Review review) {
+        Result<Review> result = validate(review);
+
+        if(!result.isSuccess()) {
+            return result;
+        }
+
+        if(review.getReviewId() <= 0) {
+            result.addMessages("reviewId MUST BE SET for `update` operation", ResultType.INVALID);
+            return result;
+        }
+
+        Review oldReview = repository.findById(review.getReviewId());
+
+        if(oldReview == null)
+        {
+            String msg = String.format("reviewId: %s not found", review.getReviewId());
+            result.addMessages(msg, ResultType.NOT_FOUND);
+            return result;
+        }
+
+        updateAvgScore(review, oldReview);
+        repository.update(review);
+        return result;
+    }
+
+    public Result<Review> deleteById(int reviewId) {
+        Result<Review> result = new Result<>();
+
+        Review review = repository.findById(reviewId);
+        if(review == null) {
+            result.addMessages(String.format("reviewId: %s not found", reviewId), ResultType.NOT_FOUND);
+            return result;
+        }
+
+        addDeleteAvgScore(review, false);
+        repository.deleteById(reviewId);
+
+        return result;
+    }
+
+    private void addDeleteAvgScore(Review review, boolean adding) {
+        if(review == null)
+            return;
+
+        Game game = gameRepository.findById(review.getGameId());
+        if(game == null)
+            return;
+
+        double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
+
+        if(adding) {
+            game.setUserReviewCount(game.getUserReviewCount() + 1);
+            totalScore += review.getScore();
+        } else {
+            game.setUserReviewCount(game.getUserReviewCount() - 1);
+            totalScore -= review.getScore();
+        }
+
+        if(game.getUserReviewCount() == 0)
+            game.setAvgUserScore(0.0);
+        else
+            game.setAvgUserScore(totalScore / game.getUserReviewCount());
+
+        gameRepository.update(game);
+    }
+
+    private void updateAvgScore(Review newReview, Review oldReview) {
+        Game game = gameRepository.findById(oldReview.getGameId());
+        if(game == null)
+            return;
+
+        double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
+        totalScore -= oldReview.getScore();
+        totalScore += newReview.getScore();
+
+        double newScore = totalScore / game.getUserReviewCount();
+        game.setAvgUserScore(newScore);
+
+        gameRepository.update(game);
+    }
+
     private Result<Review> validate(Review review) {
         Result<Review> result = new Result<>();
 
@@ -135,7 +233,7 @@ public class ReviewService {
             result.addMessages("Review Time CANNOT be NULL", ResultType.INVALID);
         }
 
-        if(review.getReviewBody().isBlank() || review.getReviewBody() == null) {
+        if(review.getReviewBody() == null || review.getReviewBody().isBlank()) {
             result.addMessages("Review Body is REQUIRED", ResultType.INVALID);
         }
 
@@ -144,7 +242,7 @@ public class ReviewService {
         }
 
         if(review.getDislikes() < 0) {
-            result.addMessages("Likes must be GREATER OR EQUAL THAN 0", ResultType.INVALID);
+            result.addMessages("Dislikes must be GREATER OR EQUAL THAN 0", ResultType.INVALID);
         }
 
         if(appUserRepository.findById(review.getUserId()) == null) {

@@ -1,8 +1,14 @@
 package learn.review_tique.domain;
 
-public class ReviewReactionService {
+import learn.review_tique.data.AppUserRepository;
+import learn.review_tique.data.ReviewReactionRepository;
+import learn.review_tique.data.ReviewRepository;
+import learn.review_tique.models.ReactionType;
+import learn.review_tique.models.Review;
+import learn.review_tique.models.ReviewReaction;
+import org.springframework.stereotype.Service;
 
-    /*
+/*
         Review Reaction Data
         ============
         - ReviewReaction reviewId
@@ -43,5 +49,92 @@ public class ReviewReactionService {
             // return result
 
      */
+@Service
+public class ReviewReactionService {
+
+    private final ReviewReactionRepository reactionRepository;
+    private final ReviewRepository reviewRepository;
+    private final AppUserRepository appUserRepository;
+
+    public ReviewReactionService(ReviewReactionRepository reactionRepository, ReviewRepository reviewRepository,
+                                 AppUserRepository appUserRepository) {
+        this.reactionRepository = reactionRepository;
+        this.reviewRepository = reviewRepository;
+        this.appUserRepository = appUserRepository;
+    }
+
+    public ReviewReaction findById(int reviewReactionId) {
+        return reactionRepository.findById(reviewReactionId);
+    }
+
+    public ReviewReaction findByReviewAndUserId(int reviewId, int userId) {
+        return reactionRepository.findByReviewIdAndUserId(reviewId, userId);
+    }
+
+    public Result<ReviewReaction> add(ReviewReaction reviewReaction) {
+        Result<ReviewReaction> result = validate(reviewReaction);
+
+        if(!result.isSuccess())
+            return result;
+
+        if(reviewReaction.getReviewReactionId() != 0) {
+            result.addMessages("ReviewReaction ID CANNOT BE SET", ResultType.INVALID);
+            return result;
+        }
+
+        reviewReaction = reactionRepository.add(reviewReaction);
+        result.setPayload(reviewReaction);
+
+        Review review = reviewRepository.findById(reviewReaction.getReviewId());
+        if(reviewReaction.getReactionType() == ReactionType.LIKE) {
+            review.setLikes(review.getLikes() + 1);
+        } else {
+            review.setDislikes(review.getDislikes() + 1);
+        }
+        reviewRepository.update(review);
+        return result;
+    }
+
+    public boolean deleteById(int reviewReactionId) {
+        ReviewReaction reviewReaction = reactionRepository.findById(reviewReactionId);
+        if(reviewReaction == null)
+            return false;
+
+        Review review = reviewRepository.findById(reviewReaction.getReviewId());
+        if(review == null)
+            return false;
+
+        if(reviewReaction.getReactionType() == ReactionType.LIKE) {
+            review.setLikes(review.getLikes() - 1);
+        } else {
+            review.setDislikes(review.getDislikes() - 1);
+        }
+
+        reviewRepository.update(review);
+        return reactionRepository.deleteById(reviewReactionId);
+    }
+
+    private Result<ReviewReaction> validate(ReviewReaction reviewReaction) {
+        Result<ReviewReaction> result = new Result<>();
+
+        if(reviewReaction == null) {
+            result.addMessages("ReviewReaction CANNOT BE NULL", ResultType.INVALID);
+            return result;
+        }
+
+        if(reviewReaction.getReactionType() == null) {
+            result.addMessages("ReactionType CANNOT BE NULL", ResultType.INVALID);
+        }
+
+        if(reviewRepository.findById(reviewReaction.getReviewId()) == null) {
+            result.addMessages("Review ID MUST BE VALID", ResultType.INVALID);
+        }
+
+        if(appUserRepository.findById(reviewReaction.getUserId()) == null) {
+            result.addMessages("User ID MUST BE VALID", ResultType.INVALID);
+        }
+
+        return result;
+    }
 
 }

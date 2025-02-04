@@ -5,6 +5,15 @@ public class Developer {
     private int developerId;
     private String developerName;
 
+    public Developer() {
+
+    }
+
+    public Developer(int developerId, String developerName) {
+        this.developerId = developerId;
+        this.developerName = developerName;
+    }
+
     public int getDeveloperId() {
         return developerId;
     }

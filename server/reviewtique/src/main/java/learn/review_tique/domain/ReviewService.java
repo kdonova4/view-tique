@@ -119,7 +119,7 @@ public class ReviewService {
     }
 
     public Result<Review> add(Review review) {
-        Result result = validate(review);
+        Result<Review> result = validate(review);
 
         if(!result.isSuccess()) {
             return result;
@@ -127,6 +127,7 @@ public class ReviewService {
 
         if(review.getReviewId() != 0) {
             result.addMessages("reviewId CANNOT BE SET for 'add' operation", ResultType.INVALID);
+            return result;
         }
 
         review = repository.add(review);
@@ -245,12 +246,16 @@ public class ReviewService {
             result.addMessages("Dislikes must be GREATER OR EQUAL THAN 0", ResultType.INVALID);
         }
 
-        if(appUserRepository.findById(review.getUserId()) == null) {
+        if (review.getUserId() <= 0) {
             result.addMessages("Valid User ID is REQUIRED", ResultType.INVALID);
+        } else if (appUserRepository.findById(review.getUserId()) == null) {
+            result.addMessages("User does not exist", ResultType.INVALID);
         }
 
-        if(gameRepository.findById(review.getGameId()) == null) {
+        if (review.getGameId() <= 0) {
             result.addMessages("Valid Game ID is REQUIRED", ResultType.INVALID);
+        } else if (gameRepository.findById(review.getGameId()) == null) {
+            result.addMessages("Game does not exist", ResultType.INVALID);
         }
 
         // check if user has already reviewed this game

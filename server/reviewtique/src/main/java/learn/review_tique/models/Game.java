@@ -15,6 +15,21 @@ public class Game {
     private int userReviewCount;
     private int criticReviewCount;
 
+    public Game() {
+
+    }
+
+    public Game(int gameId, String title, String description, LocalDate releaseDate, double avgUserScore, double avgCriticScore, int userReviewCount, int criticReviewCount, Developer developer) {
+        this.gameId = gameId;
+        this.title = title;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.avgUserScore = avgUserScore;
+        this.avgCriticScore = avgCriticScore;
+        this.userReviewCount = userReviewCount;
+        this.criticReviewCount = criticReviewCount;
+        this.developer = developer;
+    }
 
     public int getGameId() {
         return gameId;
@@ -61,7 +76,7 @@ public class Game {
     }
 
     public void setAvgUserScore(double avgUserScore) {
-        this.avgUserScore = avgUserScore;
+        this.avgUserScore = Math.round(avgUserScore * 10.0) / 10.0;
     }
 
     public double getAvgCriticScore() {

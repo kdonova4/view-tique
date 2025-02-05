@@ -96,10 +96,12 @@ public class ReviewService {
     private final ReviewRepository repository;
     private final GameRepository gameRepository;
     private final AppUserRepository appUserRepository;
-    public ReviewService(ReviewRepository repository, GameRepository gameRepository, AppUserRepository appUserRepository) {
+    private final GameService gameService;
+    public ReviewService(ReviewRepository repository, GameRepository gameRepository, AppUserRepository appUserRepository, GameService gameService) {
         this.repository = repository;
         this.gameRepository = gameRepository;
         this.appUserRepository = appUserRepository;
+        this.gameService = gameService;
     }
 
     public List<Review> findAll() {
@@ -181,7 +183,7 @@ public class ReviewService {
         if(review == null)
             return;
 
-        Game game = gameRepository.findById(review.getGameId());
+        Game game = gameService.findById(review.getGameId());
         if(game == null)
             return;
 
@@ -200,11 +202,11 @@ public class ReviewService {
         else
             game.setAvgUserScore(totalScore / game.getUserReviewCount());
 
-        gameRepository.update(game);
+        gameService.update(game);
     }
 
     private void updateAvgScore(Review newReview, Review oldReview) {
-        Game game = gameRepository.findById(oldReview.getGameId());
+        Game game = gameService.findById(oldReview.getGameId());
         if(game == null)
             return;
 
@@ -215,7 +217,7 @@ public class ReviewService {
         double newScore = totalScore / game.getUserReviewCount();
         game.setAvgUserScore(newScore);
 
-        gameRepository.update(game);
+        gameService.update(game);
     }
 
     private Result<Review> validate(Review review) {

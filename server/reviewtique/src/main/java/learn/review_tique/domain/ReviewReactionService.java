@@ -126,12 +126,16 @@ public class ReviewReactionService {
             result.addMessages("ReactionType CANNOT BE NULL", ResultType.INVALID);
         }
 
-        if(reviewRepository.findById(reviewReaction.getReviewId()) == null) {
-            result.addMessages("Review ID MUST BE VALID", ResultType.INVALID);
+        if (reviewReaction.getReviewId() <= 0) {
+            result.addMessages("Valid User ID is REQUIRED", ResultType.INVALID);
+        } else if (reviewRepository.findById(reviewReaction.getReviewId()) == null) {
+            result.addMessages("User does not exist", ResultType.INVALID);
         }
 
-        if(appUserRepository.findById(reviewReaction.getUserId()) == null) {
-            result.addMessages("User ID MUST BE VALID", ResultType.INVALID);
+        if (reviewReaction.getUserId() <= 0) {
+            result.addMessages("Valid User ID is REQUIRED", ResultType.INVALID);
+        } else if (appUserRepository.findById(reviewReaction.getUserId()) == null) {
+            result.addMessages("User does not exist", ResultType.INVALID);
         }
 
         return result;

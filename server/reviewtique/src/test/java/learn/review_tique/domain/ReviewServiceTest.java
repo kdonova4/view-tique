@@ -103,7 +103,7 @@ public class ReviewServiceTest {
         System.out.println(actual.getMessages());
         assertEquals(ResultType.SUCCESS, actual.getType());
         assertEquals(mockOut, actual.getPayload());
-        assertEquals(game.getUserReviewCount(), 11);
+        assertEquals(11, game.getUserReviewCount());
         assertEquals(game.getAvgUserScore(), 7.7);
     }
 

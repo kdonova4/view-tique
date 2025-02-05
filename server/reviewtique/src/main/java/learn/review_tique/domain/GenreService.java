@@ -65,7 +65,7 @@ public class GenreService {
     }
 
     public List<Genre> searchByName(String genreName) {
-        return  repository.searchByName(genreName);
+        return repository.searchByName(genreName);
     }
 
     public Result<Genre> add(Genre genre) {

@@ -7,6 +7,17 @@ public class ReviewReaction {
     private int userId;
     private ReactionType reactionType;
 
+    public ReviewReaction() {
+
+    }
+
+    public ReviewReaction(int reviewReactionId, int reviewId, int userId, ReactionType reactionType) {
+        this.reviewReactionId = reviewReactionId;
+        this.reviewId = reviewId;
+        this.userId = userId;
+        this.reactionType = reactionType;
+    }
+
     public int getUserId() {
         return userId;
     }

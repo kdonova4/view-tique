@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -47,6 +48,9 @@ public class GameJdbcTemplateRepository implements GameRepository {
 
     @Override
     public List<Game> searchGame(String gameName, int[] genreIds, int[] platformIds, Integer developerId) {
+
+        String fullTextParam = gameName + "*";
+
         StringBuilder sql = new StringBuilder(
                 "select distinct g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score, "
                         + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
@@ -65,8 +69,8 @@ public class GameJdbcTemplateRepository implements GameRepository {
         List<Object> params = new ArrayList<>();
 
         if(gameName != null && !gameName.isBlank()) {
-            sql.append("and soundex(g.title) = soundex(?) ");
-            params.add(gameName);
+            sql.append("and MATCH(g.title) AGAINST(? IN BOOLEAN MODE) ");
+            params.add(fullTextParam);
         }
 
         if(genreIds != null && genreIds.length > 0) {
@@ -148,6 +152,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
     }
 
     @Override
+    @Transactional
     public boolean deleteById(int gameId) {
         final String gameGenreSql = "delete from game_genre where game_id = ?;";
         final String gamePlatformSql = "delete from game_platform where game_id = ?;";

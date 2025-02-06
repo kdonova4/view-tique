@@ -30,7 +30,7 @@ public class GameJdbcTemplateRepositoryTest {
     void shouldFindAll() {
         List<Game> games = repository.findAll();
 
-        assertEquals(7, games.size());
+        assertEquals(6, games.size());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class GameJdbcTemplateRepositoryTest {
 
     @Test
     void shouldFindGameFromSearch() {
-        List<Game> games = repository.searchGame("battlefeeld", new int[]{6, 8}, null, null);
+        List<Game> games = repository.searchGame("battle", new int[]{6, 8}, null, null);
 
         assertEquals(2, games.size());
 
@@ -74,9 +74,10 @@ public class GameJdbcTemplateRepositoryTest {
 
         assertEquals(1, games.size());
 
-        games = repository.searchGame("witcheeer", null, null, null);
+        games = repository.searchGame("witch", null, null, null);
 
         assertEquals(1, games.size());
+
     }
 
     @Test

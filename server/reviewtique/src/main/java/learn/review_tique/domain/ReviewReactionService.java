@@ -7,6 +7,7 @@ import learn.review_tique.models.ReactionType;
 import learn.review_tique.models.Review;
 import learn.review_tique.models.ReviewReaction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
         Review Reaction Data
@@ -55,12 +56,14 @@ public class ReviewReactionService {
     private final ReviewReactionRepository reactionRepository;
     private final ReviewRepository reviewRepository;
     private final AppUserRepository appUserRepository;
+    private final ReviewService reviewService;
 
     public ReviewReactionService(ReviewReactionRepository reactionRepository, ReviewRepository reviewRepository,
-                                 AppUserRepository appUserRepository) {
+                                 AppUserRepository appUserRepository, ReviewService reviewService) {
         this.reactionRepository = reactionRepository;
         this.reviewRepository = reviewRepository;
         this.appUserRepository = appUserRepository;
+        this.reviewService = reviewService;
     }
 
     public ReviewReaction findById(int reviewReactionId) {
@@ -71,6 +74,7 @@ public class ReviewReactionService {
         return reactionRepository.findByReviewIdAndUserId(reviewId, userId);
     }
 
+    @Transactional
     public Result<ReviewReaction> add(ReviewReaction reviewReaction) {
         Result<ReviewReaction> result = validate(reviewReaction);
 
@@ -85,22 +89,23 @@ public class ReviewReactionService {
         reviewReaction = reactionRepository.add(reviewReaction);
         result.setPayload(reviewReaction);
 
-        Review review = reviewRepository.findById(reviewReaction.getReviewId());
+        Review review = reviewService.findById(reviewReaction.getReviewId());
         if(reviewReaction.getReactionType() == ReactionType.LIKE) {
             review.setLikes(review.getLikes() + 1);
         } else {
             review.setDislikes(review.getDislikes() + 1);
         }
-        reviewRepository.update(review);
+        reviewService.update(review);
         return result;
     }
 
+    @Transactional
     public boolean deleteById(int reviewReactionId) {
         ReviewReaction reviewReaction = reactionRepository.findById(reviewReactionId);
         if(reviewReaction == null)
             return false;
 
-        Review review = reviewRepository.findById(reviewReaction.getReviewId());
+        Review review = reviewService.findById(reviewReaction.getReviewId());
         if(review == null)
             return false;
 
@@ -110,7 +115,7 @@ public class ReviewReactionService {
             review.setDislikes(review.getDislikes() - 1);
         }
 
-        reviewRepository.update(review);
+        reviewService.update(review);
         return reactionRepository.deleteById(reviewReactionId);
     }
 
@@ -128,7 +133,7 @@ public class ReviewReactionService {
 
         if (reviewReaction.getReviewId() <= 0) {
             result.addMessages("Valid User ID is REQUIRED", ResultType.INVALID);
-        } else if (reviewRepository.findById(reviewReaction.getReviewId()) == null) {
+        } else if (reviewService.findById(reviewReaction.getReviewId()) == null) {
             result.addMessages("User does not exist", ResultType.INVALID);
         }
 

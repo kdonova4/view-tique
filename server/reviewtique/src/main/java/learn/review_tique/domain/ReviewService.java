@@ -6,6 +6,7 @@ import learn.review_tique.data.ReviewRepository;
 import learn.review_tique.models.Game;
 import learn.review_tique.models.Review;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -97,6 +98,7 @@ public class ReviewService {
     private final GameRepository gameRepository;
     private final AppUserRepository appUserRepository;
     private final GameService gameService;
+
     public ReviewService(ReviewRepository repository, GameRepository gameRepository, AppUserRepository appUserRepository, GameService gameService) {
         this.repository = repository;
         this.gameRepository = gameRepository;
@@ -120,6 +122,7 @@ public class ReviewService {
         return repository.findByGameId(gameId);
     }
 
+    @Transactional
     public Result<Review> add(Review review) {
         Result<Review> result = validate(review);
 
@@ -138,6 +141,7 @@ public class ReviewService {
         return result;
     }
 
+    @Transactional
     public Result<Review> update(Review review) {
         Result<Review> result = validate(review);
 
@@ -164,6 +168,7 @@ public class ReviewService {
         return result;
     }
 
+    @Transactional
     public Result<Review> deleteById(int reviewId) {
         Result<Review> result = new Result<>();
 

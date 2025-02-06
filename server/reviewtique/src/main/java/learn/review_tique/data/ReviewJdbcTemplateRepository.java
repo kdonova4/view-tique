@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -105,6 +106,7 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
     }
 
     @Override
+    @Transactional
     public boolean deleteById(int reviewId) {
         final String reviewReactionSql = "delete from review_reaction where review_id = ?;";
         jdbcTemplate.update(reviewReactionSql, reviewId);

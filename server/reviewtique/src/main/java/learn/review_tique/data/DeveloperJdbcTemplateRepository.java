@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -73,6 +74,7 @@ public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
     }
 
     @Override
+    @Transactional
     public boolean deleteById(int developerId) {
         final String gameGenreSql = "delete from game_genre where game_id in (select game_id from game where developer_id = ?);";
         final String gamePlatformSql = "delete from game_platform where game_id in (select game_id from game where developer_id = ?);";

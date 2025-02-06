@@ -41,7 +41,7 @@ public class GameGenreJdbcTemplateRepositoryTest {
     void shouldFindById() {
         List<GameGenre> gameGenres = repository.findByGameId(1);
 
-        assertEquals(4, gameGenres.size());
+        assertEquals(3, gameGenres.size());
     }
 
     @Test

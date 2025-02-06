@@ -56,7 +56,8 @@ create table game (
     developer_id int not null,
     constraint fk_game_developer_id
         foreign key (developer_id)
-        references developer(developer_id)
+        references developer(developer_id),
+	fulltext(title)
 );
 
 create table review (

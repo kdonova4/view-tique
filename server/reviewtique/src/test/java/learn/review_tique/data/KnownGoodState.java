@@ -10,12 +10,9 @@ public class KnownGoodState {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    static boolean hasRun = false;
+
 
     void set() {
-        if(!hasRun) {
-            hasRun = true;
-            jdbcTemplate.update("call set_known_good_state();");
-        }
+        jdbcTemplate.update("call set_known_good_state();");
     }
 }

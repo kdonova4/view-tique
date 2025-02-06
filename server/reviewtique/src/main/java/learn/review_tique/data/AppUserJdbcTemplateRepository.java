@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -51,7 +52,9 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
                 .orElse(null);
     }
 
+
     @Override
+    @Transactional
     public AppUser create(AppUser user) {
         final String sql = "insert into app_user (username, password_hash) values (?, ?);";
 
@@ -75,6 +78,7 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
     }
 
     @Override
+    @Transactional
     public void update(AppUser user) {
         final String sql = "update app_user set "
                 + "username = ?, "

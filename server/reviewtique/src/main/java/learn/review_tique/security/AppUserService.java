@@ -22,6 +22,9 @@ public class AppUserService implements UserDetailsService {
         this.encoder = encoder;
     }
 
+    public AppUser getUserById(int userId) {
+        return repository.findById(userId);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

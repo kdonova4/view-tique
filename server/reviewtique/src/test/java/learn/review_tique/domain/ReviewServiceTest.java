@@ -87,10 +87,10 @@ public class ReviewServiceTest {
     }
 
     @Test
-    void shouldAdd() {
+    void shouldAddUserReview() {
         Review review = new Review(0, 0.0, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
         Review mockOut = new Review(1, 0.0, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
-        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("user"));
+        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("USER"));
         Developer developer = new Developer(5, "Eidos Montreal");
         Game game = new Game(1, "Deus Ex: Mankind Divided", "Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy.",
                 LocalDate.now(), 8.5, 7.9, 10, 30, developer);
@@ -105,6 +105,45 @@ public class ReviewServiceTest {
         assertEquals(mockOut, actual.getPayload());
         assertEquals(11, game.getUserReviewCount());
         assertEquals(game.getAvgUserScore(), 7.7);
+    }
+
+    @Test
+    void shouldAddCriticReview() {
+        Review review = new Review(0, 2.1, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
+        Review mockOut = new Review(1, 2.1, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
+        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("CRITIC"));
+        Developer developer = new Developer(5, "Eidos Montreal");
+        Game game = new Game(1, "Deus Ex: Mankind Divided", "Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy.",
+                LocalDate.now(), 8.5, 7.9, 10, 8, developer);
+
+        when(gameRepository.findById(1)).thenReturn(game);
+        when(appUserRepository.findById(1)).thenReturn(user);
+        when(reviewRepository.add(review)).thenReturn(mockOut);
+
+        Result<Review> actual = service.add(review);
+        System.out.println(actual.getMessages());
+        assertEquals(ResultType.SUCCESS, actual.getType());
+        assertEquals(mockOut, actual.getPayload());
+        assertEquals(9, game.getCriticReviewCount());
+        assertEquals(game.getAvgCriticScore(), 7.3);
+    }
+
+    @Test
+    void shouldNotAddTwoReviewsForGame() {
+        Review review = new Review(0, 2.1, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
+        Review mockOut = new Review(1, 2.1, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
+        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("CRITIC"));
+        Developer developer = new Developer(5, "Eidos Montreal");
+        Game game = new Game(1, "Deus Ex: Mankind Divided", "Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy.",
+                LocalDate.now(), 8.5, 7.9, 10, 8, developer);
+
+        when(gameRepository.findById(1)).thenReturn(game);
+        when(appUserRepository.findById(1)).thenReturn(user);
+        when(reviewRepository.add(review)).thenReturn(mockOut);
+        when(reviewRepository.findByUserId(1)).thenReturn(List.of(mockOut));
+        Result<Review> duplicate = service.add(review);
+        System.out.println(duplicate.getMessages());
+        assertEquals(ResultType.INVALID, duplicate.getType());
     }
 
     @Test
@@ -165,7 +204,7 @@ public class ReviewServiceTest {
     void shouldUpdate() {
         Review review = new Review(1, 8.0, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
         Review oldReview = new Review(1, 7.0, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
-        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("user"));
+        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("USER"));
         Developer developer = new Developer(5, "Eidos Montreal");
         Game game = new Game(1, "Deus Ex: Mankind Divided", "Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy.",
                 LocalDate.now(), 8.5, 7.9, 10, 30, developer);
@@ -182,7 +221,7 @@ public class ReviewServiceTest {
     @Test
     void shouldNotUpdateMissing() {
         Review review = new Review(1243, 8.0, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
-        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("user"));
+        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("USER"));
         Developer developer = new Developer(5, "Eidos Montreal");
         Game game = new Game(1, "Deus Ex: Mankind Divided", "Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy.",
                 LocalDate.now(), 8.5, 7.9, 150, 30, developer);
@@ -258,7 +297,7 @@ public class ReviewServiceTest {
     @Test
     void shouldDelete() {
         Review review = new Review(1, 9.9, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
-        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("user"));
+        AppUser user = new AppUser(1, "test_user1", "$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y", false, List.of("USER"));
         Developer developer = new Developer(5, "Eidos Montreal");
         Game game = new Game(1, "Deus Ex: Mankind Divided", "Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy.",
                 LocalDate.now(), 8.5, 7.9, 5, 30, developer);

@@ -3,11 +3,15 @@ package learn.review_tique.domain;
 import learn.review_tique.data.AppUserRepository;
 import learn.review_tique.data.GameRepository;
 import learn.review_tique.data.ReviewRepository;
+import learn.review_tique.models.AppUser;
 import learn.review_tique.models.Game;
 import learn.review_tique.models.Review;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 /*
@@ -135,9 +139,10 @@ public class ReviewService {
             return result;
         }
 
+        review.setTimestamp(Timestamp.from(Instant.now()));
         review = repository.add(review);
         result.setPayload(review);
-        addDeleteAvgScore(review, true);
+        recalculateAddReviewMetrics(review);
         return result;
     }
 
@@ -162,8 +167,8 @@ public class ReviewService {
             result.addMessages(msg, ResultType.NOT_FOUND);
             return result;
         }
-
-        updateAvgScore(review, oldReview);
+        review.setTimestamp(Timestamp.from(Instant.now()));
+        recalculateUpdateReviewMetrics(review, oldReview);
         repository.update(review);
         return result;
     }
@@ -178,13 +183,13 @@ public class ReviewService {
             return result;
         }
 
-        addDeleteAvgScore(review, false);
+        recalculateDeleteReviewMetrics(review);
         repository.deleteById(reviewId);
 
         return result;
     }
 
-    private void addDeleteAvgScore(Review review, boolean adding) {
+    private void recalculateAddReviewMetrics(Review review) {
         if(review == null)
             return;
 
@@ -192,38 +197,100 @@ public class ReviewService {
         if(game == null)
             return;
 
-        double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
-
-        if(adding) {
+        if(isCritic(review.getUserId())) {
+            double totalScore = game.getAvgCriticScore() * game.getCriticReviewCount();
+            game.setCriticReviewCount(game.getCriticReviewCount() + 1);
+            totalScore += review.getScore();
+            game.setAvgCriticScore(totalScore / game.getCriticReviewCount());
+        } else if(isUser(review.getUserId())){
+            double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
             game.setUserReviewCount(game.getUserReviewCount() + 1);
             totalScore += review.getScore();
-        } else {
-            game.setUserReviewCount(game.getUserReviewCount() - 1);
-            totalScore -= review.getScore();
-        }
-
-        if(game.getUserReviewCount() == 0)
-            game.setAvgUserScore(0.0);
-        else
             game.setAvgUserScore(totalScore / game.getUserReviewCount());
+        } else {
+            return;
+        }
 
         gameService.update(game);
     }
 
-    private void updateAvgScore(Review newReview, Review oldReview) {
-        Game game = gameService.findById(oldReview.getGameId());
+    private void recalculateDeleteReviewMetrics(Review review) {
+        if(review == null)
+            return;
+
+        Game game = gameService.findById(review.getGameId());
         if(game == null)
             return;
 
-        double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
-        totalScore -= oldReview.getScore();
-        totalScore += newReview.getScore();
+        if(isCritic(review.getUserId())) {
+            double totalScore = game.getAvgCriticScore() * game.getCriticReviewCount();
+            game.setCriticReviewCount(game.getCriticReviewCount() - 1);
+            totalScore -= review.getScore();
 
-        double newScore = totalScore / game.getUserReviewCount();
-        game.setAvgUserScore(newScore);
+            if(game.getCriticReviewCount() == 0)
+                game.setAvgCriticScore(0.0);
+            else
+                game.setAvgCriticScore(totalScore / game.getCriticReviewCount());
+
+        } else if(isUser(review.getUserId())){
+            double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
+            game.setUserReviewCount(game.getUserReviewCount() - 1);
+            totalScore -= review.getScore();
+
+            if(game.getUserReviewCount() == 0)
+                game.setAvgUserScore(0.0);
+            else
+                game.setAvgUserScore(totalScore / game.getUserReviewCount());
+
+        } else {
+            return;
+        }
 
         gameService.update(game);
     }
+
+    private void recalculateUpdateReviewMetrics(Review newReview, Review oldReview) {
+        Game game = gameService.findById(oldReview.getGameId());
+        if(game == null)
+            return;
+        if(isCritic(newReview.getUserId())) {
+            double totalScore = game.getAvgCriticScore() * game.getCriticReviewCount();
+            totalScore -= oldReview.getScore();
+            totalScore += newReview.getScore();
+
+            double newScore = totalScore / game.getCriticReviewCount();
+            game.setAvgCriticScore(newScore);
+        } else if (isUser(newReview.getUserId())) {
+            double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
+            totalScore -= oldReview.getScore();
+            totalScore += newReview.getScore();
+
+            double newScore = totalScore / game.getUserReviewCount();
+            game.setAvgUserScore(newScore);
+        }
+
+
+        gameService.update(game);
+    }
+
+    private boolean isCritic(int userId) {
+        AppUser appUser = appUserRepository.findById(userId);
+        if(appUser == null)
+            return false;
+        List<String> role = AppUser.convertAuthoritiesToRoles(appUser.getAuthorities());
+
+        return role.contains("CRITIC");
+    }
+
+    private boolean isUser(int userId) {
+        AppUser appUser = appUserRepository.findById(userId);
+        if(appUser == null)
+            return false;
+        List<String> role = AppUser.convertAuthoritiesToRoles(appUser.getAuthorities());
+
+        return role.contains("USER");
+    }
+
 
     private Result<Review> validate(Review review) {
         Result<Review> result = new Result<>();

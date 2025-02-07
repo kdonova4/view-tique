@@ -80,7 +80,7 @@ public class Game {
     }
 
     public double getAvgCriticScore() {
-        return avgCriticScore;
+        return avgCriticScore = Math.round(avgCriticScore * 10.0) / 10.0;
     }
 
     public void setAvgCriticScore(double avgCriticScore) {

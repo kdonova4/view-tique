@@ -1,6 +1,6 @@
-drop database if exists review_tique_test;
-create database review_tique_test;
-use review_tique_test;
+drop database if exists review_tique;
+create database review_tique;
+use review_tique;
 
 -- creating tables
 
@@ -286,3 +286,6 @@ insert into wishlist (game_id, app_user_id) values
 (2, 5),
 (3, 5);
 
+SELECT app_user_id, username, password_hash, disabled
+FROM app_user
+WHERE app_user_id = 1;

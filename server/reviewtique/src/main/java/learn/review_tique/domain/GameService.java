@@ -1,5 +1,6 @@
 package learn.review_tique.domain;
 
+import learn.review_tique.data.DeveloperRepository;
 import learn.review_tique.data.GameGenreRepository;
 import learn.review_tique.data.GamePlatformRepository;
 import learn.review_tique.data.GameRepository;
@@ -71,11 +72,13 @@ public class GameService {
     private final GameRepository repository;
     private final GameGenreRepository gameGenreRepository;
     private final GamePlatformRepository gamePlatformRepository;
+    private final DeveloperRepository developerRepository;
 
-    public GameService(GameRepository repository, GameGenreRepository gameGenreRepository, GamePlatformRepository gamePlatformRepository) {
+    public GameService(GameRepository repository, GameGenreRepository gameGenreRepository, GamePlatformRepository gamePlatformRepository, DeveloperRepository developerRepository) {
         this.repository = repository;
         this.gameGenreRepository = gameGenreRepository;
         this.gamePlatformRepository = gamePlatformRepository;
+        this.developerRepository = developerRepository;
     }
 
     public List<Game> findAll() {
@@ -179,6 +182,16 @@ public class GameService {
         if(game.getDeveloper() == null) {
             result.addMessages("Developer CANNOT BE NULL", ResultType.INVALID);
         }
+
+        if(game.getDeveloper().getDeveloperId() <= 0) {
+            result.addMessages("Developer MUST BE VALID", ResultType.INVALID);
+        }
+
+        if(developerRepository.findById(game.getDeveloper().getDeveloperId()) == null
+            || !developerRepository.findById(game.getDeveloper().getDeveloperId()).getDeveloperName().equals(game.getDeveloper().getDeveloperName())) {
+            result.addMessages("Developer MUST EXIST", ResultType.INVALID);
+        }
+
 
         return result;
     }

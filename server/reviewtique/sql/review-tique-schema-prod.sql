@@ -285,7 +285,3 @@ insert into wishlist (game_id, app_user_id) values
 (1, 5),
 (2, 5),
 (3, 5);
-
-SELECT app_user_id, username, password_hash, disabled
-FROM app_user
-WHERE app_user_id = 1;

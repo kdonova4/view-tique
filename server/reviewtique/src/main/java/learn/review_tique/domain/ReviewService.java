@@ -332,12 +332,14 @@ public class ReviewService {
             result.addMessages("Game does not exist", ResultType.INVALID);
         }
 
-        // check if user has already reviewed this game
-        List<Review> reviews = repository.findByUserId(review.getUserId());
-        for(Review r : reviews) {
-            if(review.getGameId() == r.getGameId()) {
-                result.addMessages("User has already reviewed this game", ResultType.INVALID);
-                return result;
+        // check if user has already reviewed this game, only when adding
+        if(review.getReviewId() == 0) {
+            List<Review> reviews = repository.findByUserId(review.getUserId());
+            for(Review r : reviews) {
+                if(review.getGameId() == r.getGameId()) {
+                    result.addMessages("User has already reviewed this game", ResultType.INVALID);
+                    return result;
+                }
             }
         }
 

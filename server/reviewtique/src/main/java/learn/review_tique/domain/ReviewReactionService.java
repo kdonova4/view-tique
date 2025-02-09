@@ -132,9 +132,9 @@ public class ReviewReactionService {
         }
 
         if (reviewReaction.getReviewId() <= 0) {
-            result.addMessages("Valid User ID is REQUIRED", ResultType.INVALID);
+            result.addMessages("Valid Review ID is REQUIRED", ResultType.INVALID);
         } else if (reviewService.findById(reviewReaction.getReviewId()) == null) {
-            result.addMessages("User does not exist", ResultType.INVALID);
+            result.addMessages("Review does not exist", ResultType.INVALID);
         }
 
         if (reviewReaction.getUserId() <= 0) {

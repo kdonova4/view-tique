@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import learn.review_tique.data.AppUserRepository;
-import learn.review_tique.data.ReviewReactionRepository;
-import learn.review_tique.data.WishlistRepository;
+import learn.review_tique.data.DeveloperRepository;
+import learn.review_tique.data.GenreRepository;
 import learn.review_tique.models.AppUser;
+import learn.review_tique.models.Developer;
+import learn.review_tique.models.Genre;
 import learn.review_tique.models.Wishlist;
 import learn.review_tique.security.JwtConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +20,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -30,10 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class WishlistControllerTest {
+public class DeveloperControllerTest {
 
     @MockBean
-    WishlistRepository repository;
+    DeveloperRepository repository;
 
     @MockBean
     AppUserRepository appUserRepository;
@@ -66,7 +67,7 @@ public class WishlistControllerTest {
     @Test
     void addShouldReturn400WhenEmpty() throws Exception {
 
-        var request = post("/v1/api/wishlists")
+        var request = post("/v1/api/developers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token);
 
@@ -79,14 +80,14 @@ public class WishlistControllerTest {
 
         ObjectMapper jsonMapper = new ObjectMapper();
 
-        Wishlist wishlist = new Wishlist();
-        wishlist.setUserId(1);
-        String amenityJson = jsonMapper.writeValueAsString(wishlist);
+        Developer developer = new Developer();
 
-        var request = post("/v1/api/wishlists")
+        String developerJson = jsonMapper.writeValueAsString(developer);
+
+        var request = post("/v1/api/developers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
-                .content(amenityJson);
+                .content(developerJson);
 
         mockMvc.perform(request)
                 .andExpect(status().isBadRequest());
@@ -97,13 +98,13 @@ public class WishlistControllerTest {
 
         ObjectMapper jsonMapper = new ObjectMapper();
 
-        Wishlist wishlist = new Wishlist();
-        String reviewJson = jsonMapper.writeValueAsString(wishlist);
+        Developer developer = new Developer();;
+        String developerJson = jsonMapper.writeValueAsString(developer);
 
-        var request = post("/v1/api/wishlists")
+        var request = post("/v1/api/developers")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + token)
-                .content(reviewJson);
+                .content(developerJson);
 
         mockMvc.perform(request)
                 .andExpect(status().isUnsupportedMediaType());
@@ -114,21 +115,21 @@ public class WishlistControllerTest {
 
         ObjectMapper jsonMapper = new ObjectMapper();
 
-        Wishlist wishlist = new Wishlist(0, 1, 1);
-        Wishlist expected = new Wishlist(1, 1, 1);
+        Developer developer = new Developer(0, "Test");
+        Developer expected = new Developer(0, "Test");
         AppUser appUser = new AppUser(1, "test_user1", "85c*98Kd", false,
                 List.of("USER"));
 
         when(appUserRepository.findById(1)).thenReturn(appUser);
         when(repository.add(any())).thenReturn(expected);
 
-        String amenityJson = jsonMapper.writeValueAsString(wishlist);
+        String developerJson = jsonMapper.writeValueAsString(developer);
         String expectedJson = jsonMapper.writeValueAsString(expected);
 
-        var request = post("/v1/api/wishlists")
+        var request = post("/v1/api/developers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
-                .content(amenityJson);
+                .content(developerJson);
 
         mockMvc.perform(request)
                 .andExpect(status().isCreated())
@@ -142,7 +143,7 @@ public class WishlistControllerTest {
         when(repository.deleteById(1)).thenReturn(true);
 
 
-        var request = delete("/v1/api/wishlists/1")
+        var request = delete("/v1/api/developers/1")
                 .header("Authorization", "Bearer " + token);
 
         mockMvc.perform(request)
@@ -153,7 +154,7 @@ public class WishlistControllerTest {
     void deleteShouldReturn404NotFoundWhenMissing() throws Exception {
         when(repository.deleteById(1)).thenReturn(false);
 
-        var request = delete("/v1/api/wishlists/1")
+        var request = delete("/v1/api/developers/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 404 Not found as response

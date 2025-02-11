@@ -41,7 +41,7 @@ public class GenreController {
 
     @Operation(summary = "search for a genre", description = "search for a genre by its name")
     @GetMapping("/searchGenre")
-    public ResponseEntity<List<Genre>> findById(@RequestParam String genreName) {
+    public ResponseEntity<List<Genre>> searchByName(@RequestParam String genreName) {
         List<Genre> genres = genreService.searchByName(genreName);
 
         if(genres.isEmpty()) {
@@ -53,7 +53,7 @@ public class GenreController {
 
     @Operation(summary = "Add a genre", description = "Adds a genre")
     @PostMapping
-    public ResponseEntity<Object> findById(@RequestBody Genre genre) {
+    public ResponseEntity<Object> add(@RequestBody Genre genre) {
         Result<Genre> result = genreService.add(genre);
 
         if(result.isSuccess()) {

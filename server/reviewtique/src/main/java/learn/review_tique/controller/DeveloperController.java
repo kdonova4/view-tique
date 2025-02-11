@@ -41,7 +41,7 @@ public class DeveloperController {
 
     @Operation(summary = "search for a developer", description = "search for a developer by its name")
     @GetMapping("/searchDeveloper")
-    public ResponseEntity<List<Developer>> findById(@RequestParam String developerName) {
+    public ResponseEntity<List<Developer>> searchByName(@RequestParam String developerName) {
         List<Developer> developers = developerService.searchByName(developerName);
 
         if(developers.isEmpty()) {
@@ -53,7 +53,7 @@ public class DeveloperController {
 
     @Operation(summary = "Add a developer", description = "Adds a developer")
     @PostMapping
-    public ResponseEntity<Object> findById(@RequestBody Developer developer) {
+    public ResponseEntity<Object> add(@RequestBody Developer developer) {
         Result<Developer> result = developerService.add(developer);
 
         if(result.isSuccess()) {

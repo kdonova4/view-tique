@@ -40,7 +40,7 @@ public class PlatformController {
 
     @Operation(summary = "search for a platform", description = "search for a platform by its name")
     @GetMapping("/searchPlatform")
-    public ResponseEntity<List<Platform>> findById(@RequestParam String platformName) {
+    public ResponseEntity<List<Platform>> searchByName(@RequestParam String platformName) {
         List<Platform> platforms = platformService.searchByName(platformName);
 
         if(platforms.isEmpty()) {
@@ -52,7 +52,7 @@ public class PlatformController {
 
     @Operation(summary = "Add a platform", description = "Adds a platform")
     @PostMapping
-    public ResponseEntity<Object> findById(@RequestBody Platform platform) {
+    public ResponseEntity<Object> add(@RequestBody Platform platform) {
         Result<Platform> result = platformService.add(platform);
 
         if(result.isSuccess()) {

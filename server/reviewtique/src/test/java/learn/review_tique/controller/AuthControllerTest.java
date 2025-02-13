@@ -47,6 +47,5 @@ public class AuthControllerTest {
         token = jwtConverter.getTokenFromUser(appUser);
         jsonMapper.registerModule(new JavaTimeModule());
         jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
     }
 }

@@ -40,6 +40,11 @@ public class GameController {
         this.appUserService = appUserService;
     }
 
+    @GetMapping
+    public List<Game> findAll()  {
+        return gameService.findAll();
+    }
+
     @Operation(summary = "Get Game by ID", description = "Finds Game from ID")
     @GetMapping("/{gameId}")
     public ResponseEntity<Game> findById(@PathVariable int gameId) {

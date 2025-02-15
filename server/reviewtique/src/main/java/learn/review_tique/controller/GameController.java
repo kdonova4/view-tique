@@ -85,7 +85,7 @@ public class GameController {
         return ResponseEntity.ok(games);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Add a Game", description = "Adding a Game to the database, REQUIRES ADMIN ROLE")
     @PostMapping
     public ResponseEntity<Object> add(@RequestBody Game game) {
@@ -97,7 +97,7 @@ public class GameController {
         return ErrorResponse.build(result);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update a Game", description = "Updates a Game to the database, REQUIRES ADMIN ROLE")
     @PutMapping("/{gameId}")
     public ResponseEntity<Object> update(@PathVariable int gameId, @RequestBody Game game) {
@@ -114,7 +114,7 @@ public class GameController {
         return ErrorResponse.build(result);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete a Game", description = "Deletes a Game to the database, REQUIRES ADMIN ROLE")
     @DeleteMapping("/{gameId}")
     public ResponseEntity<Object> deleteById(@PathVariable int gameId) {

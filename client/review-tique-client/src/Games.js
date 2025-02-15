@@ -87,36 +87,146 @@ function Games() {
 
     // CRUD
     const handleEditGame = (gameId) => {
-        console.log("Editing Game")
+        setEditGameId(gameId);
+        // find the game we are looking for
+        const game = games.find(g => g.gameId === gameId);
+        // update state variable with the game object that we need to edit
+        const editGame = {...game}
+        setGame(editGame)
+        setCurrentView('Edit');
     }
 
     
     const handleDeleteGame = (gameId) => {
-        console.log("Deleting Game")
+        const game = games.find(g => g.gameId === gameId);
+        if(window.confirm(`Delete Game: ${game.title}?`)) {
+            const init = {
+                method: 'DELETE'
+            };
+            fetch(`${url}/${gameId}`, init)
+            .then(response => {
+                if(response.status === 204){
+                    // create a copy of the array remove the game
+                    const newGames = games.filter(g => g.gameId !== gameId)
+                    // update the game state
+                    setGames(newGames);
+                } else{
+                    return Promise.reject(`Unexpected Status Code ${response.status}`)
+                }
+            })
+            .catch(console.log);
+        }
     }
     
     const handleSubmit = (event) => {
         event.preventDefault();
+        
         if(editGameId === 0) {
-            // add game
+            addGame();
         } else {
-            // update game
+            updateGame();
         }
     }
 
     const handleChange = (event) => {
-        const newGame = {... game}
+        const newGame = {...game}
 
-        newGame[event.target.name] = event.target.value;
-        console.log(newGame[event.target.name]);
+        if(event.target.name === 'developer') {
+            // something
+            newGame.developer = {
+                ...newGame.developer,
+                developerName: event.target.value
+            };
+        } else{
+            newGame[event.target.name] = event.target.value;
+            console.log(newGame[event.target.name]);
+        }
+
+        
         setGame(newGame);
         console.log(game);
 
     }
 
+    // CRUD FUNCTIONS
+    const updateGame = () => {
+        game.gameId = editGameId;
+        const init = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(game)
+        }
+        fetch(`${url}/${editGameId}`, init)
+        .then(response =>{
+            if(response.status === 204){
+                return null;
+            } else if(response.status === 400) {
+                return response.json();
+            }else{
+                return Promise.reject(`Unexpected Status Code ${response.status}`);
+            }
+        })
+        .then(data =>{
+            if(!data){ //happy path
+                // create copy of the array
+                const newGames = [...games]
+                // determine the index
+                const indexToUpdate = newGames.findIndex(game => game.gameId === editGameId)
+                //update the panel at that index
+                newGames[indexToUpdate] = game;
+                // update the state variable
+                setGames(newGames)
+                // reset the state
+                resetState();
+            } else { //unhappy
+                //get our error messages and display them
+                setErrors(data)
+            }
+        })
+        .catch(console.log)
+    }
+
+    const addGame = () => {
+        
+        const init = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(game)
+        }
+        fetch(url, init)
+        .then(response =>{
+            if(response.status === 201 || response.status === 400){
+                return response.json();
+            } else{
+                return Promise.reject(`Unexpected Status Code: ${response.status}`)
+            }
+        })
+        .then(data =>{
+            if(data.gameId) { //happy path
+                // create a copy of game array
+                const newGames = [...games];
+                // add new game to it
+                newGames.push(data);
+                // update state
+                console.log("ADDING");
+                setGames(newGames);
+                // reset our state
+                resetState();
+            } else {
+                setErrors(data);
+            }
+        })
+        .catch(console.log)
+    }
+
     // HELPER FUNCTION
     const resetState = () => {
         console.log(game)
+
         setGame(GAME_DEFAULT);
         setCurrentView('List');
         setEditGameId(0);

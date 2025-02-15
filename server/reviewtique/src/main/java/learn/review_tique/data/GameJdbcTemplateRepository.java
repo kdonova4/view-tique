@@ -2,9 +2,12 @@ package learn.review_tique.data;
 
 import learn.review_tique.data.mappers.GameMapper;
 import learn.review_tique.models.Game;
+import learn.review_tique.models.Genre;
+import learn.review_tique.models.Platform;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +46,14 @@ public class GameJdbcTemplateRepository implements GameRepository {
                 + " join developer d on g.developer_id = d.developer_id"
                 + " where game_id = ?;";
 
-        return jdbcTemplate.query(sql, new GameMapper(), gameId).stream().findFirst().orElse(null);
+        Game result =  jdbcTemplate.query(sql, new GameMapper(), gameId).stream().findFirst().orElse(null);
+
+        if(result != null) {
+            addGenres(result);
+            addPlatforms(result);
+        }
+
+        return result;
     }
 
     @Override
@@ -170,5 +180,37 @@ public class GameJdbcTemplateRepository implements GameRepository {
         final String sql = "delete from game where game_id = ?;";
 
         return jdbcTemplate.update(sql, gameId) > 0;
+    }
+
+    private void addGenres(Game game) {
+        final String sql = "select g.genre_id, g.genre_name" +
+                " from genre g" +
+                " join game_genre gg on g.genre_id = gg.genre_id" +
+                " where gg.game_id = ?;";
+
+        var genres = jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Genre genre = new Genre();
+            genre.setGenreId(rs.getInt("genre_id"));
+            genre.setGenreName(rs.getString("genre_name"));
+            return genre;
+        }, game.getGameId());
+
+        game.setGenres(genres);
+    }
+
+    private void addPlatforms(Game game) {
+        final String sql = "select p.platform_id, p.platform_name" +
+                " from platform p" +
+                " join game_platform gp on p.platform_id = gp.platform_id" +
+                " where gp.game_id = ?;";
+
+        var platforms = jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Platform platform = new Platform();
+            platform.setPlatformId(rs.getInt("platform_id"));
+            platform.setPlatformName(rs.getString("platform_name"));
+            return platform;
+        }, game.getGameId());
+
+        game.setPlatforms(platforms);
     }
 }

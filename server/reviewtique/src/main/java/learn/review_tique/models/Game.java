@@ -1,6 +1,7 @@
 package learn.review_tique.models;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -14,6 +15,8 @@ public class Game {
     private double avgCriticScore;
     private int userReviewCount;
     private int criticReviewCount;
+    private List<Genre> genres = new ArrayList<>();
+    private List<Platform> platforms = new ArrayList<>();
 
     public Game() {
 
@@ -101,5 +104,21 @@ public class Game {
 
     public void setCriticReviewCount(int criticReviewCount) {
         this.criticReviewCount = criticReviewCount;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public List<Platform> getPlatforms() {
+        return platforms;
+    }
+
+    public void setPlatforms(List<Platform> platforms) {
+        this.platforms = platforms;
     }
 }

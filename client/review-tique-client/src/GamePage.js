@@ -20,91 +20,103 @@ const GAME_DEFAULT = {
 }
 
 function GamePage(){
-    const [game, setGame] = useState(GAME_DEFAULT);
+    const [game, setGame] = useState(null);
     const url = 'http://localhost:8080/v1/api/games'
-
+    const [fetching, setFetching] = useState(true);
     const navigate = useNavigate();
     const { gameId } = useParams();
 
     useEffect(() => {
+        setFetching(true);
         fetch(`${url}/${gameId}`)
         .then(response => {
             if(response.status === 200){
                 return response.json();
             }else if (response.status === 404){
                 console.error("Game Not Found");
-                navigate("*");
+                
             }else{
                 return Promise.reject(`Unexpected Status Code ${response.status}`)
             }
         })
         .then(data => setGame(data))
         .catch(console.log)
+        .finally(() =>{
+            setFetching(false);
+        })
     }, [gameId]);
 
-    return(<>
-        <h1>Game Details List</h1>
-        <section>
-                <h2 className='mb-4'>Reviews</h2>
-                        <table className='table table-striped'>
-                            <thead className='thead-dark'>
-                                <tr>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>Release Date</th>
-                                <th>User Score</th>
-                                <th>Critic Score</th>
-                                <th>User Review Count</th>
-                                <th>Critic Review Count</th>
-                                <th>Developer</th>
-                                <th>&nbsp;</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{game.title}</td>
-                                    <td>{game.description}</td>
-                                    <td>{game.releaseDate}</td>
-                                    <td>{game.avgUserScore}</td>
-                                    <td>{game.avgCriticScore}</td>
-                                    <td>{game.userReviewCount}</td>
-                                    <td>{game.criticReviewCount}</td>
-                                    <td>{game.developer.developerName}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+    return (
+        <>
+            <h1>Game Details List</h1>
+            {!fetching && (
+                game ? ( // Open conditional check
+                    <>
                         <section>
-                        <h5 className="mt-4">Genres:</h5>
-                        {game.genres.length > 0 ? (
-                            <ul>
-                                {game.genres.map((item, index) => (
-                                    <li key={index}>
-                                        {item.genreName}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No Genres Availiable</p>
-                        )}
+                            <h2 className="mb-4">Reviews</h2>
+                            <table className="table table-striped">
+                                <thead className="thead-dark">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Release Date</th>
+                                        <th>User Score</th>
+                                        <th>Critic Score</th>
+                                        <th>User Review Count</th>
+                                        <th>Critic Review Count</th>
+                                        <th>Developer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{game.title}</td>
+                                        <td>{game.description}</td>
+                                        <td>{game.releaseDate}</td>
+                                        <td>{game.avgUserScore}</td>
+                                        <td>{game.avgCriticScore}</td>
+                                        <td>{game.userReviewCount}</td>
+                                        <td>{game.criticReviewCount}</td>
+                                        <td>{game.developer.developerName}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+        
+                            <section>
+                                <h5 className="mt-4">Genres:</h5>
+                                {game.genres.length > 0 ? (
+                                    <ul>
+                                        {game.genres.map((item, index) => (
+                                            <li key={index}>{item.genreName}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No Genres Available</p>
+                                )}
+                            </section>
+        
+                            <div className="mb-4">
+                                <h5 className="mt-4">Platforms:</h5>
+                                {game.platforms.length > 0 ? (
+                                    <ul>
+                                        {game.platforms.map((item, index) => (
+                                            <li key={index}>{item.platformName}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No Platforms Available</p>
+                                )}
+                            </div>
                         </section>
-                        <div className="mb-4">
-                        <h5  className="mt-4">Platforms:</h5>
-                        {game.platforms.length > 0 ? (
-                            <ul>
-                                {game.platforms.map((item, index) => (
-                                    <li key={index}>
-                                        {item.platformName}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No Platforms Availiable</p>
-                        )}
-                        </div>
-                    </section>
-                    <div><ReviewList/></div>
-                    
-    </>)
+        
+                        <div><ReviewList/></div>
+                    </>
+                ) : ( // Else condition
+                    <p>No Game Available</p>
+                )
+            )}
+            
+        </>
+    );
 
 }
 

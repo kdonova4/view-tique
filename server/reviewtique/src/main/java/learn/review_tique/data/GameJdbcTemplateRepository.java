@@ -59,6 +59,12 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public List<Game> searchGame(String gameName, int[] genreIds, int[] platformIds, Integer developerId) {
 
+        if ((gameName == null || gameName.isEmpty()) &&
+                (genreIds == null || genreIds.length == 0) &&
+                (platformIds == null || platformIds.length == 0) &&
+                (developerId == null)) {
+            return Collections.emptyList();
+        }
         String fullTextParam = gameName + "*";
 
         StringBuilder sql = new StringBuilder(

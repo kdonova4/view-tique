@@ -23,7 +23,6 @@ function GamePage(){
     const [game, setGame] = useState(null);
     const url = 'http://localhost:8080/v1/api/games'
     const [fetching, setFetching] = useState(true);
-    const navigate = useNavigate();
     const { gameId } = useParams();
 
     useEffect(() => {

@@ -9,7 +9,12 @@ function GameSearch() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        navigate(`/games/search?gameName=${gameName}`)
+        if(gameName) {
+            navigate(`/games/search?gameName=${gameName}`)
+        }else {
+            navigate(`/games/search`)
+        }
+        
     }
 
     return(<>

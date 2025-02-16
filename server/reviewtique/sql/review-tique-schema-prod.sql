@@ -158,7 +158,8 @@ insert into platform (platform_name) values
 
 insert into developer (developer_name) values
 ('Bungie'),
-('Bethesda'),
+('Betheso'),
+('Bethesoo'),
 ('Dice'),
 ('Infinity Ward'),
 ('CD Projekt Red'),

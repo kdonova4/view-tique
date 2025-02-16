@@ -181,13 +181,9 @@ public class GameService {
 
         if(game.getDeveloper() == null) {
             result.addMessages("Developer CANNOT BE NULL", ResultType.INVALID);
-        }
-
-        if(game.getDeveloper().getDeveloperId() <= 0) {
+        }else if(game.getDeveloper().getDeveloperId() <= 0) {
             result.addMessages("Developer MUST BE VALID", ResultType.INVALID);
-        }
-
-        if(developerRepository.findById(game.getDeveloper().getDeveloperId()) == null
+        }else if(developerRepository.findById(game.getDeveloper().getDeveloperId()) == null
             || !developerRepository.findById(game.getDeveloper().getDeveloperId()).getDeveloperName().equals(game.getDeveloper().getDeveloperName())) {
             result.addMessages("Developer MUST EXIST", ResultType.INVALID);
         }

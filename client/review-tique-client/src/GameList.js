@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import DeveloperFilter from "./DeveloperFilter";
 
 function GameList(){
     // STATE
@@ -55,7 +56,7 @@ function GameList(){
         })
         
         
-    }, [location]); // call me once on page load
+    }, [location.search]); // call me once on page load
     
     // handle delete
     const handleDeleteGame = (gameId) => {
@@ -121,11 +122,16 @@ function GameList(){
                         ))}
                     </tbody>
                 </table>
+
+                
                 </section>
+
             ) : (
                 <p className="mt-4">Would you rather have unlimited bacon and no games? or games, unlimited games, and no games?</p>
             ))}
-                
+                <div>
+                    <DeveloperFilter/>
+                </div>
             
     </>);
 }

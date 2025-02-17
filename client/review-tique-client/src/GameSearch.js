@@ -1,19 +1,17 @@
 
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 function GameSearch() {
     const [gameName, setGameName] = useState('');
     
     const navigate = useNavigate();
-
+    const location = useLocation();
     const handleSubmit = (event) => {
         event.preventDefault();
-        if(gameName) {
-            navigate(`/games/search?gameName=${gameName}`)
-        }else {
-            navigate(`/games/search`)
-        }
+        const queryParams = new URLSearchParams(location.search);
+        queryParams.set("gameName", gameName);
+        navigate(`?${queryParams.toString()}`, { replace: true });
         
     }
 

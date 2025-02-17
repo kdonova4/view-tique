@@ -1,9 +1,11 @@
 import { Button } from "react-bootstrap";
-
+import { FaTimesCircle } from "react-icons/fa";
 function DeveloperButton({ developerId, developerName, clearSelection }) {
     return(<>
-        <div className="developer-button mt-4 mb-4">
-            <Button variant="secondary" onClick={clearSelection}>X {developerName}</Button>
+        <div className=" mt-4 mb-4">
+            <Button variant="info" onClick={clearSelection} className="developer-button">
+                <FaTimesCircle className="filter-icon"/> {developerName}
+            </Button>
         </div>
     </>)
 }

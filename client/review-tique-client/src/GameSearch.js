@@ -11,7 +11,7 @@ function GameSearch() {
         event.preventDefault();
         const queryParams = new URLSearchParams(location.search);
         queryParams.set("gameName", gameName);
-        navigate(`?${queryParams.toString()}`, { replace: true });
+        navigate(`games/search?${queryParams.toString()}`, { replace: true });
         
     }
 

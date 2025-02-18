@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import DeveloperFilter from "./DeveloperFilter";
+import PlatformFilter from "./PlatformFilter";
 
 function GameList(){
     // STATE
@@ -106,7 +107,7 @@ function GameList(){
                     <tbody>
                         {games.map(game => (
                             <tr key={game.gameId}>
-                                <td>{game.title}</td>
+                                <td><Link to={`/games/${game.gameId}`}>{game.title}</Link></td>
                                 <td>{game.description}</td>
                                 <td>{game.releaseDate}</td>
                                 <td>{game.avgUserScore}</td>
@@ -131,6 +132,9 @@ function GameList(){
             ))}
                 <div>
                     <DeveloperFilter/>
+                </div>
+                <div>
+                    <PlatformFilter/>
                 </div>
             
     </>);

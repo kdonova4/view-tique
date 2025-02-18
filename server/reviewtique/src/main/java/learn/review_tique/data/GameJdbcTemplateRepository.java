@@ -69,49 +69,54 @@ public class GameJdbcTemplateRepository implements GameRepository {
 
         StringBuilder sql = new StringBuilder(
                 "select distinct g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score, "
-                        + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
-                        + " from game g "
-                        + " join developer d on g.developer_id = d.developer_id "
-
+                        + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name, "
+                        + "MATCH(g.title) AGAINST(? IN BOOLEAN MODE) as relevance_score "
+                        + "from game g "
+                        + "join developer d on g.developer_id = d.developer_id "
         );
-
-        if(genreIds != null && genreIds.length > 0)
-            sql.append("join game_genre gg on g.game_id = gg.game_id ");
-        if(platformIds != null && platformIds.length > 0)
-            sql.append("join game_platform gp on g.game_id = gp.game_id ");
-
-        sql.append("where 1 = 1 ");
-
         List<Object> params = new ArrayList<>();
-
-        if(gameName != null && !gameName.isBlank()) {
+        params.add(gameName);
+        if (gameName != null && !gameName.isBlank()) {
             sql.append("and MATCH(g.title) AGAINST(? IN BOOLEAN MODE) ");
             params.add(fullTextParam);
         }
 
-        if(genreIds != null && genreIds.length > 0) {
+        if (genreIds != null && genreIds.length > 0)
+            sql.append("join game_genre gg on g.game_id = gg.game_id ");
+        if (platformIds != null && platformIds.length > 0)
+            sql.append("join game_platform gp on g.game_id = gp.game_id ");
+
+        sql.append("where 1 = 1 ");
+
+
+
+
+
+        if (genreIds != null && genreIds.length > 0) {
             sql.append("and gg.genre_id in (")
                     .append(String.join(", ", Collections.nCopies(genreIds.length, "?")))
                     .append(") ");
-            for(int genreId : genreIds) {
+            for (int genreId : genreIds) {
                 params.add(genreId);
             }
-
         }
 
-        if(platformIds != null && platformIds.length > 0) {
+        if (platformIds != null && platformIds.length > 0) {
             sql.append("and gp.platform_id in (")
                     .append(String.join(", ", Collections.nCopies(platformIds.length, "?")))
                     .append(") ");
-            for(int platformId : platformIds) {
+            for (int platformId : platformIds) {
                 params.add(platformId);
             }
         }
 
-        if(developerId != null) {
+        if (developerId != null) {
             sql.append("and g.developer_id = ? ");
             params.add(developerId);
         }
+        sql.append("ORDER BY (g.title = ?) DESC, relevance_score DESC");
+        params.add(gameName);
+
 
         return jdbcTemplate.query(sql.toString(), new GameMapper(), params.toArray());
     }

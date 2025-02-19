@@ -47,12 +47,11 @@ function GamePage(){
 
     return (
         <>
-            <h1>Game Details List</h1>
+            <h1>Game Details</h1>
             {!fetching && (
                 game ? ( // Open conditional check
                     <>
                         <section>
-                            <h2 className="mb-4">Reviews</h2>
                             <table className="table table-striped">
                                 <thead className="thead-dark">
                                     <tr>

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import DeveloperFilter from "./DeveloperFilter";
+import PlatformFilter from "./PlatformFilter";
+import GenreFilter from "./GenreFilter";
+import { Modal } from "react-bootstrap";
 
 function GameList(){
     // STATE
@@ -87,7 +90,6 @@ function GameList(){
                 games.length > 0 ? (
                 <section>
                 
-                
                 <Link className='btn btn-outline-success' to={'/game/add'}>Add a Game</Link>
                 <table className='table table-striped'>
                     <thead className='thead-dark'>
@@ -106,7 +108,7 @@ function GameList(){
                     <tbody>
                         {games.map(game => (
                             <tr key={game.gameId}>
-                                <td>{game.title}</td>
+                                <td><Link to={`/games/${game.gameId}`}>{game.title}</Link></td>
                                 <td>{game.description}</td>
                                 <td>{game.releaseDate}</td>
                                 <td>{game.avgUserScore}</td>
@@ -131,6 +133,12 @@ function GameList(){
             ))}
                 <div>
                     <DeveloperFilter/>
+                </div>
+                <div>
+                    <PlatformFilter/>
+                </div>
+                <div>
+                    <GenreFilter/>
                 </div>
             
     </>);

@@ -17,16 +17,16 @@ function DeveloperFilter() {
 
   useEffect(() => {
     const storedDevelopers = JSON.parse(localStorage.getItem('allDevelopers')) || [];
-    setAllDevelopers(storedDevelopers);
+    setAllDevelopers(storedDevelopers); // get stored developers for the devloper filter button
 
     const { developerId } = getQueryParams(); 
-    setCheckedDeveloperId(developerId ? developerId : null); 
-  }, [location.search]);
+    setCheckedDeveloperId(developerId ? developerId : null); // if there is a devloperId set checkedDevloper
+  }, [location.search]); // Re-render when the url changes
 
 
 
   const getQueryParams = () => {
-    const urlParams = new URLSearchParams(location.search);
+    const urlParams = new URLSearchParams(location.search); // get params from url
 
     return {
       gameName: urlParams.get('gameName') || '',
@@ -39,8 +39,11 @@ function DeveloperFilter() {
 
 
   const handleChange = (e) => {
-    // const { developerId } = getQueryParams();
-    setDeveloperName(e.target.value)
+    // set devloper name used for searching to the value in the search bar
+    const value = e.target.value;
+    setDeveloperName(value);
+
+    // fetch list of developers using the devloperName and searchByName method in Backend
     fetch(`${url}?developerName=${developerName}`)
       .then(response => {
         if (response.status === 200) {
@@ -50,8 +53,8 @@ function DeveloperFilter() {
         }
       })
       .then(data => {
-        setDevelopers(data);
-        data.forEach(newDeveloper => {
+        setDevelopers(data); // set current developers
+        data.forEach(newDeveloper => { // adding developers to persistent array for the developer button
           setAllDevelopers((prevDevelopers) => {
             const isDeveloperExists = prevDevelopers.some(dev => dev.developerId === newDeveloper.developerId);
             if (!isDeveloperExists) {
@@ -68,20 +71,19 @@ function DeveloperFilter() {
 
   const clearSelection = () => {
     setCheckedDeveloperId(null);
-
+    // remove devloperId from url when removed filter
     const queryParams = new URLSearchParams(location.search);
     queryParams.delete("developerId");
-
+    
     navigate(`?${queryParams.toString()}`, { replace: true });
   };
 
   const handleCheckboxChange = (developerId) => {
+    // if developersId is equal to checkedDeveloper than uncheck, else make checkedDev the new Id
     const newDeveloperId = checkedDeveloperId === String(developerId) ? null : String(developerId);
-
-    
     setCheckedDeveloperId(newDeveloperId);
 
-    
+    // update url
     const queryParams = new URLSearchParams(location.search);
     if (newDeveloperId) {
       queryParams.set("developerId", newDeveloperId);
@@ -91,9 +93,10 @@ function DeveloperFilter() {
 
     navigate(`?${queryParams.toString()}`, { replace: true });
   };
-  console.log(allDevelopers)
+
+  // get the selected developer before rendering using persistent list
   const selectedDeveloper = allDevelopers.find(dev => String(dev.developerId) === String(checkedDeveloperId));
-  console.log(selectedDeveloper)
+
   return (
     <>
       {selectedDeveloper && (

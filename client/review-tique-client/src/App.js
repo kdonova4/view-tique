@@ -4,13 +4,33 @@ import GameForm from "./GameForm";
 import GameList from "./GameList";
 import Home from "./Home";
 import NotFound from "./NotFound";
+import Register from "./Register";
 import NavBar from "./NavBar";
 import ReviewList from "./ReviewList";
 import GamePage from "./GamePage";
 import GameSearch from "./GameSearch";
+import { jwtDecode } from "jwt-decode";
 import DeveloperFilter from "./DeveloperFilter";
+import ProtectedRoute from "./ProtectedRoute";
+import Login from "./Login";
+import { Modal } from "react-bootstrap";
 
 function App() {
+  const token = localStorage.getItem("token");
+
+  let role = null;
+  let isAuthenticated = false;
+
+  if(token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      role = decodedToken.authorities;
+      isAuthenticated = true;
+    } catch (e) {
+      console.error("Invalid Token", e);
+    }
+  }
+
   return (
     <Router>
       <NavBar/>
@@ -24,6 +44,21 @@ function App() {
         <Route path="/search" element={<GameSearch/>}/>
         <Route path="*" element={<NotFound/>}/>
         <Route path="/developer" element={<DeveloperFilter/>}/>
+        <Route path="/login"
+        element={
+          <ProtectedRoute requireAuth={false} redirectTo="/">
+            <Login/>
+          </ProtectedRoute>
+        }
+        />
+        <Route
+              path="/register"
+              element={
+                <ProtectedRoute requireAuth={false} redirectTo="/">
+                  <Register />
+                </ProtectedRoute>
+              }
+            />
       </Routes>
     </Router>
   );

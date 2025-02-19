@@ -16,7 +16,6 @@ function GameSearch() {
     }
 
     return(<>
-        <h1>Search Bar</h1>
         <div className="container">
             <Form className="d-flex" onSubmit={handleSubmit}>
             <Form.Control

@@ -108,3 +108,18 @@ h3{
   background-color: #202785;
   border-color: #202785;
 }
+
+.genre-button{
+  color: #fff;
+  background-color: #0A7C5A;
+  border-color: #0A7C5A;
+  
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.genre-button:hover {
+  background-color: #05583f;
+  border-color: #05583f;
+}

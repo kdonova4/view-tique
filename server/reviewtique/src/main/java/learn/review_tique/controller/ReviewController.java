@@ -14,6 +14,7 @@ import learn.review_tique.models.Review;
 import learn.review_tique.security.AppUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -73,6 +74,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
 
+    @PreAuthorize("hasAnyRole('CRITIC', 'USER')")
     @Operation(summary = "Add Review for Game", description = "Adds a review for a game")
     @PostMapping
     public ResponseEntity<Object> add(@RequestBody Review review) {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import ReviewForm from "./ReviewForm";
 
 function ReviewList(){
 
@@ -23,9 +24,9 @@ function ReviewList(){
     }, [gameId])
 
     return(<>
-        <h1>Reviews List</h1>
         <section>
                 <h2 className='mb-4'>Reviews</h2>
+                <ReviewForm/>
                         <table className='table table-striped'>
                             <thead className='thead-dark'>
                                 <tr>

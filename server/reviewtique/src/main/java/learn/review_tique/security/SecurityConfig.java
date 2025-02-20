@@ -43,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v1/api/games/{gameId}").permitAll()
                 .antMatchers("/v1/api/user/register").permitAll()
                 .antMatchers("/api/user/{userId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/v1/api/reviews/{reviewId}").permitAll()
                 .antMatchers("/v1/api/reviews/game/{gameId}").permitAll()
                 .antMatchers(HttpMethod.POST, "/v1/api/reviews").permitAll()
                 .antMatchers( "/v1/api/games/search").permitAll()

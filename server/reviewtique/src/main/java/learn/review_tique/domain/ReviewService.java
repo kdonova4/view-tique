@@ -128,6 +128,7 @@ public class ReviewService {
 
     @Transactional
     public Result<Review> add(Review review) {
+        review.setTimestamp(Timestamp.from(Instant.now()));
         Result<Review> result = validate(review);
 
         if(!result.isSuccess()) {
@@ -139,7 +140,7 @@ public class ReviewService {
             return result;
         }
 
-        review.setTimestamp(Timestamp.from(Instant.now()));
+
         review = repository.add(review);
         result.setPayload(review);
         recalculateAddReviewMetrics(review);
@@ -148,6 +149,7 @@ public class ReviewService {
 
     @Transactional
     public Result<Review> update(Review review) {
+        review.setTimestamp(Timestamp.from(Instant.now()));
         Result<Review> result = validate(review);
 
         if(!result.isSuccess()) {
@@ -167,7 +169,7 @@ public class ReviewService {
             result.addMessages(msg, ResultType.NOT_FOUND);
             return result;
         }
-        review.setTimestamp(Timestamp.from(Instant.now()));
+
         recalculateUpdateReviewMetrics(review, oldReview);
         repository.update(review);
         return result;

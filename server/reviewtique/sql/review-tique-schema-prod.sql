@@ -218,7 +218,7 @@ values
  '2013-10-29', 8.7, 8.0, 130, 28, 3),
 ('Battlefield 3', 'Enjoy total freedom to fight the way you want. Explore 29 massive multiplayer maps and use loads of vehicles, weapons, and gadgets to help you turn up the heat. Every second of battle gets you closer to unlocking tons of extras and moving up in the Ranks. So get in the action.',
   '2011-10-28', 8.7, 8.0, 130, 28, 3),
-('The Elder Scrolls V: Skyrim', 'The Elder Scrolls V: Skyrim is an open-world RPG set in the fantasy world of Tamriel, where you play as the Dragonborn tasked with saving the world from an ancient dragon. Featuring exploration, questing, and combat, Skyrim offers a rich and immersive world to explore.', '2011-11-11', 9.5, 9.3, 500, 100, 2),
+('The Elder Scrolls V: Skyrim', 'The Elder Scrolls V: Skyrim is an open-world RPG set in the fantasy world of Tamriel, where you play as the Dragonborn tasked with saving the world from an ancient dragon. Featuring exploration, questing, and combat, Skyrim offers a rich and immersive world to explore.', '2011-11-11', 9.5, 9.3, 15, 10, 2),
 ('The Last of Us', 'A post-apocalyptic action-adventure game where players follow Joel and Ellie as they navigate through dangerous environments filled with hostile humans and infected creatures. The Last of Us is known for its emotionally charged storytelling and immersive world.', '2013-06-14', 9.8, 9.5, 1000, 200, 9),
 ('Grand Theft Auto V', 'Grand Theft Auto V takes place in the fictional state of San Andreas, following three protagonists as they engage in heists, explore the open world, and deal with personal conflicts. Known for its detailed world, dynamic gameplay, and extensive multiplayer mode.', '2013-09-17', 9.5, 9.4, 1500, 300, 17),
 ('Red Dead Redemption 2', 'Set in the American Wild West, Red Dead Redemption 2 follows Arthur Morgan and the Van der Linde gang. Players experience a massive open world with realistic ecosystems, complex characters, and an emotionally driven story of loyalty and survival.', '2018-10-26', 9.6, 9.8, 1000, 400, 17),
@@ -347,3 +347,5 @@ select * from platform;
 select * from game_genre;
 select * from genre;
 select * from wishlist;
+select * from app_user;
+select * from app_user_role;

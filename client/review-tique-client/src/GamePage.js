@@ -24,7 +24,6 @@ function GamePage(){
     const url = 'http://localhost:8080/v1/api/games'
     const [fetching, setFetching] = useState(true);
     const { gameId } = useParams();
-
     useEffect(() => {
         setFetching(true);
         fetch(`${url}/${gameId}`)
@@ -44,6 +43,24 @@ function GamePage(){
             setFetching(false);
         })
     }, [gameId]);
+
+    
+    const refreshData = () => {
+        console.log('REFRESHING')
+        fetch(`${url}/${gameId}`)
+        .then(response => {
+            if(response.status === 200){
+                return response.json();
+            }else if (response.status === 404){
+                console.error("Game Not Found");
+                
+            }else{
+                return Promise.reject(`Unexpected Status Code ${response.status}`)
+            }
+        })
+        .then(data => setGame(data))
+        .catch(console.log)
+    }
 
     return (
         <>
@@ -106,7 +123,7 @@ function GamePage(){
                             </div>
                         </section>
         
-                        <div><ReviewList/></div>
+                        <div><ReviewList refreshData={refreshData}/></div>
                     </>
                 ) : ( // Else condition
                     <p>No Game Available</p>

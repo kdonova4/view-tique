@@ -14,6 +14,7 @@ import DeveloperFilter from "./DeveloperFilter";
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "./Login";
 import { Modal } from "react-bootstrap";
+import UserProfile from "./UserProfile";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -58,7 +59,15 @@ function App() {
                   <Register />
                 </ProtectedRoute>
               }
-            />
+        />
+        <Route
+              path="/profile"
+              element={
+                <ProtectedRoute requireAuth={true} redirectTo="/login">
+                  <UserProfile />
+                </ProtectedRoute>
+              }
+        />
       </Routes>
     </Router>
   );

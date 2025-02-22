@@ -13,7 +13,7 @@ function NavBar(){
             <GameSearch/>
             {token ? (
                 <>
-                    <Nav.Link as={Link} to={"/"}>Profile</Nav.Link>
+                    <Nav.Link as={Link} to={"/profile"}>Profile</Nav.Link>
                     <Nav.Link onClick={logout}>Logout</Nav.Link>
                 </>
                 

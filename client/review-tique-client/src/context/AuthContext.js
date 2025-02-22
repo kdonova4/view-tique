@@ -8,21 +8,29 @@ export const AuthProvider = ({ children }) => {
     const [appUserId, setAppUserId] = useState(null);
   
     useEffect(() => {
+      let interval;
       if (token) {
         const decodedToken = JSON.parse(atob(token.split(".")[1]));
         setRole(decodedToken.authorities);
         setAppUserId(decodedToken.appUserId)
         console.log(decodedToken.appUserId)
-        if (decodedToken.exp * 1000 < Date.now()) {
-          logout();
-          alert("Your session has expired. Please log in again.");
-        } else {
-          localStorage.setItem("token", token);
-        }
+        interval = setInterval(() => {
+          if (decodedToken.exp * 1000 < Date.now()) {
+            logout();
+            clearInterval(interval);
+            alert("Your session has expired. Please log in again.");
+          }
+            
+        }, 10000)
+
+        localStorage.setItem("token", token);
+          
       } else {
         setRole(null);
         localStorage.removeItem("token");
       }
+
+      return () => clearInterval(interval);
     }, [token]);
   
     const login = (newToken) => {

@@ -55,7 +55,7 @@ function ReviewList({ refreshData }){
     }
 
     const handleDelete = (reviewId) => {
-        if(window.confirm(`Delete Review`)) {
+        if(window.confirm(`Delete Review?`)) {
             const headers = {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

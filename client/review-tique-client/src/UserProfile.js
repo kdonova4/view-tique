@@ -111,7 +111,7 @@ function UserProfile() {
             fetch(`http://localhost:8080/v1/api/wishlists/${wishlistId}`, init)
                 .then(response => {
                     if(response.status === 204) {
-                        const newWishlist = wishlist.filter(wishlistGame => wishlistGame.wishlistId !== wishlist);
+                        const newWishlist = wishlist.filter(wishlistGame => wishlistGame.wishlistId !== wishlistId);
                         setWishlist(newWishlist);
                         fetchData("wishlist")
                     } else {

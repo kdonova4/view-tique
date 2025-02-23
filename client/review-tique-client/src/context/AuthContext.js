@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
             alert("Your session has expired. Please log in again.");
           }
             
-        }, 10000)
+        }, 1000)
 
         localStorage.setItem("token", token);
           

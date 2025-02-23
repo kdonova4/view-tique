@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { use, useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ReviewList from "./ReviewList";
+import { useWishlist } from "./context/WishlistContext";
+import { useAuth } from "./context/AuthContext";
+import { jwtDecode } from "jwt-decode";
+import { Button } from "react-bootstrap";
 
 const GAME_DEFAULT = {
     title: "None",
@@ -24,7 +28,15 @@ function GamePage(){
     const url = 'http://localhost:8080/v1/api/games'
     const [fetching, setFetching] = useState(true);
     const { gameId } = useParams();
+    const { token } = useAuth();
+    const location = useLocation();
+    const decodedToken = token ? jwtDecode(token) : null;
+    const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+
+
+
     useEffect(() => {
+        console.log("FIRSIT")
         setFetching(true);
         fetch(`${url}/${gameId}`)
         .then(response => {
@@ -42,10 +54,15 @@ function GamePage(){
         .finally(() =>{
             setFetching(false);
         })
-    }, [gameId]);
+    }, [gameId, wishlist]);
 
+    useEffect(() => {
+        console.log("RUNNING")
+        
+    }, [wishlist, gameId])
     
     const refreshData = () => {
+        
         console.log('REFRESHING')
         fetch(`${url}/${gameId}`)
         .then(response => {
@@ -62,8 +79,26 @@ function GamePage(){
         .catch(console.log)
     }
 
+    const isWishlisted = wishlist.some(item => Number(item.gameId) === Number(gameId))
+    console.log("Wishlist:", wishlist);
+    console.log("Current gameId:", gameId);
+    console.log("isWishlisted:", isWishlisted);
     return (
         <>
+            {!isWishlisted ?  (
+                <>
+                
+                <Button variant="success" onClick={() => addToWishlist(gameId)}>
+                    {"Add To Wishlist"}
+                </Button></>
+            ) : (
+                <>
+                <Button variant="danger" onClick={() => removeFromWishlist(gameId)}>
+                    {"Remove From Wishlist"}
+                </Button>
+                </>
+            )}
+            
             <h1>Game Details</h1>
             {!fetching && (
                 game ? ( // Open conditional check

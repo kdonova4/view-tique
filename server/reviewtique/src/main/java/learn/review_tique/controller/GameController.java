@@ -55,6 +55,16 @@ public class GameController {
         return ResponseEntity.ok(game);
     }
 
+    @Operation(summary = "Get Game Top Games In A Genre", description = "Finds Top N Games from Genre")
+    @GetMapping("/{genreId}/{limit}")
+    public ResponseEntity<List<Game>> findTopNGamesByGenre(@PathVariable int genreId, @PathVariable int limit) {
+        List<Game> games = gameService.findTopNGamesByGenre(genreId, limit);
+        if(games.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+        return ResponseEntity.ok(games);
+    }
+
     @Operation(summary = "Search For Games", description = "Search for games using filters")
     @GetMapping("/search")
     public ResponseEntity<List<Game>> searchGame(@RequestParam(required = false) String gameName,

@@ -10,6 +10,8 @@ public interface GameRepository {
 
     Game findById(int gameId);
 
+    List<Game> findTopNGamesByGenre(int genreId, int limit);
+
     List<Game> searchGame(String gameName, int[] genreIds, int[] platformIds, Integer developerId);
 
     Game add(Game game);

@@ -85,19 +85,25 @@ function GamePage(){
     console.log("isWishlisted:", isWishlisted);
     return (
         <>
-            {!isWishlisted ?  (
-                <>
-                
-                <Button variant="success" onClick={() => addToWishlist(gameId)}>
-                    {"Add To Wishlist"}
-                </Button></>
-            ) : (
-                <>
-                <Button variant="danger" onClick={() => removeFromWishlist(gameId)}>
-                    {"Remove From Wishlist"}
-                </Button>
-                </>
+
+            {token && (
+                !isWishlisted ?  (
+                    <>
+                    
+                    <Button variant="success" onClick={() => addToWishlist(gameId)}>
+                        {"Add To Wishlist"}
+                    </Button></>
+                ) : (
+                    <>
+                    <Button variant="danger" onClick={() => removeFromWishlist(gameId)}>
+                        {"Remove From Wishlist"}
+                    </Button>
+                    </>
+                )
             )}
+                
+            
+            
             
             <h1>Game Details</h1>
             {!fetching && (

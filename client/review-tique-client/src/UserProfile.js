@@ -3,19 +3,19 @@ import { useAuth } from "./context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import { useWishlist } from "./context/WishlistContext";
 
 function UserProfile() {
 
     const [reviews, setReviews] = useState([]);
     const [games, setGames] = useState([]);
-    const [wishlist, setWishlist] = useState([]);
     const [loadingReviews, setLoadingReviews] = useState(true)
-    const [loadingWishlist, setLoadingWishlist] = useState(true)
+    const [loadingWishlist, setLoadingWishlist] = useState(false)
     const { token, role } = useAuth();
     const decodedToken = token ? jwtDecode(token) : null;
     const username = decodedToken?.sub;
     const baseUrl = 'http://localhost:8080/v1/api'
-
+    const { wishlist, removeFromWishlist } = useWishlist();
     const fetchData = useCallback( async (type) => {
             if(type === "reviews") {
                 try {
@@ -38,25 +38,7 @@ function UserProfile() {
                     setLoadingReviews(false)
                 }
             } else if(type === "wishlist"){
-                try {
-                    const response = await fetch(`${baseUrl}/wishlists/wishlist` , {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                        }
-                    });
-
-                    if(!response.ok) {
-                        throw new Error(`Unexpected Status Code: ${response.status}`)
-                    }
-
-                    const data = await response.json();
-                    setWishlist(data);
-                }catch(error) {
-                    console.error(error);
-                } finally {
-                    setLoadingWishlist(false)
-                }
+                
             }
         }, [token])
 
@@ -78,7 +60,6 @@ function UserProfile() {
     console.log(wishlist)
     useEffect(() => {
         fetchData("reviews");
-        fetchData("wishlist");
     }, [fetchData])
 
     useEffect(() => {
@@ -90,37 +71,15 @@ function UserProfile() {
     }, [reviews])
 
     useEffect(() => {
-        wishlist.forEach((wishlist) => {
-            if (!games[wishlist.gameId]) { // If the game isn't already fetched
-                fetchGame(wishlist.gameId);
+        wishlist.forEach((wishlistedItem) => {
+            if (!games[wishlistedItem.gameId]) { // If the game isn't already fetched
+                fetchGame(wishlistedItem.gameId);
             }
         });
     }, [wishlist])
 
-    const handleDeleteWishlistGame = (wishlistId) => {
-        if(window.confirm(`Remove Game From Wishlist?`)) {
-            const headers = {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-            const init = {
-                method: 'DELETE',
-                headers: headers
-            }
 
-            fetch(`http://localhost:8080/v1/api/wishlists/${wishlistId}`, init)
-                .then(response => {
-                    if(response.status === 204) {
-                        const newWishlist = wishlist.filter(wishlistGame => wishlistGame.wishlistId !== wishlistId);
-                        setWishlist(newWishlist);
-                        fetchData("wishlist")
-                    } else {
-                        return Promise.reject(`Unexpected Status Code ${response.status}`)
-                    }
-                })
-                .catch(console.log)
-        }
-    }
+
 
     return (
         <>
@@ -161,7 +120,7 @@ function UserProfile() {
                                 <Button
                                     className="ml-4"
                                     variant="danger"
-                                    onClick={() => handleDeleteWishlistGame(wishlistGame.wishlistId)}
+                                    onClick={() => removeFromWishlist(wishlistGame.gameId)}
                                 >
                                     Delete
                                 </Button>

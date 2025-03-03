@@ -89,6 +89,10 @@ public class GameService {
         return repository.findById(gameId);
     }
 
+    public List<Game> findTopNGamesByGenre(int genreId, int limit) {
+        return repository.findTopNGamesByGenre(genreId, limit);
+    }
+
     public List<Game> searchGame(String gameName, int[] genreIds, int[] platformIds, Integer developerId) {
         return repository.searchGame(gameName, genreIds, platformIds, developerId);
     }

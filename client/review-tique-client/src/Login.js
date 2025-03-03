@@ -35,7 +35,7 @@ function Login() {
                 const data = await response.json();
                 console.log(data);
                 login(data.jwt_token);
-                navigate("/");
+                navigate(-1);
             }else {
                 const errorMessage = await response.text();
                 setError (

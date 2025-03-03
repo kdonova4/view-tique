@@ -57,6 +57,20 @@ public class GameJdbcTemplateRepository implements GameRepository {
     }
 
     @Override
+    public List<Game> findTopNGamesByGenre(int genreId, int limit) {
+        final String sql = "select g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score,"
+                + " g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
+                + " from game g"
+                + " join developer d on g.developer_id = d.developer_id"
+                + " join game_genre gg on g.game_id = gg.game_id"
+                + " where gg.genre_id = ?"
+                + " order by g.avg_critic_score desc"
+                + " limit ?";
+
+        return jdbcTemplate.query(sql, new GameMapper(), genreId, limit);
+    }
+
+    @Override
     public List<Game> searchGame(String gameName, int[] genreIds, int[] platformIds, Integer developerId) {
 
         if ((gameName == null || gameName.isEmpty()) &&

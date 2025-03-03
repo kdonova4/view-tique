@@ -15,6 +15,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Login from "./Login";
 import { Modal } from "react-bootstrap";
 import UserProfile from "./UserProfile";
+import TopGames from "./TopGames";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -42,6 +43,7 @@ function App() {
         <Route path="/games/:gameId" element={<GamePage/>}/>
         <Route path="/game/edit/:id" element={<GameForm/>}/>
         <Route path="/games/search" element={<GameList/>}/>
+        <Route path="/games/:genreId/:limit" element={<TopGames/>}/>
         <Route path="/search" element={<GameSearch/>}/>
         <Route path="*" element={<NotFound/>}/>
         <Route path="/developer" element={<DeveloperFilter/>}/>

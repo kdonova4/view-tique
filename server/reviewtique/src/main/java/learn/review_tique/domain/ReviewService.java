@@ -149,7 +149,6 @@ public class ReviewService {
 
     @Transactional
     public Result<Review> update(Review review) {
-        review.setTimestamp(Timestamp.from(Instant.now()));
         Result<Review> result = validate(review);
 
         if(!result.isSuccess()) {
@@ -339,7 +338,7 @@ public class ReviewService {
             List<Review> reviews = repository.findByUserId(review.getUserId());
             for(Review r : reviews) {
                 if(review.getGameId() == r.getGameId()) {
-                    result.addMessages("User has already reviewed this game", ResultType.INVALID);
+                    result.addMessages("You have already reviewed this game", ResultType.INVALID);
                     return result;
                 }
             }

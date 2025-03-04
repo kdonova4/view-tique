@@ -12,6 +12,7 @@ public class Review {
     private int dislikes;
     private int userId;
     private int gameId;
+    private String username;
 
     public Review() {
 
@@ -91,4 +92,13 @@ public class Review {
     public void setGameId(int gameId) {
         this.gameId = gameId;
     }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }

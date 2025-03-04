@@ -104,6 +104,7 @@ function ReviewList({ refreshData }){
               <table className='table table-striped'>
                 <thead className='thead-dark'>
                   <tr>
+                    <th>User</th>
                     <th>Score</th>
                     <th>Timestamp</th>
                     <th>Review Body</th>
@@ -115,6 +116,7 @@ function ReviewList({ refreshData }){
                 <tbody>
                   {reviews.map((review) => (
                     <tr key={review.reviewId}>
+                      <td>{review.username}</td>
                       <td>{review.score}</td>
                       <td>
                         {new Date(review.timestamp).toLocaleString(undefined, {

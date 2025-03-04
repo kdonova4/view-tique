@@ -50,11 +50,25 @@ public class ReviewJdbcTemplateRepository implements ReviewRepository{
     @Override
     public List<Review> findByGameId(int gameId) {
         final String sql = "select review_id, score, review_time, review_body, likes, dislikes, r.app_user_id, r.game_id, g.title "
+                + ", u.username "
                 + "from review r "
+                + "inner join app_user u on r.app_user_id = u.app_user_id "
                 + "inner join game g on g.game_id = r.game_id "
                 + "where g.game_id = ?;";
 
-        return jdbcTemplate.query(sql, new ReviewMapper(), gameId);
+        return jdbcTemplate.query(sql, ((rs, rowNum) -> {
+            Review review = new Review();
+            review.setReviewId((rs.getInt("review_id")));
+            review.setScore(rs.getDouble("score"));
+            review.setTimestamp(rs.getTimestamp("review_time"));
+            review.setReviewBody(rs.getString("review_body"));
+            review.setLikes(rs.getInt("likes"));
+            review.setDislikes((rs.getInt("dislikes")));
+            review.setUserId(rs.getInt("app_user_id"));
+            review.setGameId(rs.getInt("game_id"));
+            review.setUsername(rs.getString("username"));
+            return review;
+        }), gameId);
     }
 
     @Override

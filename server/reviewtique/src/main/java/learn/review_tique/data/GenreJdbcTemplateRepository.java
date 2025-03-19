@@ -1,7 +1,9 @@
 package learn.review_tique.data;
 
 import learn.review_tique.data.mappers.GenreMapper;
+import learn.review_tique.data.mappers.PlatformMapper;
 import learn.review_tique.models.Genre;
+import learn.review_tique.models.Platform;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -33,6 +35,15 @@ public class GenreJdbcTemplateRepository implements GenreRepository {
         final String sql = "select genre_id, genre_name from genre where genre_id = ?;";
 
         return jdbcTemplate.query(sql, new GenreMapper(), genreId).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public Genre findByName(String genreName) {
+        final String sql = "select genre_id, genre_name" +
+                " from genre" +
+                " where genre_name = ?;";
+
+        return jdbcTemplate.query(sql, new GenreMapper(), genreName).stream().findFirst().orElse(null);
     }
 
     @Override

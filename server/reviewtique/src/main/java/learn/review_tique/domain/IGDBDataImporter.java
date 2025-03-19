@@ -4,6 +4,8 @@ package learn.review_tique.domain;
 
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
+
 public class IGDBDataImporter {
 
     private final RestTemplate restTemplate;
@@ -11,6 +13,10 @@ public class IGDBDataImporter {
     private final GenreService genreService;
     private final PlatformService platformService;
     private final DeveloperService developerService;
+    private Map<Integer, Object> platforms;
+    private Map<Integer, Object> genres;
+    private Map<Integer, Object> companies;
+    private Map<Integer, Map<String, Object>> involvedCompanies;
 
     public IGDBDataImporter(RestTemplate restTemplate,
                             GameService gameService,
@@ -25,10 +31,27 @@ public class IGDBDataImporter {
     }
 
     // before start
-    // preload all platforms into Map<Integer, Map<String, Object>>
-    // preload all genres into Map<Integer, Map<String, Object>>
+    // preload all platforms into Map<Integer, Object>
+    // preload all genres into Map<Integer, Object>
     // preload involved_companies into Map<Integer, Map<String, Object>>
-    // preload companies into Map<Integer, Map<String, Object>>
+    // preload companies into Map<Integer, Object>
+
+
+    public void preloadPlatforms(String apiUrl) {
+
+    }
+
+    public void preloadGenres(String apiUrl) {
+
+    }
+
+    public void preloadCompanies(String apiUrl) {
+
+    }
+
+    public void preloadInvolvedCompanies(String apiUrl) {
+
+    }
 
 
 
@@ -64,6 +87,8 @@ public class IGDBDataImporter {
 
     // add that to my database and then add it to the game object you made
 
+    // add game object to database
+
 
 
 
@@ -92,7 +117,7 @@ public class IGDBDataImporter {
 
     // When I find that I take the name of that platform and call service.findByName(name) on my own database to find the platform id
 
-    // I create the GamePlatform object to add into the GamePlatform table
+    // I create the GameGenre object to add into the GameGenre table
 
 
 

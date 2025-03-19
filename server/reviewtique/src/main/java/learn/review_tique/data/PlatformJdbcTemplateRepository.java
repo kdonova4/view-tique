@@ -37,6 +37,15 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
     }
 
     @Override
+    public Platform findByName(String platformName) {
+        final String sql = "select platform_id, platform_name" +
+                " from platform" +
+                " where platform_name = ?;";
+
+        return jdbcTemplate.query(sql, new PlatformMapper(), platformName).stream().findFirst().orElse(null);
+    }
+
+    @Override
     public List<Platform> searchByName(String platformName) {
         final String sql = "select platform_id, platform_name"
                 + " from platform"

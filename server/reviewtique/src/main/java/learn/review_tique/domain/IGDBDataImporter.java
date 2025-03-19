@@ -1,0 +1,100 @@
+package learn.review_tique.domain;
+
+
+
+import org.springframework.web.client.RestTemplate;
+
+public class IGDBDataImporter {
+
+    private final RestTemplate restTemplate;
+    private final GameService gameService;
+    private final GenreService genreService;
+    private final PlatformService platformService;
+    private final DeveloperService developerService;
+
+    public IGDBDataImporter(RestTemplate restTemplate,
+                            GameService gameService,
+                            GenreService genreService,
+                            PlatformService platformService,
+                            DeveloperService developerService) {
+        this.restTemplate = restTemplate;
+        this.gameService = gameService;
+        this.genreService = genreService;
+        this.platformService = platformService;
+        this.developerService = developerService;
+    }
+
+    // before start
+    // preload all platforms into Map<Integer, Map<String, Object>>
+    // preload all genres into Map<Integer, Map<String, Object>>
+    // preload involved_companies into Map<Integer, Map<String, Object>>
+    // preload companies into Map<Integer, Map<String, Object>>
+
+
+
+
+    // PLATFORMS
+
+    // using preloaded platforms
+    // Map them to Platform Objects
+    // Add each to the database
+
+    // GENRES
+
+    // using preloaded genres
+    // Map them to Genre Objects
+    // Add each to the database
+
+
+
+    // GAMES
+
+    // map IGDB game object to game model
+
+
+    // GAME DEVELOPER
+
+    // when adding games and you need to add the developer
+
+    // you check the involved companies array form IGDB with the preloaded involved_companies map using the id
+
+    // you then see for that company in the involved_companies table if the developer field is true if not move on
+
+    // if it is true then get the company id and  get the developer form the companies preloaded table from IGDB  and make a developer object
+
+    // add that to my database and then add it to the game object you made
+
+
+
+
+    // GAME_PLATFORMS
+
+    // I have already added each platform into the database
+
+    // I will then add every main game to the database after each game is added I have to add the that game id and platform id to the gamePlatform table
+
+    // I will take the platforms array from IGDB data and loop through each id looking through the map of pre-loaded igdb platform data I have in a map<Integer, Map<String, Object>>
+
+    // When I find that I take the name of that platform and call service.findByName(name) on my own database to find the platform id
+
+    // I create the GamePlatform object to add into the GamePlatform table
+
+
+
+
+    // GAME_GENRES
+
+    // I have already added each genre into the database
+
+    // I will then add every main game to the database after each game is added I have to add the that game id and genre id to the gameGenre table
+
+    // I will take the genres array from IGDB data and loop through each id looking through the map of pre-loaded igdb genre data I have in a map<Integer, Map<String, Object>>
+
+    // When I find that I take the name of that platform and call service.findByName(name) on my own database to find the platform id
+
+    // I create the GamePlatform object to add into the GamePlatform table
+
+
+
+
+}

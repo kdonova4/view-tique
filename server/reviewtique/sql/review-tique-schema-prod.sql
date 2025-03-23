@@ -52,7 +52,8 @@ create table game (
     avg_user_score decimal(4, 1) not null default(0.0),
     avg_critic_score decimal(4, 1) not null default(0.0),
     user_review_count int default (0), 
-    critic_review_count int default (0), 
+    critic_review_count int default (0),
+    cover varchar(2083),
     developer_id int not null,
     constraint fk_game_developer_id
         foreign key (developer_id)
@@ -349,3 +350,4 @@ select * from genre;
 select * from wishlist;
 select * from app_user;
 select * from app_user_role;
+

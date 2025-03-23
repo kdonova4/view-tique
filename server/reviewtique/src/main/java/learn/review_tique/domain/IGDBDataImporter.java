@@ -4,6 +4,7 @@ package learn.review_tique.domain;
 
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class IGDBDataImporter {
@@ -35,6 +36,7 @@ public class IGDBDataImporter {
     // preload all genres into Map<Integer, Object>
     // preload involved_companies into Map<Integer, Map<String, Object>>
     // preload companies into Map<Integer, Object>
+    // preload covers into Map<Integer, String>
 
 
     public void preloadPlatforms(String apiUrl) {

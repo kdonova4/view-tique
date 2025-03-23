@@ -15,6 +15,7 @@ public class Game {
     private double avgCriticScore;
     private int userReviewCount;
     private int criticReviewCount;
+    private String cover;
     private List<Genre> genres = new ArrayList<>();
     private List<Platform> platforms = new ArrayList<>();
 
@@ -120,5 +121,13 @@ public class Game {
 
     public void setPlatforms(List<Platform> platforms) {
         this.platforms = platforms;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 }

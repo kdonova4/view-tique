@@ -101,6 +101,7 @@ function GameList(){
                             <th>Critic Score</th>
                             <th>User Review Count</th>
                             <th>Critic Review Count</th>
+                            <th>Cover URL</th>
                             <th>Developer</th>
                             <th>&nbsp;</th>
                         </tr>
@@ -115,6 +116,7 @@ function GameList(){
                                 <td>{game.avgCriticScore}</td>
                                 <td>{game.userReviewCount}</td>
                                 <td>{game.criticReviewCount}</td>
+                                <td>{game.cover}</td>
                                 <td>{game.developer.developerName}</td>
                                 <td>
                                     <Link className='btn btn-outline-warning mr-4' to={`/game/edit/${game.gameId}`}>Update</Link>

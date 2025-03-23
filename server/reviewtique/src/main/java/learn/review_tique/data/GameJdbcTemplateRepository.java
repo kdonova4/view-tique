@@ -31,7 +31,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public List<Game> findAll() {
         final String sql = "select g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score, "
-                + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
+                + "g.user_review_count, g.critic_review_count, g.cover, g.developer_id, d.developer_name"
                 + " from game g"
                 + " join developer d on g.developer_id = d.developer_id;";
 
@@ -41,7 +41,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public Game findById(int gameId) {
         final String sql = "select g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score, "
-                + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
+                + "g.user_review_count, g.critic_review_count, g.cover, g.developer_id, d.developer_name"
                 + " from game g"
                 + " join developer d on g.developer_id = d.developer_id"
                 + " where game_id = ?;";
@@ -59,7 +59,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public List<Game> findTopNGamesByGenre(int genreId, int limit) {
         final String sql = "select g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score,"
-                + " g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name"
+                + " g.user_review_count, g.critic_review_count, g.cover, g.developer_id, d.developer_name"
                 + " from game g"
                 + " join developer d on g.developer_id = d.developer_id"
                 + " join game_genre gg on g.game_id = gg.game_id"
@@ -83,7 +83,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
 
         StringBuilder sql = new StringBuilder(
                 "select distinct g.game_id, g.title, g.game_description, g.release_date, g.avg_user_score, g.avg_critic_score, "
-                        + "g.user_review_count, g.critic_review_count, g.developer_id, d.developer_name, "
+                        + "g.user_review_count, g.critic_review_count, g.cover, g.developer_id, d.developer_name, "
                         + "MATCH(g.title) AGAINST(? IN BOOLEAN MODE) as relevance_score "
                         + "from game g "
                         + "join developer d on g.developer_id = d.developer_id "
@@ -138,7 +138,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public Game add(Game game) {
         final String sql = "insert into game (title, game_description, release_date, avg_user_score, avg_critic_score," +
-                " user_review_count, critic_review_count, developer_id)"
+                " user_review_count, critic_review_count, cover, developer_id)"
                 + " values (?, ?, ?, ?, ?, ?, ?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();

@@ -49,10 +49,10 @@ public class IGDBDataImporter {
 
 
         Map<Integer, String> platforms = new HashMap<>();
-
+        String bearerToken = System.getenv("BEARER_TOKEN");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Client-ID", "hzle9t1ozr3ttnlzw17xx6zodx0csj");
-        headers.set("Authorization", "Bearer rs09iax1hwcyrho9diuxfurw12n4hy");
+        headers.set("Authorization", "Bearer " + bearerToken);
         headers.set("Accept", "application/json");
         headers.setContentType(MediaType.APPLICATION_JSON);
 

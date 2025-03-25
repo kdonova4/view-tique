@@ -1,7 +1,6 @@
 package learn.review_tique.domain;
 
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.*;
@@ -48,24 +47,17 @@ public class IGDBDataImporter {
 
 
         Map<Integer, String> platforms = new HashMap<>();
-        String bearerToken = System.getenv("BEARER_TOKEN");
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Client-ID", "hzle9t1ozr3ttnlzw17xx6zodx0csj");
-        headers.set("Authorization", "Bearer " + bearerToken);
-        headers.set("Accept", "application/json");
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<String> request = new HttpEntity<>("fields id, name; limit 500;", headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, createRequest("fields id, name; limit 500;"), String.class);
         System.out.println(response.getStatusCode());
-        if(response.getStatusCode() == HttpStatus.OK) {
+
+        if (response.getStatusCode() == HttpStatus.OK) {
 
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode rootNode = objectMapper.readTree(response.getBody());
 
-                for( JsonNode node : rootNode) {
+                for (JsonNode node : rootNode) {
                     int id = node.get("id").asInt();
                     String name = node.get("name").asText();
                     platforms.put(id, name);
@@ -74,8 +66,7 @@ public class IGDBDataImporter {
                 e.printStackTrace();
             }
 
-        }
-        else {
+        } else {
             System.out.println("Failed to fetch platforms, Status Code:" + response.getStatusCode());
         }
 
@@ -85,25 +76,18 @@ public class IGDBDataImporter {
     public Map<Integer, String> preloadGenres(String apiUrl) {
         Map<Integer, String> genres = new HashMap<>();
 
-        String bearerToken = System.getenv("BEARER_TOKEN");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Client-ID", "hzle9t1ozr3ttnlzw17xx6zodx0csj");
-        headers.set("Authorization", "Bearer " + bearerToken);
-        headers.set("Accept", "application/json");
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<String> request = new HttpEntity<>("fields id, name; limit 500;", headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, createRequest("fields id, name; limit 500;"), String.class);
         System.out.println(response.getStatusCode());
-        if(response.getStatusCode() == HttpStatus.OK) {
+
+        if (response.getStatusCode() == HttpStatus.OK) {
 
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode rootNode = objectMapper.readTree(response.getBody());
 
-                for( JsonNode node : rootNode) {
+                for (JsonNode node : rootNode) {
                     int id = node.get("id").asInt();
                     String name = node.get("name").asText();
                     genres.put(id, name);
@@ -112,8 +96,7 @@ public class IGDBDataImporter {
                 e.printStackTrace();
             }
 
-        }
-        else {
+        } else {
             System.out.println("Failed to fetch genres, Status Code:" + response.getStatusCode());
         }
 
@@ -126,15 +109,6 @@ public class IGDBDataImporter {
         boolean fetching = true;
         Map<Integer, String> companies = new HashMap<>();
 
-        String bearerToken = System.getenv("BEARER_TOKEN");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Client-ID", "hzle9t1ozr3ttnlzw17xx6zodx0csj");
-        headers.set("Authorization", "Bearer " + bearerToken);
-        headers.set("Accept", "application/json");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-
         while (fetching) {
 
             try {
@@ -143,21 +117,24 @@ public class IGDBDataImporter {
                 Thread.currentThread().interrupt();
             }
 
-            HttpEntity<String> request = new HttpEntity<>("fields id, name; limit 500; offset " + offset + ";", headers);
-            ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
 
-            if(response.getStatusCode() == HttpStatus.OK) {
+            ResponseEntity<String> response = restTemplate.exchange(apiUrl,
+                    HttpMethod.POST,
+                    createRequest("fields id, name; limit 500; offset " + offset + ";"),
+                    String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
 
                 try {
                     ObjectMapper objectMapper = new ObjectMapper();
                     JsonNode rootNode = objectMapper.readTree(response.getBody());
 
-                    if(rootNode.size() != limit)
+                    if (rootNode.size() != limit)
                         fetching = false;
                     else
                         offset += limit;
 
-                    for( JsonNode node : rootNode) {
+                    for (JsonNode node : rootNode) {
                         int id = node.get("id").asInt();
                         String name = node.get("name").asText();
                         companies.put(id, name);
@@ -166,8 +143,7 @@ public class IGDBDataImporter {
                     e.printStackTrace();
                 }
 
-            }
-            else {
+            } else {
                 System.out.println("Failed to fetch companies, Status Code:" + response.getStatusCode());
                 fetching = false;
             }
@@ -181,8 +157,16 @@ public class IGDBDataImporter {
 
     }
 
+    private HttpEntity<String> createRequest(String body) {
+        String bearerToken = System.getenv("BEARER_TOKEN");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Client-ID", "hzle9t1ozr3ttnlzw17xx6zodx0csj");
+        headers.set("Authorization", "Bearer " + bearerToken);
+        headers.set("Accept", "application/json");
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-
+        return new HttpEntity<>(body, headers);
+    }
 
     // PLATFORMS
 
@@ -195,7 +179,6 @@ public class IGDBDataImporter {
     // using preloaded genres
     // Map them to Genre Objects
     // Add each to the database
-
 
 
     // GAMES
@@ -218,8 +201,6 @@ public class IGDBDataImporter {
     // add game object to database
 
 
-
-
     // GAME_PLATFORMS
 
     // I have already added each platform into the database
@@ -233,8 +214,6 @@ public class IGDBDataImporter {
     // I create the GamePlatform object to add into the GamePlatform table
 
 
-
-
     // GAME_GENRES
 
     // I have already added each genre into the database
@@ -246,8 +225,6 @@ public class IGDBDataImporter {
     // When I find that I take the name of that platform and call service.findByName(name) on my own database to find the platform id
 
     // I create the GameGenre object to add into the GameGenre table
-
-
 
 
 }

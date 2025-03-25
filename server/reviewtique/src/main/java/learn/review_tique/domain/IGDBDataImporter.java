@@ -2,10 +2,17 @@ package learn.review_tique.domain;
 
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class IGDBDataImporter {
 
     private final RestTemplate restTemplate;
@@ -31,14 +38,49 @@ public class IGDBDataImporter {
     }
 
     // before start
-    // preload all platforms into Map<Integer, Object>
+
     // preload all genres into Map<Integer, Object>
     // preload involved_companies into Map<Integer, Map<String, Object>>
     // preload companies into Map<Integer, Object>
+    // preload covers into Map<Integer, String>
+
+    // preload all platforms into Map<Integer, Object>
+    public Map<Integer, String> preloadPlatforms(String apiUrl) {
 
 
-    public void preloadPlatforms(String apiUrl) {
+        Map<Integer, String> platforms = new HashMap<>();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Client-ID", "hzle9t1ozr3ttnlzw17xx6zodx0csj");
+        headers.set("Authorization", "Bearer rs09iax1hwcyrho9diuxfurw12n4hy");
+        headers.set("Accept", "application/json");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request = new HttpEntity<>("fields id, name; limit 500;", headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
+        System.out.println(response.getStatusCode());
+        if(response.getStatusCode() == HttpStatus.OK) {
+
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+                for( JsonNode node : rootNode) {
+                    int id = node.get("id").asInt();
+                    String name = node.get("name").asText();
+                    platforms.put(id, name);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        else {
+            System.out.println("Failed to fetch platforms, Status Code:" + response.getStatusCode());
+        }
+
+        return platforms;
     }
 
     public void preloadGenres(String apiUrl) {

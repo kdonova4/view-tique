@@ -20,6 +20,7 @@ public class GameMapper implements RowMapper<Game> {
         game.setAvgCriticScore(resultSet.getDouble("avg_critic_score"));
         game.setUserReviewCount(resultSet.getInt("user_review_count"));
         game.setCriticReviewCount(resultSet.getInt("critic_review_count"));
+        game.setCover(resultSet.getString("cover"));
 
         DeveloperMapper developerMapper = new DeveloperMapper();
         game.setDeveloper(developerMapper.mapRow(resultSet, i));

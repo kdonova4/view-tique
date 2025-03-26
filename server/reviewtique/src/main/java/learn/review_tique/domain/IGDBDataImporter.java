@@ -3,6 +3,7 @@ package learn.review_tique.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -35,12 +36,7 @@ public class IGDBDataImporter {
         this.developerService = developerService;
     }
 
-    // before start
 
-    // preload all genres into Map<Integer, Object>
-    // preload involved_companies into Map<Integer, Map<String, Object>>
-    // preload companies into Map<Integer, Object>
-    // preload covers into Map<Integer, String>
 
     // preload all platforms into Map<Integer, Object>
     public Map<Integer, String> preloadPlatforms(String apiUrl) {
@@ -153,8 +149,103 @@ public class IGDBDataImporter {
         return companies;
     }
 
-    public void preloadInvolvedCompanies(String apiUrl) {
+    public Map<Integer, String> preLoadCovers(String apiUrl) {
+        int offset = 0;
+        int limit = 500;
+        boolean fetching = true;
+        Map<Integer, String> covers = new HashMap<>();
 
+        while (fetching) {
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(250); // Ensures you stay under 4 requests/sec
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+
+            ResponseEntity<String> response = restTemplate.exchange(apiUrl,
+                    HttpMethod.POST,
+                    createRequest("fields id, url; limit 500; offset " + offset + ";"),
+                    String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+                    if (rootNode.size() != limit)
+                        fetching = false;
+                    else
+                        offset += limit;
+
+                    for (JsonNode node : rootNode) {
+                        int id = node.get("id").asInt();
+                        String url = node.get("url").asText().replace("t_thumb", "t_cover_big");
+                        covers.put(id, url);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                System.out.println("Failed to fetch covers, Status Code:" + response.getStatusCode());
+                fetching = false;
+            }
+
+        }
+
+        return covers;
+    }
+
+    public Map<Integer, Pair<Integer, Boolean>> preloadInvolvedCompanies(String apiUrl) {
+        int limit = 500;
+        int offset = 0;
+        Map<Integer, Pair<Integer, Boolean>> involvedCompanies = new HashMap<>();
+        boolean fetching  = true;
+
+        while(fetching) {
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(250); // Ensures you stay under 4 requests/sec
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            ResponseEntity<String> response = restTemplate.exchange(apiUrl,
+                    HttpMethod.POST,
+                    createRequest("fields id, company, developer; limit 500; offset " + offset + ";"),
+                    String.class);
+
+            if(response.getStatusCode() == HttpStatus.OK) {
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+                    if (rootNode.size() != limit)
+                        fetching = false;
+                    else
+                        offset += limit;
+
+                    for (JsonNode node : rootNode) {
+                        int id = node.get("id").asInt();
+                        int companyId = node.get("company").asInt();
+                        boolean isDeveloper = node.get("developer").asBoolean();
+                        Pair<Integer, Boolean> companyInfo = Pair.of(companyId, isDeveloper);
+                        involvedCompanies.put(id, companyInfo);
+                    }
+                } catch (Exception e) {
+
+                }
+            } else {
+                System.out.println("Failed to fetch Involved Companies, Status Code:" + response.getStatusCode());
+                fetching = false;
+            }
+
+        }
+
+        return involvedCompanies;
     }
 
     private HttpEntity<String> createRequest(String body) {

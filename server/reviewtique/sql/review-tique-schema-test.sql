@@ -6,12 +6,12 @@ use review_tique_test;
 
 create table genre (
     genre_id int primary key auto_increment,
-    genre_name varchar(50) not null
+    genre_name varchar(50) unique not null
 );
 
 create table platform (
     platform_id int primary key auto_increment,
-    platform_name varchar(50) not null
+    platform_name varchar(100) not null
 );
 
 create table developer (
@@ -130,6 +130,9 @@ create table wishlist (
     constraint uq_wishlist unique (game_id, app_user_id)
 );
 
+select * from game;
+select * from genre;
+select * from platform;
 
 delimiter //
 create procedure set_known_good_state()

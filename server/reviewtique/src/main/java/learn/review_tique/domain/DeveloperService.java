@@ -66,6 +66,10 @@ public class DeveloperService {
         return repository.findById(developerId);
     }
 
+    public Developer findByName(String developerName) {
+        return repository.findByName(developerName);
+    }
+
     public List<Developer> searchByName(String developerName) {
         return repository.searchByName(developerName);
     }

@@ -3,11 +3,18 @@ package learn.review_tique.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import learn.review_tique.models.*;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -19,10 +26,11 @@ public class IGDBDataImporter {
     private final GenreService genreService;
     private final PlatformService platformService;
     private final DeveloperService developerService;
-    private Map<Integer, Object> platforms;
-    private Map<Integer, Object> genres;
-    private Map<Integer, Object> companies;
-    private Map<Integer, Map<String, Object>> involvedCompanies;
+    private Map<Integer, String> platforms;
+    private Map<Integer, String> genres;
+    private Map<Integer, String> companies;
+    private Map<Integer, String> covers;
+    private Map<Integer, Pair<Integer, Boolean>> involvedCompanies;
 
     public IGDBDataImporter(RestTemplate restTemplate,
                             GameService gameService,
@@ -34,15 +42,17 @@ public class IGDBDataImporter {
         this.genreService = genreService;
         this.platformService = platformService;
         this.developerService = developerService;
+        platforms = new HashMap<>();
+        genres = new HashMap<>();
+        companies = new HashMap<>();
+        covers = new HashMap<>();
+        involvedCompanies = new HashMap<>();
     }
 
 
 
     // preload all platforms into Map<Integer, Object>
     public Map<Integer, String> preloadPlatforms(String apiUrl) {
-
-
-        Map<Integer, String> platforms = new HashMap<>();
 
         ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, createRequest("fields id, name; limit 500;"), String.class);
         System.out.println(response.getStatusCode());
@@ -70,9 +80,6 @@ public class IGDBDataImporter {
     }
 
     public Map<Integer, String> preloadGenres(String apiUrl) {
-        Map<Integer, String> genres = new HashMap<>();
-
-
 
         ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, createRequest("fields id, name; limit 500;"), String.class);
         System.out.println(response.getStatusCode());
@@ -103,7 +110,7 @@ public class IGDBDataImporter {
         int offset = 0;
         int limit = 500;
         boolean fetching = true;
-        Map<Integer, String> companies = new HashMap<>();
+
 
         while (fetching) {
 
@@ -153,7 +160,7 @@ public class IGDBDataImporter {
         int offset = 0;
         int limit = 500;
         boolean fetching = true;
-        Map<Integer, String> covers = new HashMap<>();
+
 
         while (fetching) {
 
@@ -202,7 +209,7 @@ public class IGDBDataImporter {
     public Map<Integer, Pair<Integer, Boolean>> preloadInvolvedCompanies(String apiUrl) {
         int limit = 500;
         int offset = 0;
-        Map<Integer, Pair<Integer, Boolean>> involvedCompanies = new HashMap<>();
+
         boolean fetching  = true;
 
         while(fetching) {
@@ -236,7 +243,7 @@ public class IGDBDataImporter {
                         involvedCompanies.put(id, companyInfo);
                     }
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             } else {
                 System.out.println("Failed to fetch Involved Companies, Status Code:" + response.getStatusCode());
@@ -248,29 +255,177 @@ public class IGDBDataImporter {
         return involvedCompanies;
     }
 
-    private HttpEntity<String> createRequest(String body) {
-        String bearerToken = System.getenv("BEARER_TOKEN");
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Client-ID", "hzle9t1ozr3ttnlzw17xx6zodx0csj");
-        headers.set("Authorization", "Bearer " + bearerToken);
-        headers.set("Accept", "application/json");
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    public List<Platform> transformPlatforms(Map<Integer, String> platforms) {
+        List<Platform> newPlatforms = new ArrayList<>();
+        for (String platform : platforms.values()) {
+            newPlatforms.add(new Platform(0, platform));
+        }
 
-        return new HttpEntity<>(body, headers);
+        return newPlatforms;
     }
 
-    // PLATFORMS
+    public List<Genre> transformGenres(Map<Integer, String> genres) {
+        List<Genre> newGenres = new ArrayList<>();
+        for (String genre : genres.values()) {
+            newGenres.add(new Genre(0, genre));
+        }
 
-    // using preloaded platforms
-    // Map them to Platform Objects
-    // Add each to the database
+        return newGenres;
+    }
 
-    // GENRES
 
-    // using preloaded genres
-    // Map them to Genre Objects
-    // Add each to the database
+    public void loadAndAddGames(String apiUrl) {
+        int limit = 500;
+        int offset = 0;
+        boolean fetching = true;
+        List<Game> games = new ArrayList<>();
+        List<Genre> gameGenres = new ArrayList<>();
+        List<Platform> gamePlatforms = new ArrayList<>();
+        while(fetching) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(250); // Ensures you stay under 4 requests/sec
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
 
+            ResponseEntity<String> response = restTemplate.exchange(apiUrl,
+                    HttpMethod.POST,
+                    createRequest("fields cover, first_release_date, genres, name, platforms, summary, involved_companies; limit 500; where category = (0, 2, 4, 8, 9) & cover != null & involved_companies != null; offset " + offset + ";"),
+                    String.class);
+
+            if(response.getStatusCode() == HttpStatus.OK) {
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+                    if (rootNode.size() != limit)
+                        fetching = false;
+                    else
+                        offset += limit;
+
+                    String title;
+                    String description;
+                    String coverUrl;
+                    long timestamp;
+                    LocalDate releaseDate;
+                    Instant instant;
+
+                    for(JsonNode node : rootNode) {
+
+                        Developer developer = new Developer(0, null);
+                        JsonNode genreArray = node.get("genres");
+                        JsonNode platformsArray = node.get("platforms");
+                        JsonNode involvedCompaniesArray = node.get("involved_companies");
+
+                        if(genreArray != null && genreArray.isArray()) {
+                            for(JsonNode genre : genreArray) {
+                                int genreId = genre.asInt();
+                                String genreName = genres.get(genreId);
+                                Genre g = genreService.findByName(genreName);
+
+                                if(g != null)
+                                    gameGenres.add(g);
+                            }
+                        }
+
+                        if(platformsArray != null && platformsArray.isArray()) {
+                            for(JsonNode platform : platformsArray) {
+                                int platformId = platform.asInt();
+                                String platformName = platforms.get(platformId);
+                                Platform p = platformService.findByName(platformName);
+
+                                if(p != null)
+                                    gamePlatforms.add(p);
+                            }
+                        }
+
+                        if(involvedCompaniesArray != null && involvedCompaniesArray.isArray()) {
+                            for(JsonNode involvedCompany : involvedCompaniesArray) {
+                                int involvedCompanyId = involvedCompany.asInt();
+                                Pair<Integer, Boolean> p = involvedCompanies.get(involvedCompanyId);
+
+                                if(p.getRight()) {
+                                    String developerName = companies.get(p.getLeft());
+                                    developer.setDeveloperName(developerName);
+                                }
+                            }
+                        }
+
+                        // get release date
+                        timestamp = node.get("first_release_date").asLong();
+                        instant = Instant.ofEpochSecond(timestamp);
+                        releaseDate = instant.atZone(ZoneOffset.UTC).toLocalDate();
+
+                        //get title
+                        title = node.get("name").asText();
+                        //get description
+                        description = node.get("summary").asText();
+                        //get cover url
+                        int coverId = node.get("cover").asInt();
+                        coverUrl = covers.get(coverId);
+
+                        Game game = new Game(0, title, description, releaseDate, 0.0, 0.0, 0, 0, null);
+                        game.setCover(coverUrl);
+
+                        addGameAndRelationships(game, gameGenres, gamePlatforms, developer);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Failed to fetch Games, Status Code:" + response.getStatusCode());
+                fetching = false;
+            }
+        }
+    }
+
+
+    private void addGameAndRelationships(Game game, List<Genre> thisGenres, List<Platform> thisPlatforms, Developer developer) {
+        int gameId = 0;
+        //check if developer name is null
+        if(developer.getDeveloperName() == null)
+            return;
+
+        Developer existingDev = developerService.findByName(developer.getDeveloperName());
+        if(existingDev != null) {
+            game.setDeveloper(existingDev);
+        } else {
+            Result<Developer> devResult = developerService.add(developer);
+            if(devResult.isSuccess())
+                game.setDeveloper(devResult.getPayload());
+            else
+                return;
+        }
+
+        Result<Game> gameResult = gameService.add(game);
+        if(gameResult.isSuccess())
+            gameId = gameResult.getPayload().getGameId();
+        else {
+            return;
+        }
+
+        for(Platform platform : thisPlatforms) {
+            gameService.add(new GamePlatform(gameId, platform));
+        }
+        for(Genre genre : thisGenres) {
+            gameService.add(new GameGenre(gameId, genre));
+        }
+
+    }
+
+    public void addPlatforms(List<Platform> platforms) {
+        for(Platform platform : platforms) {
+            if(platformService.findByName(platform.getPlatformName()) == null)
+                platformService.add(platform);
+        }
+    }
+
+    public void addGenres(List<Genre> genres) {
+        for(Genre genre : genres) {
+            if(genreService.findByName(genre.getGenreName()) == null)
+                genreService.add(genre);
+        }
+    }
 
     // GAMES
 
@@ -317,5 +472,14 @@ public class IGDBDataImporter {
 
     // I create the GameGenre object to add into the GameGenre table
 
+    private HttpEntity<String> createRequest(String body) {
+        String bearerToken = System.getenv("BEARER_TOKEN");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Client-ID", "hzle9t1ozr3ttnlzw17xx6zodx0csj");
+        headers.set("Authorization", "Bearer " + bearerToken);
+        headers.set("Accept", "application/json");
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
+        return new HttpEntity<>(body, headers);
+    }
 }

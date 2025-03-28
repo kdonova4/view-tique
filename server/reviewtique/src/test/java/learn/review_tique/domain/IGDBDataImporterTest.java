@@ -1,5 +1,7 @@
 package learn.review_tique.domain;
 
+import learn.review_tique.models.Genre;
+import learn.review_tique.models.Platform;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,11 @@ public class IGDBDataImporterTest {
     @Autowired
     IGDBDataImporter importer;
 
+    @Autowired
+    PlatformService platformService;
+
+    @Autowired
+    GenreService genreService;
 
     @Test
     void shouldPopulate219Platforms() {
@@ -54,5 +61,42 @@ public class IGDBDataImporterTest {
 
         assertEquals(true, involvedCompanies.get(95000).getRight());
         assertEquals(14486, involvedCompanies.get(95000).getLeft());
+    }
+
+    @Test
+    void shouldTransformAllPlatforms() {
+        Map<Integer, String> platforms = importer.preloadPlatforms("https://api.igdb.com/v4/platforms");
+        List<Platform> newPlatforms = importer.transformPlatforms(platforms);
+        assertEquals(219, newPlatforms.size());
+        assertEquals(newPlatforms.get(1).getPlatformId(), 0);
+    }
+
+    @Test
+    void shouldTransformAllGenres() {
+        Map<Integer, String> genres = importer.preloadGenres("https://api.igdb.com/v4/genres");
+        List<Genre> newGenres = importer.transformGenres(genres);
+        assertEquals(23, newGenres.size());
+        assertEquals(newGenres.get(1).getGenreId(), 0);
+    }
+
+    @Test
+    void shouldLoadTransformAndAddPlatforms() {
+        Map<Integer, String> platforms = importer.preloadPlatforms("https://api.igdb.com/v4/platforms");
+        List<Platform> newPlatforms = importer.transformPlatforms(platforms);
+        importer.addPlatforms(newPlatforms);
+        List<Platform> allPlatforms = platformService.findAll();
+
+        assertEquals(219, allPlatforms.size());
+    }
+
+    @Test
+    void shouldLoadTransformAndAddGenres() {
+        Map<Integer, String> genres = importer.preloadGenres("https://api.igdb.com/v4/genres");
+        List<Genre> newGenres = importer.transformGenres(genres);
+        importer.addGenres(newGenres);
+        List<Genre> allGenres = genreService.findAll();
+
+        assertEquals(23, allGenres.size());
+        assertEquals("Indie", genreService.findById(1).getGenreName());
     }
 }

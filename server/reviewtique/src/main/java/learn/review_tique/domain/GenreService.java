@@ -64,6 +64,10 @@ public class GenreService {
         return repository.findById(genreId);
     }
 
+    public Genre findByName(String genreName) {
+        return repository.findByName(genreName);
+    }
+
     public List<Genre> searchByName(String genreName) {
         return repository.searchByName(genreName);
     }

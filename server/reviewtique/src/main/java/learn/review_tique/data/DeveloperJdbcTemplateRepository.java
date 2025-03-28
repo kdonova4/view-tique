@@ -38,6 +38,13 @@ public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
     }
 
     @Override
+    public Developer findByName(String developerName) {
+        final String sql = "select developer_id, developer_name from developer where developer_name = ?;";
+
+        return jdbcTemplate.query(sql, new DeveloperMapper(), developerName).stream().findFirst().orElse(null);
+    }
+
+    @Override
     public List<Developer> searchByName(String developerName) {
         final String sql = "select developer_id, developer_name"
                 + " from developer"

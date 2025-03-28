@@ -63,6 +63,10 @@ public class PlatformService {
         return repository.findById(platformId);
     }
 
+    public Platform findByName(String platformName) {
+        return repository.findByName(platformName);
+    }
+
     public List<Platform> searchByName(String platformName) {
         return repository.searchByName(platformName);
     }

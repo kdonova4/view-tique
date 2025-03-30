@@ -11,12 +11,12 @@ create table genre (
 
 create table platform (
     platform_id int primary key auto_increment,
-    platform_name varchar(100) not null
+    platform_name varchar(200) unique not null
 );
 
 create table developer (
     developer_id int primary key auto_increment,
-    developer_name varchar(50) not null
+    developer_name varchar(200) not null
 );
 
 create table app_user (
@@ -46,13 +46,14 @@ create table app_user_role (
 
 create table game (
     game_id int primary key auto_increment,
-    title varchar(150) not null,
-    game_description varchar(1000) not null,
+    title varchar(250) not null,
+    game_description TEXT not null,
     release_date date not null,
     avg_user_score decimal(4, 1) not null default(0.0),
     avg_critic_score decimal(4, 1) not null default(0.0),
     user_review_count int default (0), 
     critic_review_count int default (0), 
+    cover varchar(2083),
     developer_id int not null,
     constraint fk_game_developer_id
         foreign key (developer_id)
@@ -130,9 +131,15 @@ create table wishlist (
     constraint uq_wishlist unique (game_id, app_user_id)
 );
 
-select * from game;
-select * from genre;
-select * from platform;
+
+select count(*) from game;
+select count(*) from genre;
+select count(*) from platform;
+select count(*) from game_genre;
+select count(*) from game_platform;
+select count(*) from developer;
+alter table game auto_increment = 1;
+
 
 delimiter //
 create procedure set_known_good_state()

@@ -1,5 +1,6 @@
 package learn.review_tique.domain;
 
+import learn.review_tique.models.Game;
 import learn.review_tique.models.Genre;
 import learn.review_tique.models.Platform;
 import org.apache.commons.lang3.tuple.Pair;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.client.RestTemplate;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,9 @@ public class IGDBDataImporterTest {
 
     @Autowired
     GenreService genreService;
+
+    @Autowired
+    GameService gameService;
 
     @Test
     void shouldPopulate219Platforms() {
@@ -98,5 +103,42 @@ public class IGDBDataImporterTest {
 
         assertEquals(23, allGenres.size());
         assertEquals("Indie", genreService.findById(1).getGenreName());
+    }
+
+    @Test
+    void shouldLoadAndTransformAndAddAllGames() {
+        //set up
+        Map<Integer, String> genres = importer.preloadGenres("https://api.igdb.com/v4/genres");
+        System.out.println("Finished preloading genres");
+
+        Map<Integer, String> platforms = importer.preloadPlatforms("https://api.igdb.com/v4/platforms");
+        System.out.println("Finished preloading platforms");
+
+        importer.preloadCompanies("https://api.igdb.com/v4/companies");
+        System.out.println("Finished preloading companies");
+
+        importer.preLoadCovers("https://api.igdb.com/v4/covers");
+        System.out.println("Finished preloading covers");
+
+        importer.preloadInvolvedCompanies("https://api.igdb.com/v4/involved_companies");
+        System.out.println("Finished preloading involved companies");
+
+        List<Genre> newGenres = importer.transformGenres(genres);
+        System.out.println("Finished transforming genres");
+
+        List<Platform> newPlatforms = importer.transformPlatforms(platforms);
+        System.out.println("Finished transforming platforms");
+
+        importer.addGenres(newGenres);
+        System.out.println("Added genres");
+
+        importer.addPlatforms(newPlatforms);
+        System.out.println("Added platforms");
+
+        importer.loadAndAddGames("https://api.igdb.com/v4/games");
+        System.out.println("ERROR COUNT: " + importer.errorCount);
+        System.out.println("GAME COUNT: " + importer.gameCount);
+        List<Game> allGames = gameService.findAll();
+        assertTrue(allGames.size() < 92800 && allGames.size() > 92700);
     }
 }

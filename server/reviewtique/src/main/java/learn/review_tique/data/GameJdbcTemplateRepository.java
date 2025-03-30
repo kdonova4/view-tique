@@ -139,7 +139,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
     public Game add(Game game) {
         final String sql = "insert into game (title, game_description, release_date, avg_user_score, avg_critic_score," +
                 " user_review_count, critic_review_count, cover, developer_id)"
-                + " values (?, ?, ?, ?, ?, ?, ?, ?);";
+                + " values (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
@@ -151,7 +151,8 @@ public class GameJdbcTemplateRepository implements GameRepository {
             ps.setDouble(5, game.getAvgCriticScore());
             ps.setInt(6, game.getUserReviewCount());
             ps.setInt(7, game.getCriticReviewCount());
-            ps.setInt(8, game.getDeveloper().getDeveloperId());
+            ps.setString(8, game.getCover());
+            ps.setInt(9, game.getDeveloper().getDeveloperId());
             return ps;
         }, keyHolder);
 

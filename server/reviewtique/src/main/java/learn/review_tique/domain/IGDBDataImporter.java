@@ -5,21 +5,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import learn.review_tique.models.*;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+import javax.sound.midi.Soundbank;
+import java.awt.*;
+import java.sql.DataTruncation;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class IGDBDataImporter {
+public class IGDBDataImporter  implements CommandLineRunner {
 
     private final RestTemplate restTemplate;
     private final GameService gameService;
@@ -31,6 +37,8 @@ public class IGDBDataImporter {
     private Map<Integer, String> companies;
     private Map<Integer, String> covers;
     private Map<Integer, Pair<Integer, Boolean>> involvedCompanies;
+    public int errorCount = 0;
+    public int gameCount = 0;
 
     public IGDBDataImporter(RestTemplate restTemplate,
                             GameService gameService,
@@ -49,7 +57,44 @@ public class IGDBDataImporter {
         involvedCompanies = new HashMap<>();
     }
 
+    @Override
+    public void run(String... args) throws Exception {
+//        System.out.println("Running IGDB data import...");
+//        populate();
+//        System.out.println("IGDB data import complete.");
+    }
 
+    public void populate() {
+        Map<Integer, String> genres = preloadGenres("https://api.igdb.com/v4/genres");
+        System.out.println("Finished preloading genres");
+
+        Map<Integer, String> platforms = preloadPlatforms("https://api.igdb.com/v4/platforms");
+        System.out.println("Finished preloading platforms");
+
+        preloadCompanies("https://api.igdb.com/v4/companies");
+        System.out.println("Finished preloading companies");
+
+        preLoadCovers("https://api.igdb.com/v4/covers");
+        System.out.println("Finished preloading covers");
+
+        preloadInvolvedCompanies("https://api.igdb.com/v4/involved_companies");
+        System.out.println("Finished preloading involved companies");
+
+        List<Genre> newGenres = transformGenres(genres);
+        System.out.println("Finished transforming genres");
+
+        List<Platform> newPlatforms = transformPlatforms(platforms);
+        System.out.println("Finished transforming platforms");
+
+        addGenres(newGenres);
+        System.out.println("Added genres");
+
+        addPlatforms(newPlatforms);
+        System.out.println("Added platforms");
+
+        loadAndAddGames("https://api.igdb.com/v4/games");
+        System.out.println("=== FINISHED ===");
+    }
 
     // preload all platforms into Map<Integer, Object>
     public Map<Integer, String> preloadPlatforms(String apiUrl) {
@@ -110,7 +155,7 @@ public class IGDBDataImporter {
         int offset = 0;
         int limit = 500;
         boolean fetching = true;
-
+        int processed = 0;
 
         while (fetching) {
 
@@ -141,7 +186,12 @@ public class IGDBDataImporter {
                         int id = node.get("id").asInt();
                         String name = node.get("name").asText();
                         companies.put(id, name);
+                        processed++;
                     }
+
+
+                    System.out.print("\rProcessed " + processed + " companies");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -160,7 +210,7 @@ public class IGDBDataImporter {
         int offset = 0;
         int limit = 500;
         boolean fetching = true;
-
+        int processed = 0;
 
         while (fetching) {
 
@@ -191,7 +241,11 @@ public class IGDBDataImporter {
                         int id = node.get("id").asInt();
                         String url = node.get("url").asText().replace("t_thumb", "t_cover_big");
                         covers.put(id, url);
+                        processed++;
                     }
+
+                    System.out.print("\rProcessed " + processed + " covers");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -209,6 +263,7 @@ public class IGDBDataImporter {
     public Map<Integer, Pair<Integer, Boolean>> preloadInvolvedCompanies(String apiUrl) {
         int limit = 500;
         int offset = 0;
+        int processed = 0;
 
         boolean fetching  = true;
 
@@ -241,7 +296,11 @@ public class IGDBDataImporter {
                         boolean isDeveloper = node.get("developer").asBoolean();
                         Pair<Integer, Boolean> companyInfo = Pair.of(companyId, isDeveloper);
                         involvedCompanies.put(id, companyInfo);
+                        processed++;
                     }
+
+                    System.out.print("\rProcessed " + processed + " involved companies");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -278,19 +337,18 @@ public class IGDBDataImporter {
         int limit = 500;
         int offset = 0;
         boolean fetching = true;
-        List<Game> games = new ArrayList<>();
-        List<Genre> gameGenres = new ArrayList<>();
-        List<Platform> gamePlatforms = new ArrayList<>();
+        int processed = 0;
+
+
         while(fetching) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(250); // Ensures you stay under 4 requests/sec
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
 
             ResponseEntity<String> response = restTemplate.exchange(apiUrl,
                     HttpMethod.POST,
-                    createRequest("fields cover, first_release_date, genres, name, platforms, summary, involved_companies; limit 500; where category = (0, 2, 4, 8, 9) & cover != null & involved_companies != null; offset " + offset + ";"),
+                    createRequest("fields cover, " +
+                            "first_release_date, genres, name, " +
+                            "platforms, summary, involved_companies; " +
+                            "limit 500; where category = (0, 2, 4, 8, 9, 11) & cover != null & involved_companies != null" +
+                            " & first_release_date != null & summary != null; offset " + offset + ";"),
                     String.class);
 
             if(response.getStatusCode() == HttpStatus.OK) {
@@ -312,6 +370,8 @@ public class IGDBDataImporter {
 
                     for(JsonNode node : rootNode) {
 
+                        List<Genre> gameGenres = new ArrayList<>();
+                        List<Platform> gamePlatforms = new ArrayList<>();
                         Developer developer = new Developer(0, null);
                         JsonNode genreArray = node.get("genres");
                         JsonNode platformsArray = node.get("platforms");
@@ -347,14 +407,22 @@ public class IGDBDataImporter {
                                 if(p.getRight()) {
                                     String developerName = companies.get(p.getLeft());
                                     developer.setDeveloperName(developerName);
+                                    break;
                                 }
                             }
                         }
+
+                        // skip game if no developer
+                        if(developer.getDeveloperName() == null)
+                            continue;
 
                         // get release date
                         timestamp = node.get("first_release_date").asLong();
                         instant = Instant.ofEpochSecond(timestamp);
                         releaseDate = instant.atZone(ZoneOffset.UTC).toLocalDate();
+
+                        if(releaseDate.isAfter(LocalDate.now()))
+                            continue;
 
                         //get title
                         title = node.get("name").asText();
@@ -368,7 +436,10 @@ public class IGDBDataImporter {
                         game.setCover(coverUrl);
 
                         addGameAndRelationships(game, gameGenres, gamePlatforms, developer);
+                        processed++;
                     }
+                    System.out.println("\rProcessed " + processed + " games");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -386,30 +457,45 @@ public class IGDBDataImporter {
         if(developer.getDeveloperName() == null)
             return;
 
+        System.out.println("==================================");
         Developer existingDev = developerService.findByName(developer.getDeveloperName());
         if(existingDev != null) {
             game.setDeveloper(existingDev);
         } else {
             Result<Developer> devResult = developerService.add(developer);
-            if(devResult.isSuccess())
+            if(devResult.isSuccess()) {
                 game.setDeveloper(devResult.getPayload());
-            else
+                System.out.println("| Added Developer " + devResult.getPayload().getDeveloperId());
+            } else
                 return;
         }
 
+
         Result<Game> gameResult = gameService.add(game);
-        if(gameResult.isSuccess())
+        if(gameResult.isSuccess()) {
             gameId = gameResult.getPayload().getGameId();
+            System.out.println("| Added Game " + gameId);
+            gameCount++;
+        }
         else {
+            errorCount++;
+            System.out.println("***************************************************************************");
+            System.out.println(game.getTitle() + " FAILED <--------------------------------------");
+            System.out.println(gameResult.getMessages());
+            System.out.println("***************************************************************************");
             return;
         }
 
         for(Platform platform : thisPlatforms) {
             gameService.add(new GamePlatform(gameId, platform));
+            System.out.println("| Added GamePlatform [" + gameId + "," + platform.getPlatformId() + "]");
         }
         for(Genre genre : thisGenres) {
             gameService.add(new GameGenre(gameId, genre));
+            System.out.println("| Added GameGenre [" + gameId + "," + genre.getGenreId() + "]");
         }
+
+        System.out.println("==================================\n");
 
     }
 
@@ -482,4 +568,6 @@ public class IGDBDataImporter {
 
         return new HttpEntity<>(body, headers);
     }
+
+
 }

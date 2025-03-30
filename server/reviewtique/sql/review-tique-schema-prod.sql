@@ -6,17 +6,17 @@ use review_tique;
 
 create table genre (
     genre_id int primary key auto_increment,
-    genre_name varchar(50) not null
+    genre_name varchar(50) unique not null
 );
 
 create table platform (
     platform_id int primary key auto_increment,
-    platform_name varchar(50) not null
+    platform_name varchar(200) unique not null
 );
 
 create table developer (
     developer_id int primary key auto_increment,
-    developer_name varchar(50) not null
+    developer_name varchar(200) not null
 );
 
 create table app_user (
@@ -46,19 +46,19 @@ create table app_user_role (
 
 create table game (
     game_id int primary key auto_increment,
-    title varchar(150) not null,
-    game_description varchar(1000) not null,
+    title varchar(250) not null,
+    game_description TEXT not null,
     release_date date not null,
     avg_user_score decimal(4, 1) not null default(0.0),
     avg_critic_score decimal(4, 1) not null default(0.0),
     user_review_count int default (0), 
-    critic_review_count int default (0),
+    critic_review_count int default (0), 
     cover varchar(2083),
     developer_id int not null,
     constraint fk_game_developer_id
         foreign key (developer_id)
         references developer(developer_id),
-	fulltext(title)
+	fulltext (title)
 );
 
 create table review (

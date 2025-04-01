@@ -4,6 +4,7 @@ import DeveloperFilter from "./DeveloperFilter";
 import PlatformFilter from "./PlatformFilter";
 import GenreFilter from "./GenreFilter";
 import { Modal } from "react-bootstrap";
+import ImageComponent from "./ImageComponent";
 
 function GameList(){
     // STATE
@@ -13,6 +14,7 @@ function GameList(){
     const [platforms, setPlatforms] = useState([]);
     const [developerId, setDeveloperId] = useState('');
     const [fetching, setFetching] = useState(true);
+
     const url = 'http://localhost:8080/v1/api/games/search'
     const location = useLocation();
     const getQueryParams = () => {
@@ -85,47 +87,26 @@ function GameList(){
     }
 
     return(<>
-        <h2 className='mb-4'>Games</h2>
+        <h2 className='mb-4'>Search Results</h2>
         {!fetching && (
                 games.length > 0 ? (
                 <section>
                 
-                <Link className='btn btn-outline-success' to={'/game/add'}>Add a Game</Link>
-                <table className='table table-striped'>
-                    <thead className='thead-dark'>
-                        <tr>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Release Date</th>
-                            <th>User Score</th>
-                            <th>Critic Score</th>
-                            <th>User Review Count</th>
-                            <th>Critic Review Count</th>
-                            <th>Cover URL</th>
-                            <th>Developer</th>
-                            <th>&nbsp;</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                
+
                         {games.map(game => (
-                            <tr key={game.gameId}>
-                                <td><Link to={`/games/${game.gameId}`}>{game.title}</Link></td>
-                                <td>{game.description}</td>
-                                <td>{game.releaseDate}</td>
-                                <td>{game.avgUserScore}</td>
-                                <td>{game.avgCriticScore}</td>
-                                <td>{game.userReviewCount}</td>
-                                <td>{game.criticReviewCount}</td>
-                                <td>{game.cover}</td>
-                                <td>{game.developer.developerName}</td>
-                                <td>
-                                    <Link className='btn btn-outline-warning mr-4' to={`/game/edit/${game.gameId}`}>Update</Link>
-                                    <button className='btn btn-outline-danger mr-4' onClick={() => handleDeleteGame(game.gameId)}>Delete</button>
-                                </td>
-                            </tr>
+                            <div className="results">
+                                <div className="cover" key={game.id}>
+                                <ImageComponent src={game.cover.replace("t_cover_big", "t_logo_med")}/>
+                                </div>
+                                <div className="media"><Link to={`/games/${game.gameId}`}>{game.title}</Link></div>
+                                
+                                
+                                
+                            </div>
+                            
                         ))}
-                    </tbody>
-                </table>
+
 
                 
                 </section>

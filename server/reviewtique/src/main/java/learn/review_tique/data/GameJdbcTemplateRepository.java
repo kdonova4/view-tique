@@ -129,6 +129,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
             params.add(developerId);
         }
         sql.append("ORDER BY (g.title = ?) DESC, relevance_score DESC");
+        sql.append(" limit 50;");
         params.add(gameName);
 
 

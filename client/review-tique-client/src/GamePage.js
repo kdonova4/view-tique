@@ -5,6 +5,7 @@ import { useWishlist } from "./context/WishlistContext";
 import { useAuth } from "./context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import { Button } from "react-bootstrap";
+import ImageComponent from "./ImageComponent";
 
 const GAME_DEFAULT = {
     title: "None",
@@ -109,6 +110,12 @@ function GamePage(){
             {!fetching && (
                 game ? ( // Open conditional check
                     <>
+                    <div className="game-page-cover">
+                        <img src={game.cover}></img>
+                    </div>
+                    
+                    
+                        
                         <section>
                             <table className="table table-striped">
                                 <thead className="thead-dark">

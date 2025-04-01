@@ -55,7 +55,7 @@ function GamePage(){
         .finally(() =>{
             setFetching(false);
         })
-    }, [gameId, wishlist]);
+    }, [gameId]);
 
     useEffect(() => {
         console.log("RUNNING")

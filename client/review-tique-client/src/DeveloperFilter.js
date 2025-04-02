@@ -42,9 +42,9 @@ function DeveloperFilter() {
     // set devloper name used for searching to the value in the search bar
     const value = e.target.value;
     setDeveloperName(value);
-
-    // fetch list of developers using the devloperName and searchByName method in Backend
-    fetch(`${url}?developerName=${developerName}`)
+    if(value === "") {
+      setDevelopers([]);
+    } else { fetch(`${url}?developerName=${developerName}`)// fetch list of developers using the devloperName and searchByName method in Backend
       .then(response => {
         if (response.status === 200) {
           return response.json();
@@ -67,6 +67,7 @@ function DeveloperFilter() {
         });
       })
       .catch(console.log)
+    }
   }
 
   const clearSelection = () => {
@@ -99,6 +100,7 @@ function DeveloperFilter() {
 
   return (
     <>
+    <div className="filters m-4">
       {selectedDeveloper && (
         <DeveloperButton
           developerId={checkedDeveloperId}
@@ -106,9 +108,11 @@ function DeveloperFilter() {
           clearSelection={clearSelection}
         />
       )}
-
+    
       <div>
         <Form.Control
+
+          className="dev"
           type="search"
           value={developerName}
           onChange={(e) => handleChange(e)}
@@ -117,21 +121,30 @@ function DeveloperFilter() {
         />
 
 
-        {/* Render list of checkboxes */}
+        
 
         {developers.map((developer) => (
-          <div key={developer.developerId}>
+          <div
+                        className="developers"
+                        key={developer.de}
+                        onClick={() => handleCheckboxChange(developer.developerId)}
+                        style={{ cursor: 'pointer' }}
+                    >
             <input
+              className="ml-3"
               type="checkbox"
               id={developer.developerId}
-              checked={String(checkedDeveloperId) === String(developer.developerId)}
-              onChange={() => handleCheckboxChange(developer.developerId)}
+              checked={(String(checkedDeveloperId) === String(developer.developerId))}
+              onChange={() => { }}
             />
-            <label>{developer.developerName}</label>
+            <label className="ml-2" style={{ cursor: 'pointer' }}>
+                            {developer.developerName}
+                        </label>
           </div>
         ))}
 
 
+      </div>
       </div>
     </>)
 }

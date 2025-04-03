@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -48,9 +49,13 @@ public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
     public List<Developer> searchByName(String developerName) {
         final String sql = "select developer_id, developer_name"
                 + " from developer"
-                + " where soundex(developer_name) = soundex(?);";
+                + " where match(developer_name) against(? in boolean mode)"
+                + " limit 10;";
 
-        return jdbcTemplate.query(sql, new DeveloperMapper(), developerName);
+        if(developerName != null && !developerName.isBlank())
+            return jdbcTemplate.query(sql, new DeveloperMapper(), developerName + "*");
+        else
+            return Collections.emptyList();
     }
 
     @Override

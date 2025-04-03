@@ -6,17 +6,20 @@ use review_tique;
 
 create table genre (
     genre_id int primary key auto_increment,
-    genre_name varchar(50) unique not null
+    genre_name varchar(50) unique not null,
+    fulltext (genre_name)
 );
 
 create table platform (
     platform_id int primary key auto_increment,
-    platform_name varchar(200) unique not null
+    platform_name varchar(200) unique not null,
+    fulltext (platform_name)
 );
 
 create table developer (
     developer_id int primary key auto_increment,
-    developer_name varchar(200) not null
+    developer_name varchar(200) not null,
+    fulltext (developer_name)
 );
 
 create table app_user (
@@ -153,10 +156,12 @@ insert into app_user_role values
 
 
 select * from review;
-select * from game;
+select * from game
+where title = 'Star Wars: the force unleashed';
 select * from developer;
 select * from review_reaction;
-select * from game_platform;
+select * from game_platform
+where game_id = 6698;
 select * from platform;
 select * from game_genre;
 select * from genre;
@@ -164,3 +169,9 @@ select * from wishlist;
 select * from app_user;
 select * from app_user_role;
 
+alter table genre add fulltext(genre_name);
+alter table platform add fulltext(platform_name);
+alter table developer add fulltext(developer_name);
+
+select * from genre
+where match(genre_name) against('*shoo*' in boolean mode);

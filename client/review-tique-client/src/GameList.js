@@ -129,7 +129,7 @@ function GameList() {
             )}
             </div>
             <div className="filter-container">
-                <h6 className="ml-2">Filters</h6>
+                <h6 className=" title">&nbsp; Filters</h6>
                 <DeveloperFilter />
 
 

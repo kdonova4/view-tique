@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -48,11 +49,17 @@ public class GenreJdbcTemplateRepository implements GenreRepository {
 
     @Override
     public List<Genre> searchByName(String genreName) {
+
         final String sql = "select genre_id, genre_name"
                 + " from genre"
-                + " where soundex(genre_name) = soundex(?);";
+                + " where MATCH(genre_name) against(? in boolean mode);";
 
-        return jdbcTemplate.query(sql, new GenreMapper(), genreName);
+        if(genreName != null && !genreName.isBlank()) {
+            return jdbcTemplate.query(sql, new GenreMapper(), genreName + "*");
+        } else {
+            return Collections.emptyList();
+        }
+
     }
 
     @Override

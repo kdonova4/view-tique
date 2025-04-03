@@ -3,10 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import DeveloperFilter from "./DeveloperFilter";
 import PlatformFilter from "./PlatformFilter";
 import GenreFilter from "./GenreFilter";
-import { Modal } from "react-bootstrap";
+import { Container, Modal } from "react-bootstrap";
 import ImageComponent from "./ImageComponent";
 
-function GameList(){
+function GameList() {
     // STATE
     const [games, setGames] = useState([]);
     const [gameName, setGameName] = useState('')
@@ -41,89 +41,105 @@ function GameList(){
 
         const queryParams = new URLSearchParams();
 
-        if(gameName) queryParams.append('gameName', gameName);
-        if(genres.length > 0) queryParams.append('genres', genres.join(','));
-        if(platforms.length > 0) queryParams.append('platforms', platforms.join(','));
+        if (gameName) queryParams.append('gameName', gameName);
+        if (genres.length > 0) queryParams.append('genres', genres.join(','));
+        if (platforms.length > 0) queryParams.append('platforms', platforms.join(','));
         if (developerId) queryParams.append('developerId', developerId);
 
         fetch(`${url}?${queryParams.toString()}`)
-        .then(response => {
-            if(response.status === 200) {
-                return response.json();
-            }else {
-                return Promise.reject(`Unexpected Status Code ${response.status}`)
-            }
-        })
-        .then(data => setGames(data))
-        .catch(console.log)
-        .finally(() =>{
-            setFetching(false);
-        })
-        
-        
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return Promise.reject(`Unexpected Status Code ${response.status}`)
+                }
+            })
+            .then(data => setGames(data))
+            .catch(console.log)
+            .finally(() => {
+                setFetching(false);
+                console.log(games)
+            })
+
+
     }, [location.search]); // call me once on page load
-    
+
     // handle delete
     const handleDeleteGame = (gameId) => {
         const game = games.find(g => g.gameId === gameId);
         console.log(gameId)
-        if(window.confirm(`Delete Game: ${game.title}?`)) {
+        if (window.confirm(`Delete Game: ${game.title}?`)) {
             const init = {
                 method: 'DELETE'
             };
             fetch(`http://localhost:8080/v1/api/games/${gameId}`, init)
-            .then(response => {
-                if(response.status === 204){
-                    // create a copy of the array remove the game
-                    const newGames = games.filter(g => g.gameId !== gameId)
-                    // update the game state
-                    setGames(newGames);
-                } else{
-                    return Promise.reject(`Unexpected Status Code ${response.status}`)
-                }
-            })
-            .catch(console.log);
+                .then(response => {
+                    if (response.status === 204) {
+                        // create a copy of the array remove the game
+                        const newGames = games.filter(g => g.gameId !== gameId)
+                        // update the game state
+                        setGames(newGames);
+                    } else {
+                        return Promise.reject(`Unexpected Status Code ${response.status}`)
+                    }
+                })
+                .catch(console.log);
         }
     }
 
-    return(<>
-        <h2 className='mb-4'>Search Results</h2>
-        {!fetching && (
-                games.length > 0 ? (
-                <section>
-                
-                
-
-                        {games.map(game => (
-                            <div className="results">
-                                <div className="cover" key={game.id}>
-                                <ImageComponent src={game.cover.replace("t_cover_big", "t_logo_med")}/>
-                                </div>
-                                <div className="media"><Link to={`/games/${game.gameId}`}>{game.title}</Link></div>
-                                
-                                
-                                
-                            </div>
+    return (<>
+        
+        <section className="container">
+            <h2 className='mb-4'>Search Results</h2>
+            <div className="results-filter">
+                <div className="game-container">
+                {!fetching && games.length > 0 ? (
                             
-                        ))}
+                                games.map(game => (
+<Link to={`/games/${game.gameId}`}>
+                                    <div className="results" key={game.id}>
+                                        
+                                            <div className="cover" >
+                                                <ImageComponent src={game.cover.replace("t_cover_big", "t_logo_med")} />
+                                            </div>
+                                        
+                                        <Link to={`/games/${game.gameId}`}>
+                                            <div className="info">
+                                                <div className="media">
+                                                    <span to={`/games/${game.gameId}`}>
+                                                        {game.title}
+                                                        <time className="ml-2 text-muted small" dateTime={game.releaseDate}>
+                                                            {new Date(game.releaseDate).getFullYear()}
+                                                        </time>
+                                                    </span>
+
+                                                    <span className="text-muted med">
+                                                        {game.developer.developerName}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </div></Link>
+                                ))
+
+                ) : (
+                <p className="mt-4">
+                    Would you rather have unlimited bacon and no games? or games, unlimited games, and no games?
+                </p>
+            )}
+            </div>
+            <div className="filter-container">
+                <h6 className=" title">&nbsp; Filters</h6>
+                <DeveloperFilter />
 
 
-                
-                </section>
+                <PlatformFilter />
 
-            ) : (
-                <p className="mt-4">Would you rather have unlimited bacon and no games? or games, unlimited games, and no games?</p>
-            ))}
-                <div>
-                    <DeveloperFilter/>
-                </div>
-                <div>
-                    <PlatformFilter/>
-                </div>
-                <div>
-                    <GenreFilter/>
-                </div>
-            
+
+                <GenreFilter />
+            </div>
+        </div>
+    </section >
     </>);
 }
 

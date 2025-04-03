@@ -103,8 +103,9 @@ function PlatformFilter() {
     const selectedPlatforms = allPlatforms.filter((platform) =>
     checkedPlatformIds.includes(String(platform.platformId)));
     
-    return (<>
-
+    return (
+    <>
+    <div className="filters  m-4">
         {selectedPlatforms.length > 0 && (
             selectedPlatforms.map((platform) => (
                 <PlatformButton
@@ -119,6 +120,7 @@ function PlatformFilter() {
         
         <div>
             <Form.Control
+                className="plat"
                 type="search"
                 value={platformName}
                 onChange={(e) => handleChange(e)}
@@ -128,21 +130,26 @@ function PlatformFilter() {
 
 
             {platforms.map((platform) => (
-                <div key={platform.platformId}>
-                    <input
-                        type="checkbox"
-                        id={platform.platformId}
-                        onChange={() => {
-                            console.log(checkedPlatformIds.includes(String(platform.platformId)));
-                            handleCheckboxChange(platform.platformId)}   
-                        }
-                        checked={checkedPlatformIds.includes(String(platform.platformId))}
-                        
-                        
-                    />
-                    <label>{platform.platformName}</label>
-                </div>
+                <div
+                className="platforms"
+                key={platform.platformId}
+                onClick={() => handleCheckboxChange(platform.platformId)}
+                style={{ cursor: 'pointer' }} 
+              >
+                <input
+                  className="ml-3"
+                  type="checkbox"
+                  id={platform.platformId}
+                  onChange={() => {} /* Prevent direct checkbox toggling */}
+                  checked={checkedPlatformIds.includes(String(platform.platformId))}
+                  
+                />
+                <label className="ml-2" style={{ cursor: 'pointer' }}>
+                  {platform.platformName}
+                </label>
+              </div>
             ))}
+        </div>
         </div>
     </>)
 }

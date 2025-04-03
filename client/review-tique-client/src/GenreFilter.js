@@ -15,13 +15,13 @@ function GenreFilter() {
 
     const url = 'http://localhost:8080/v1/api/genres/searchGenre'
     useEffect(() => {
-            const storedGenres = JSON.parse(localStorage.getItem('allGenres')) || [];
-            setAllGenres(storedGenres);
-    
-            const { genres } = getQueryParams();
-            setCheckedGenreIds(genres.length > 0 ? genres : []);
-        },[location.search]);
-    
+        const storedGenres = JSON.parse(localStorage.getItem('allGenres')) || [];
+        setAllGenres(storedGenres);
+
+        const { genres } = getQueryParams();
+        setCheckedGenreIds(genres.length > 0 ? genres : []);
+    }, [location.search]);
+
     const getQueryParams = () => {
         const urlParams = new URLSearchParams(location.search); // get params from url
 
@@ -40,9 +40,9 @@ function GenreFilter() {
 
         const queryParams = new URLSearchParams(location.search);
 
-        if(newGenreIds.length > 0) {
+        if (newGenreIds.length > 0) {
             queryParams.set('genres', newGenreIds.join(','))
-        }else {
+        } else {
             queryParams.delete('genres')
         }
 
@@ -53,29 +53,29 @@ function GenreFilter() {
         const value = e.target.value
         setGenreName(value);
         fetch(`${url}?genreName=${value}`)
-        .then(response => {
-            if(response.status === 200){
-                return response.json();
-            }else{
-                return Promise.reject(`Unexpected Status Code ${response.status}`);
-            }
-        })
-        .then(data => {
-            setGenres(data);
-            setAllGenres((prevGenres) => {
-                const newGenres = data.filter(newGenre =>
-                    !prevGenres.some(genre => genre.genreId === newGenre.genreId)
-                );
-
-                if(newGenres.length === 0) return prevGenres;
-
-                const updatedGenres = [...prevGenres, ...newGenres];
-
-                localStorage.setItem('allGenres', JSON.stringify(updatedGenres))
-
-                return updatedGenres;
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return Promise.reject(`Unexpected Status Code ${response.status}`);
+                }
             })
-        })
+            .then(data => {
+                setGenres(data);
+                setAllGenres((prevGenres) => {
+                    const newGenres = data.filter(newGenre =>
+                        !prevGenres.some(genre => genre.genreId === newGenre.genreId)
+                    );
+
+                    if (newGenres.length === 0) return prevGenres;
+
+                    const updatedGenres = [...prevGenres, ...newGenres];
+
+                    localStorage.setItem('allGenres', JSON.stringify(updatedGenres))
+
+                    return updatedGenres;
+                })
+            })
     }
 
     const handleCheckboxChange = (genreId) => {
@@ -98,48 +98,54 @@ function GenreFilter() {
     }
 
     const selectedGenres = allGenres.filter((genre) =>
-    checkedGenreIds.includes(String(genre.genreId)));
+        checkedGenreIds.includes(String(genre.genreId)));
 
     return (<>
-
-        {selectedGenres.length > 0 && (
-            selectedGenres.map((genre) => (
-                <GenreButton
-                key={genre.genreId}
-                genre={genre}
-                clearSelection={() => clearSelection(genre.genreId)}
-            />
-            ))
-            
-        )}
-
-        
-        <div>
-            <Form.Control
-                type="search"
-                value={genreName}
-                onChange={(e) => handleChange(e)}
-                placeholder="Search Genre"
-                aria-label="Search"
-            />
-
-
-            {genres.map((genre) => (
-                <div key={genre.genreId}>
-                    <input
-                        type="checkbox"
-                        id={genre.genreId}
-                        onChange={() => {
-                            console.log(checkedGenreIds.includes(String(genre.genreId)));
-                            handleCheckboxChange(genre.genreId)}   
-                        }
-                        checked={checkedGenreIds.includes(String(genre.genreId))}
-                        
-                        
+        <div className="filters m-4">
+            {selectedGenres.length > 0 && (
+                selectedGenres.map((genre) => (
+                    <GenreButton
+                        key={genre.genreId}
+                        genre={genre}
+                        clearSelection={() => clearSelection(genre.genreId)}
                     />
-                    <label>{genre.genreName}</label>
-                </div>
-            ))}
+                ))
+
+            )}
+
+
+            <div>
+                <Form.Control
+                    className="genre"
+                    type="search"
+                    value={genreName}
+                    onChange={(e) => handleChange(e)}
+                    placeholder="Search Genre"
+                    aria-label="Search"
+                />
+
+
+                {genres.map((genre) => (
+                    <div
+                        className="genres"
+                        key={genre.genreId}
+                        onClick={() => handleCheckboxChange(genre.genreId)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <input
+                            className="ml-3"
+                            type="checkbox"
+                            id={genre.genreId}
+                            onChange={() => { } /* Prevent direct checkbox toggling */}
+                            checked={checkedGenreIds.includes(String(genre.genreId))}
+
+                        />
+                        <label className="ml-2" style={{ cursor: 'pointer' }}>
+                            {genre.genreName}
+                        </label>
+                    </div>
+                ))}
+            </div>
         </div>
     </>)
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import GenreButton from "./GenreButton";
-import { Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 
 function GenreFilter() {
     const [genres, setGenres] = useState([]);
@@ -126,8 +126,9 @@ function GenreFilter() {
 
 
                 {genres.map((genre) => (
-                    <div
-                        className="genres"
+                    <Button
+                        variant="primary"
+                        className="genre-style ml-1"
                         key={genre.genreId}
                         onClick={() => handleCheckboxChange(genre.genreId)}
                         style={{ cursor: 'pointer' }}
@@ -138,12 +139,12 @@ function GenreFilter() {
                             id={genre.genreId}
                             onChange={() => { } /* Prevent direct checkbox toggling */}
                             checked={checkedGenreIds.includes(String(genre.genreId))}
-
+                            hidden
                         />
-                        <label className="ml-2" style={{ cursor: 'pointer' }}>
+                        <label className="" style={{ cursor: 'pointer' }}>
                             {genre.genreName}
                         </label>
-                    </div>
+                    </Button>
                 ))}
             </div>
         </div>

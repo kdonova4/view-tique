@@ -124,8 +124,9 @@ function DeveloperFilter() {
         
 
         {developers.map((developer) => (
-          <div
-                        className="developers"
+          <Button
+                        variant="primary"
+                        className="developer-style ml-1"
                         key={developer.de}
                         onClick={() => handleCheckboxChange(developer.developerId)}
                         style={{ cursor: 'pointer' }}
@@ -136,11 +137,12 @@ function DeveloperFilter() {
               id={developer.developerId}
               checked={(String(checkedDeveloperId) === String(developer.developerId))}
               onChange={() => { }}
+              hidden
             />
-            <label className="ml-2" style={{ cursor: 'pointer' }}>
+            <label className="" style={{ cursor: 'pointer' }}>
                             {developer.developerName}
                         </label>
-          </div>
+          </Button>
         ))}
 
 

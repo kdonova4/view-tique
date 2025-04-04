@@ -2,9 +2,9 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-/* * {
-  outline: 1px solid red; /* You can change the color and thickness 
-} */
+*{
+  /* outline: 1px solid red;  */
+} 
 #root{
   background-color: #ffffff;
 }
@@ -62,6 +62,7 @@ html{
 }
 
 body{
+  padding-top: 65px;
   font-size: 1.8rem;
   line-height: 1.5;
   font-family: "Lato", sans-serif;
@@ -80,6 +81,13 @@ h2{
 h3{
   font-size: 2.4rem;
 }
+
+.developer-style {
+  color: #fff;
+  background-color: #FF3D34;
+  border-color: #FF3D34;
+}
+
 .developer-button{
   color: #fff;
   background-color: #FF3D34;
@@ -90,7 +98,7 @@ h3{
   justify-content: flex-start;
 }
 
-.developer-button:hover {
+.developer-button:hover, .developer-style:hover, .developer-style:focus {
   background-color: #a1201a;
   border-color: #a1201a;
 }
@@ -98,6 +106,13 @@ h3{
 .filter-icon{
   margin-right: 5px;
   margin-bottom: -.5px;
+}
+
+.platform-style {
+  color: #fff;
+  background-color: #3A41A9;
+  border-color: #3A41A9;
+  
 }
 
 .platform-button{
@@ -110,9 +125,15 @@ h3{
   justify-content: flex-start;
 }
 
-.platform-button:hover {
+.platform-button:hover, .platform-style:hover, .platform-style:focus {
   background-color: #202785;
   border-color: #202785;
+}
+
+.genre-style{
+  color: #fff;
+  background-color: #0A7C5A;
+  border-color: #0A7C5A;
 }
 
 .genre-button{
@@ -125,7 +146,7 @@ h3{
   justify-content: flex-start;
 }
 
-.genre-button:hover {
+.genre-button:hover, .genre-style:hover, .genre-style:focus {
   background-color: #05583f;
   border-color: #05583f;
 }
@@ -146,11 +167,11 @@ h3{
 
 @keyframes size-up {
   0% {
-    transform: scale(0);
+    transform: scale(1);
 
   }
   100% {
-    transform: scale(1);
+    transform: scale(1.05);
 
   }
 }
@@ -159,11 +180,14 @@ h3{
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  transition: transform 500ms ease-in-out;
 }
 
 .results:hover{
   cursor: pointer;
-  background-color: #c5c5c5;
+  background-color: #e9c3ff;
+  border-radius: 4px;
+  transform: scale(1.05);
 }
 
 .cover {
@@ -178,6 +202,7 @@ h3{
 
 .scale-down {
   object-fit: cover;
+  border-radius: 2px;
   animation: 1000ms cubic-bezier(0.7, 0, 0.6, 1) materialize;
 }
 
@@ -288,3 +313,60 @@ a:hover {
 
 }
 
+.game-info, .game-details, .reviews {
+  z-index: 1; 
+}
+
+
+.game-info{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+.game-image-header{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('https://images.igdb.com/igdb/image/upload/t_1080p/ar5jt.webp');
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  color:white;
+  position: relative;
+  z-index: 0;
+}
+
+.game-image-header::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
+.review-select {
+  position: sticky;
+  background-color: #05583f;
+  top: 59px; /* Adjust this value based on your navbar height */
+  
+  background-color: rgb(255, 135, 135); /* Optionally give it a background */
+  z-index: 1000; /* Ensure it's above other content */
+}
+.navbar{
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 60px;
+  padding: 1px 1px;
+  color: black;
+  background-color: white;
+  z-index: 500;
+}

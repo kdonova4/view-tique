@@ -130,8 +130,9 @@ function PlatformFilter() {
 
 
             {platforms.map((platform) => (
-                <div
-                className="platforms"
+                <Button
+                variant="secondary"
+                className="platform-style ml-1"
                 key={platform.platformId}
                 onClick={() => handleCheckboxChange(platform.platformId)}
                 style={{ cursor: 'pointer' }} 
@@ -142,12 +143,12 @@ function PlatformFilter() {
                   id={platform.platformId}
                   onChange={() => {} /* Prevent direct checkbox toggling */}
                   checked={checkedPlatformIds.includes(String(platform.platformId))}
-                  
+                  hidden
                 />
-                <label className="ml-2" style={{ cursor: 'pointer' }}>
+                <label className="" style={{ cursor: 'pointer' }}>
                   {platform.platformName}
                 </label>
-              </div>
+              </Button>
             ))}
         </div>
         </div>

@@ -6,6 +6,7 @@ import { useAuth } from "./context/AuthContext";
 import { jwtDecode } from "jwt-decode";
 import { Button } from "react-bootstrap";
 import ImageComponent from "./ImageComponent";
+import ReactShowMoreText from "react-show-more-text";
 
 const GAME_DEFAULT = {
     title: "None",
@@ -185,45 +186,69 @@ function GamePage() {
     return (
         <>
 
-
-
-            <div className="game-container">
-                <div className="game-page">
-                    <div className="game-info">
-                        <header className="game-image-header">
-                            <div className="container game-info-media"> {/* background for this should be large image of game */}
-                                <div className="game-info-container">
-                                    <div className="game-info-root">
-                                        <div className="game-title">
-                                            <h1>Game Title</h1>
-                                        </div>
-                                        <div className="game-info-small">
-                                            <div className="release-date">
-                                                <span>Release Date</span>
+            {!fetching && game ? (
+                <div className="game-container">
+                    <div className="game-page">
+                        <div className="game-info">
+                            <header className="game-image-header" style={{ "--bg-url": `url(${game.cover.replace("t_cover_big", "t_1080p")})` }}>
+                                <div className="container game-info-media"> {/* background for this should be large image of game */}
+                                    <div className="game-info-container">
+                                        <div className="game-info-root">
+                                            <div className="game-title">
+                                                <h1>{game.title}</h1>
                                             </div>
-                                            <div className="game-developer">
-                                                <span>Developer</span>
-                                            </div>
-                                        </div>
-                                        <div className="review-info-media">
-                                            <div className="game-cover">
-                                                <div>
-                                                    <img src="https://images.igdb.com/igdb/image/upload/t_cover_big/co25jt.webp"></img>
+                                            <div className="game-info-small">
+                                                <div className="release-date">
+                                                    <span>{new Date(game.releaseDate).toLocaleString(undefined, {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric'
+                                                    })}</span>
+                                                </div>
+                                                <div className="game-developer">
+                                                    <span>{game.developer.developerName}</span>
                                                 </div>
                                             </div>
-                                            <div className="rating-container">
-                                                <div className="rating-root">
-                                                    <div className="user-rating">
-                                                        <div>
+                                            <div className="review-info-media">
+                                                <div className="game-cover">
+                                                    <div className="game-cover-img">
+                                                        <img className="cover-img" src={game.cover}></img>
+                                                    </div>
+                                                </div>
+                                                <div className="rating-container">
+                                                    <div className="rating-root">
+                                                        <div className="user-rating">
                                                             <div>
-                                                                User
+                                                                <div>
+                                                                    User Score
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div className="circle-placeholder">
+                                                                    {game.avgUserScore}
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div>
+                                                                    {game.userReviewCount} User reviews
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="critic-rating">
-                                                        <div>
+                                                        <div className="critic-rating">
                                                             <div>
-                                                                Critic
+                                                                <div>
+                                                                    Critic Score
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div className="circle-placeholder">
+                                                                    {game.avgCriticScore}
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div>
+                                                                    {game.userReviewCount} Critic reviews
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -232,20 +257,62 @@ function GamePage() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </header>
-                        <div className="container game-details">
-                            <div>
+                            </header>
+                            <div className="game-details-container">
                                 <div>
                                     <div>
-                                        <strong>Genres: </strong>
-                                        <strong>Platforms: </strong>
+                                        <div className="container game-details">
+                                            <p className="mt-4">
+                                                <strong>Genres: </strong>
+                                                {game.genres.length > 0 ? (
+                                                    <>
 
-                                        <p>Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.</p>
+
+                                                        {game.genres.map((item, index) => (
+                                                            <span key={index}>{item.genreName}{index < game.genres.length - 1 && ", "}&nbsp;</span>
+
+                                                        ))}
+
+                                                    </>
+
+                                                ) : (
+                                                    <p>No Genres Available</p>
+                                                )}
+                                            </p>
+                                            <p>
+                                                <strong>Platforms: </strong>
+                                                {game.platforms.length > 0 ? (
+                                                    <>
+
+
+                                                        {game.platforms.map((item, index) => (
+                                                            <span key={index}>{item.platformName}{index < game.platforms.length - 1 && ", "}&nbsp;</span>
+
+                                                        ))}
+
+                                                    </>
+
+                                                ) : (
+                                                    <p>No Platforms Available</p>
+                                                )}
+                                            </p>
+                                            
+
+                                            <ReactShowMoreText
+                                                lines={4}
+                                                more="Show More"
+                                                lest="Show Less"
+                                                anchorClass="show-more btn-link p-0"
+                                                expanded={false}
+                                                truncatedEndingComponent={"... "}
+                                            >
+
+                                                <p>{game.description}</p>
+                                            </ReactShowMoreText>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         </div>
                         <div className="review-select">
                             <header className="container review-header">
@@ -260,9 +327,14 @@ function GamePage() {
                         <div className=" container reviews">
                             Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.Godfather ipsum dolor sit amet. Only don't tell me you're innocent. Because it insults my intelligence and makes me very angry. You talk about vengeance. Is vengeance going to bring your son back to you? Or my boy to me? Mr Corleone is Johnny Fontane's godfather. Now Italians regard that as a very close, a very sacred religious relationship. Why do you hurt me, Michael? I've always been loyal to you. Just when I thought I was out... they pull me back in.
                         </div>
-                    
+
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div>No Game Available</div>
+            )}
+
+
         </>
     );
 }

@@ -2,9 +2,7 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-*{
-  /* outline: 1px solid red;  */
-} 
+
 #root{
   background-color: #ffffff;
 }
@@ -180,6 +178,7 @@ h3{
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  min-width: 800px;
   transition: transform 500ms ease-in-out;
 }
 
@@ -228,6 +227,7 @@ a {
 
 .filter-container{
   width: 35%;
+  min-width: 20%;
   margin-left: 30px;
   outline: 1px solid gray;
   outline-color: #c5c5c5;
@@ -271,13 +271,12 @@ a:hover {
 
 
 .game-page-cover {
-  height: 370px;
-  margin-left: 15px;
+  margin-left: 1px;
   animation: 1000ms cubic-bezier(0.7, 0, 0.6, 1) materialize;
 }
 
 .game-container{
-  width: 100%;
+
 }
 
 .platforms{
@@ -318,26 +317,99 @@ a:hover {
 }
 
 
-.game-info{
+.game-info-media{
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.game-info-small{
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  column-gap: 50px;
+}
+.game-cover{
+  display: flex;
+  justify-content: center;
+
+}
+.game-cover-img{
+  margin-top: 10px;
+  display: block;
+  line-height: 0;
+  object-fit: cover;
+  position: relative;
+  min-height: 362px;
+  min-width: 268px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  animation: 1000ms cubic-bezier(0.7, 0, 0.6, 1) materialize;
+}
+.cover-img{
+  border-radius: 4px;
+}
+
+.review-info-media{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  row-gap: 100px;
+  column-gap: 560px;
+  
+}
+
+.rating-root{
+  display: flex;
+  column-gap: 10px;
+  background-color: #29292979;
+  border-radius: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+.rating-container{
+  margin-right: 15px;
+  height: auto;
+  align-self: flex-start;
+}
+.user-rating{
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  z-index: 1;
+  justify-content: center;
+  align-items: center;
+  row-gap: 10px;
+}
+
+.critic-rating{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 10px;
+}
+.circle-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ccc; /* Light gray placeholder */
+  display: inline-block;
 }
 
 .game-image-header{
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-image: url('https://images.igdb.com/igdb/image/upload/t_1080p/ar5jt.webp');
+  background-image: var(--bg-url);
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-position: bottom;
   color:white;
   position: relative;
+  position-anchor: top;
   z-index: 0;
+  padding-bottom: 50px;
+  padding-top: 50px;
 }
 
 .game-image-header::after{
@@ -349,6 +421,19 @@ a:hover {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: -1;
+}
+
+.game-details-container{
+
+}
+
+.game-details{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  row-gap: 10px;
+
+  margin-bottom: 15px;
 }
 
 .review-select {
@@ -369,4 +454,8 @@ a:hover {
   color: black;
   background-color: white;
   z-index: 500;
+}
+
+.show-more{
+  cursor: pointer;
 }

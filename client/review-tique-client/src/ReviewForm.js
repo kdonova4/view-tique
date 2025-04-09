@@ -140,7 +140,7 @@ useEffect(() => {
 
       <Modal show={onClose}>
         <Modal.Header>
-          <Modal.Title>{reviewId ? "Edit Review" : "Add Review"}</Modal.Title>
+          <Modal.Title>{reviewId ? "Edit Review" : "Write Review"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -155,7 +155,7 @@ useEffect(() => {
                 </ul>
             </div>
               )}
-              
+              <Form.Label>Score</Form.Label>
               <Form.Control
                 type="number"
                 name="score"

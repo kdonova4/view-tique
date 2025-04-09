@@ -115,18 +115,21 @@ function Reactions({ likes, dislikes, reviewId, userId, token , fetchReviews }) 
 
     return(
         <>
-        <td>
+        <div className="reaction-block">
+        <div className="mr-4">
             <span className="reaction" onClick={() => findReaction(reviewId, userId, "LIKE")}>
             {reaction === "LIKE" ? <FaThumbsUp /> : <FaRegThumbsUp />}
             </span> {likes}
-        </td>
-        <td>
+        </div>
+        <div className="mr-4">
             <span className="reaction" onClick={() => findReaction(reviewId, userId, "DISLIKE")}>
                 
             {reaction === "DISLIKE" ? <FaThumbsDown /> : <FaRegThumbsDown />}
                 
             </span> {dislikes}
-        </td>
+        </div>
+        </div>
+        
         
         </>
     )

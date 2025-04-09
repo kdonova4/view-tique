@@ -3,6 +3,7 @@
    License: none (public domain)
 */
 
+
 #root{
   background-color: #ffffff;
 }
@@ -345,6 +346,7 @@ a:hover {
   max-width: 100%;
   height: auto;
   border-radius: 4px;
+
   animation: 1000ms cubic-bezier(0.7, 0, 0.6, 1) materialize;
 }
 .cover-img{
@@ -394,8 +396,11 @@ a:hover {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-color: #ccc; /* Light gray placeholder */
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
 }
 
 .game-image-header{
@@ -404,7 +409,7 @@ a:hover {
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-position: bottom;
-  color:white;
+  color:#ffffff;
   position: relative;
   position-anchor: top;
   z-index: 0;
@@ -458,4 +463,52 @@ a:hover {
 
 .show-more{
   cursor: pointer;
+}
+
+.review-card{
+  outline: 1px solid gray;
+  outline-color: #c5c5c5;
+  border-radius: 6px;
+}
+
+.review-info{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: end;
+  border-bottom: 1px solid gray;
+}
+
+.circle-review {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+}
+
+.review-body{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-wrap: wrap;
+}
+
+.review-edit-delete{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reaction-block{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  width: 90px;
+  padding-left: 20px;
+  padding-top: 5px;
 }

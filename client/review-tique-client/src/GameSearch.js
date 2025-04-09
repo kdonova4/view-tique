@@ -16,7 +16,7 @@ function GameSearch() {
     }
 
     return(<>
-        <div className="container">
+        <div>
             <Form className="d-flex" onSubmit={handleSubmit}>
             <Form.Control
               type="search" 

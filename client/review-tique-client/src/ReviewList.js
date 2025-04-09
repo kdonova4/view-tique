@@ -161,7 +161,7 @@ function ReviewList({ refreshData }){
               
             </section>
           ) : (
-            <p>No reviews available.</p>
+            <h4 className="mb-4">No reviews available.</h4>
           )}
           {showModal && (
                 <ReviewForm

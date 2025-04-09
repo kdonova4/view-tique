@@ -512,3 +512,40 @@ a:hover {
   padding-left: 20px;
   padding-top: 5px;
 }
+
+.wishlist-section{
+  display: flex;
+  justify-content: right;
+  width: 100px;
+  margin-top: 6px;
+  
+}
+
+.add-wishlist, .remove-wishlist{
+  padding: 10px 30px;
+  max-width: 170px;
+  max-height: 37px;
+  margin-left: 650px;
+  text-align: justify;
+  text-wrap: nowrap;
+}
+
+.genre-wishlist{
+  display: flex;
+  flex-direction: row;
+}
+
+.genre-list{
+  text-wrap: wrap;
+  width: 1000px;
+}
+
+.game-search{
+  max-width: 800px;
+  min-width: 100px;
+  width: 100%;
+}
+
+.profile{
+  display: flex;
+}

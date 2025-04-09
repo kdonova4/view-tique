@@ -135,6 +135,7 @@ function UserProfile() {
 
 
                         <h2>Your Wishlist</h2>
+                        <div className="container">
                         {wishlist.length === 0 ? (
                             <p>There are no games on your wishlist</p>
                         ) : (
@@ -162,6 +163,7 @@ function UserProfile() {
                                     </div>
                             ))
                         )}
+                        </div>
                     </>
                 )}
             </section>

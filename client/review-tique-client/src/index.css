@@ -185,7 +185,7 @@ h3{
 
 .results:hover{
   cursor: pointer;
-  background-color: #e9c3ff;
+  background-color: #3a41a959;
   border-radius: 4px;
   transform: scale(1.05);
 }

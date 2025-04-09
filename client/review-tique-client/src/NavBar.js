@@ -10,7 +10,7 @@ function NavBar(){
         <Navbar>
             <Container>
               
-            <Nav.Link as={Link} to={"/"} style={{ width: `120px` }}>
+            <Nav.Link as={Link} to={"/"} style={{ width: `120px`, minWidth: `120px` }}>
             <img
             src="/review-tique-logo-480x480.png"
             alt="Brand Logo"

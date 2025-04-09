@@ -79,12 +79,18 @@ function ReviewList({ refreshData }){
         }
     }
 
-
+    const getRatingColor = (rating) => {
+      if (rating >= 8) return '#15ff0073';
+      if (rating >= 6) return '#fffb0073';
+      if (rating >= 5) return '#ff910073';
+      return '#ff000073';
+  };
 
     return (
         <>
-          <h2 className='mb-4'>Reviews</h2>
           <Button
+            className="mb-4"
+            size="lg"
             variant="primary"
             onClick={() => {
               if (!token) {
@@ -96,12 +102,87 @@ function ReviewList({ refreshData }){
               }
             }}
           >
-            Add Review
+            Write Review
           </Button>
       
           {Array.isArray(reviews) && reviews.length > 0 ? (
             <section>
-              <table className='table table-striped'>
+              
+              <div className="container reviews-container">
+              {reviews.map((review) => (
+                <div className="review-card mb-4" key={review.reviewId}>
+                    <div className="review-info mr-2">
+                      <div className="review-score ml-4 mt-4">
+                        <div className="circle-review mb-4" style={{ backgroundColor: getRatingColor(review.score) }}>{review.score}</div>
+                      </div>
+                      <div className="review-user mb-4">{review.username}</div>
+                      <div className="review-date mb-4">{new Date(review.timestamp).toLocaleString(undefined, {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })}</div>
+                    </div>
+                    <div className="review-body">
+                      <div className="review-text mb-2 mt-4 ml-4">
+                          {review.reviewBody}
+                      </div>
+                      <div className="review-reactions">
+                      <Reactions
+                        likes={review.likes}
+                        dislikes={review.dislikes}
+                        reviewId={review.reviewId}
+                        fetchReviews={fetchReviews}
+                        refreshData={refreshData}
+                        userId={decodedToken ? decodedToken.appUserId : null}
+                        token={token}
+                      />
+                      </div>
+                      
+                    
+                  
+                    </div>
+                    {decodedToken && review.userId === decodedToken.appUserId && (
+                        <div className="review-edit-delete">
+                          <Button onClick={() => handleOpenModal(review.reviewId)} className="mr-4 mb-2 mt-4">Edit</Button>
+                          <Button
+                            className="mr-4 mb-2 mt-4"
+                            variant="danger"
+                            onClick={() => handleDelete(review.reviewId)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      )}
+                </div>
+              ))}
+              </div>
+              
+            </section>
+          ) : (
+            <p>No reviews available.</p>
+          )}
+          {showModal && (
+                <ReviewForm
+                  fetchReviews={fetchReviews}
+                  refreshData={refreshData}
+                  reviewId={currentReviewId}
+                  onClose={handleCloseModal}
+                />
+              )}
+        </>
+      );
+      
+}
+
+export default ReviewList;
+
+
+
+
+
+{/* <table className='table table-striped'>
                 <thead className='thead-dark'>
                   <tr>
                     <th>User</th>
@@ -154,24 +235,4 @@ function ReviewList({ refreshData }){
                     </tr>
                   ))}
                 </tbody>
-              </table>
-      
-              
-            </section>
-          ) : (
-            <p>No reviews available.</p>
-          )}
-          {showModal && (
-                <ReviewForm
-                  fetchReviews={fetchReviews}
-                  refreshData={refreshData}
-                  reviewId={currentReviewId}
-                  onClose={handleCloseModal}
-                />
-              )}
-        </>
-      );
-      
-}
-
-export default ReviewList;
+              </table> */}

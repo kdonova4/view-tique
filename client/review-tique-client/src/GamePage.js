@@ -231,7 +231,7 @@ function GamePage() {
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div className="circle-placeholder" style={{ backgroundColor: getRatingColor(game.avgUserScore) }} >  
+                                                                <div className="circle-placeholder" style={{ backgroundColor: getRatingColor(game.avgUserScore) }} >
                                                                     <h2>{game.avgUserScore}</h2>
                                                                 </div>
                                                             </div>
@@ -269,7 +269,8 @@ function GamePage() {
                                 <div>
                                     <div>
                                         <div className="container game-details">
-                                            <p className="mt-4">
+                                            <div className="genre-wishlist">
+                                                <p className="mt-4 genre-list">
                                                 <strong>Genres: </strong>
                                                 {game.genres.length > 0 ? (
                                                     <>
@@ -286,7 +287,27 @@ function GamePage() {
                                                     <p>No Genres Available</p>
                                                 )}
                                             </p>
+                                            <div className="wishlist-section">
+                                                    {token && (
+                                                !isWishlisted ? (
+                                                    <>
+
+                                                        <Button className="add-wishlist" variant="success" onClick={() => addToWishlist(gameId)}>
+                                                            {"Add To Wishlist"}
+                                                        </Button></>
+                                                ) : (
+                                                    <>
+                                                        <Button className="remove-wishlist" variant="danger" onClick={() => removeFromWishlist(gameId)}>
+                                                            {"Remove From Wishlist"}
+                                                        </Button>
+                                                    </>
+                                                )
+                                            )}
+                                                </div>
+                                            </div>
+                                            
                                             <p>
+                                                
                                                 <strong>Platforms: </strong>
                                                 {game.platforms.length > 0 ? (
                                                     <>
@@ -303,7 +324,7 @@ function GamePage() {
                                                     <p>No Platforms Available</p>
                                                 )}
                                             </p>
-                                            
+
 
                                             <ReactShowMoreText
                                                 lines={4}
@@ -316,6 +337,8 @@ function GamePage() {
 
                                                 <p>{game.description}</p>
                                             </ReactShowMoreText>
+                                                
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -329,7 +352,7 @@ function GamePage() {
                             </header>
                         </div>
                         <div className=" container reviews">
-                        <ReviewList refreshData={refreshData}/>
+                            <ReviewList refreshData={refreshData} />
                         </div>
 
                     </div>

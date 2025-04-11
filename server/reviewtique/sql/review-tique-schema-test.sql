@@ -132,14 +132,6 @@ create table wishlist (
 );
 
 
-select count(*) from game;
-select count(*) from genre;
-select count(*) from platform;
-select count(*) from game_genre;
-select count(*) from game_platform;
-select count(*) from developer;
-alter table game auto_increment = 1;
-
 
 delimiter //
 create procedure set_known_good_state()

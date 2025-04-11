@@ -67,8 +67,8 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> createAccount(@RequestBody Map<String, String> credentials) {
+    @PostMapping("/register/user")
+    public ResponseEntity<?> createAccountUser(@RequestBody Map<String, String> credentials) {
         AppUser appUser = null;
 
         try {
@@ -76,6 +76,27 @@ public class AuthController {
             String password = credentials.get("password");
 
             appUser = appUserService.create(username, password);
+        } catch (ValidationException ex) {
+            return new ResponseEntity<>(List.of(ex.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (DuplicateKeyException ex) {
+            return new ResponseEntity<>(List.of("The provided username already exists"), HttpStatus.BAD_REQUEST);
+        }
+
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("appUserId", appUser.getAppUserId());
+
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/register/critic")
+    public ResponseEntity<?> createAccountCritic(@RequestBody Map<String, String> credentials) {
+        AppUser appUser = null;
+
+        try {
+            String username = credentials.get("username");
+            String password = credentials.get("password");
+
+            appUser = appUserService.createCritic(username, password);
         } catch (ValidationException ex) {
             return new ResponseEntity<>(List.of(ex.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (DuplicateKeyException ex) {

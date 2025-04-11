@@ -9,25 +9,40 @@ function Register() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e, role) => {
         e.preventDefault();
 
         setLoading(true);
         setError("");
 
         const payload = { username, password };
-
+        console.log(role)
         try {
-            const response = await fetch (
-                "http://localhost:8080/v1/api/user/register",
-                {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                }
-            );
+          let response = null;
+          if(role === 'user') {
+            response = await fetch (
+              "http://localhost:8080/v1/api/user/register/user",
+              {
+                  method: 'POST',
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify(payload)
+              }
+          );
+          } else if(role === 'critic') {
+            response = await fetch (
+              "http://localhost:8080/v1/api/user/register/critic",
+              {
+                  method: 'POST',
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify(payload)
+              }
+          );
+          }
+            
 
             if(response.ok) {
                 navigate("/login");
@@ -50,7 +65,7 @@ function Register() {
         <div className="container d-flex justify-content-center align-items-center min-vh-100">
           <div className="col-12 col-md-6 col-lg-4">
             <h2 className="text-center mb-4">Register</h2>
-            <form onSubmit={handleSubmit}>
+            <form>
               <div className="mb-3">
                 <label htmlFor="username" className="form-label">
                   Username
@@ -83,11 +98,20 @@ function Register() {
     
     
               <button
-                type="submit"
+                onClick={(event) => handleSubmit(event, 'user')}
                 className="btn btn-primary w-100"
                 disabled={loading}
               >
-                {loading ? "Registering..." : "Register"}
+                {loading ? "Registering..." : "Register as User"}
+              </button>
+              <button
+                
+                onClick={(event) => handleSubmit(event, 'critic')}
+                
+                className="btn btn-primary w-100 mt-4"
+                disabled={loading}
+              >
+                {loading ? "Registering..." : "Register as Critic"}
               </button>
             </form>
           </div>

@@ -48,6 +48,17 @@ public class AppUserService implements UserDetailsService {
         return repository.create(appUser);
     }
 
+    public AppUser createCritic(String username, String password) {
+        validate(username);
+        validatePassword(password);
+
+        password = encoder.encode(password);
+
+        AppUser appUser = new AppUser(0, username, password, false, List.of("Critic"));
+
+        return repository.create(appUser);
+    }
+
     private void validate(String username) {
         if(username == null || username.isBlank()) {
             throw new ValidationException("Username IS REQUIRED");

@@ -88,58 +88,53 @@ function GameList() {
     }
 
     return (<>
-        
-        <section className="container">
-            <h2 className='mb-4'>Search Results</h2>
-            <div className="results-filter">
-                <div className="game-container">
-                {!fetching && games.length > 0 ? (
-                            
-                                games.map(game => (
-<Link to={`/games/${game.gameId}`}>
-                                    <div className="results" key={game.id}>
-                                        
-                                            <div className="cover" >
-                                                <ImageComponent src={game.cover.replace("t_cover_big", "t_logo_med")} />
-                                            </div>
-                                        
-                                        <Link to={`/games/${game.gameId}`}>
-                                            <div className="info">
-                                                <div className="media">
-                                                    <span to={`/games/${game.gameId}`}>
-                                                        {game.title}
-                                                        <time className="ml-2 text-muted small" dateTime={game.releaseDate}>
-                                                            {new Date(game.releaseDate).getFullYear()}
-                                                        </time>
-                                                    </span>
 
-                                                    <span className="text-muted med">
-                                                        {game.developer.developerName}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    </div></Link>
-                                ))
+<section className="container">
+    <h2 className='mb-4'>Search Results</h2>
+    <div className="results-filter">
+        <div className="game-container">
+            {!fetching ? (
+                games.length > 0 ? (
+                    games.map(game => (
+                        <Link to={`/games/${game.gameId}`} key={game.id}>
+                            <div className="results">
 
+                                <div className="cover">
+                                    <ImageComponent src={game.cover.replace("t_cover_big", "t_logo_med")} />
+                                </div>
+
+                                <div className="info">
+                                    <div className="media">
+                                        <span to={`/games/${game.gameId}`}>
+                                            {game.title}
+                                            <time className="ml-2 text-muted small" dateTime={game.releaseDate}>
+                                                {new Date(game.releaseDate).getFullYear()}
+                                            </time>
+                                        </span>
+
+                                        <span className="text-muted">
+                                            {game.developer.developerName}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
+                    ))
                 ) : (
-                <p className="mt-4">
-                    Would you rather have unlimited bacon and no games? or games, unlimited games, and no games?
-                </p>
-            )}
-            </div>
-            <div className="filter-container">
-                <h6 className=" title">&nbsp; Filters</h6>
-                <DeveloperFilter />
-
-
-                <PlatformFilter />
-
-
-                <GenreFilter />
-            </div>
+                    <p className="mt-4">
+                        Would you rather have unlimited bacon and no games? or games, unlimited games, and no games?
+                    </p>
+                )
+            ) : null}
         </div>
-    </section >
+        <div className="filter-container">
+            <h6 className="title">&nbsp; Filters</h6>
+            <DeveloperFilter />
+            <PlatformFilter />
+            <GenreFilter />
+        </div>
+    </div>
+</section>
     </>);
 }
 

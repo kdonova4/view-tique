@@ -103,6 +103,12 @@ function Home() {
                             </div>
                         </div>
                         <div className="tech">
+                            <img className="tech-image" src="https://www.logo.wine/a/logo/Amazon_Web_Services/Amazon_Web_Services-Logo.wine.svg" alt="tech Logo" />
+                            <div className="tech-title text-muted">
+                                <span>AWS</span>
+                            </div>
+                        </div>
+                        <div className="tech">
                             <img className="tech-image" src="https://topsalaries.tech/assets/logos/docker.jpg" alt="tech Logo" />
                             <div className="tech-title text-muted">
                                 <span>Docker</span>

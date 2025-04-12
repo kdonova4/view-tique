@@ -14,7 +14,8 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:3000",
+        "http://review-tique-frontend.s3-website.us-east-2.amazonaws.com"})
 @RequestMapping("/api/v1/platforms")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Platform Controller", description = "Platform Operations")

@@ -26,7 +26,8 @@ import static org.springframework.security.authorization.AuthorityAuthorizationM
 
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:3000",
+        "http://review-tique-frontend.s3-website.us-east-2.amazonaws.com"})
 @RequestMapping("/api/v1/games")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Game Controller", description = "Game Operations")

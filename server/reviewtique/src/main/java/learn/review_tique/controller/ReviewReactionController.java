@@ -16,7 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:3000",
+        "http://review-tique-frontend.s3-website.us-east-2.amazonaws.com"})
 @RequestMapping("/api/v1/reactions")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Review Reaction Controller", description = "Review Reaction Operations")

@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:3000",
+                        "http://review-tique-frontend.s3-website.us-east-2.amazonaws.com"})
 @RequestMapping("/api/v1/user")
 public class AuthController {
 

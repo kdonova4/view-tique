@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import learn.review_tique.data.AppUserRepository;
 import learn.review_tique.data.GameGenreRepository;
 import learn.review_tique.data.GamePlatformRepository;
+import learn.review_tique.data.GameRepository;
 import learn.review_tique.models.*;
 import learn.review_tique.security.JwtConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,6 +33,9 @@ public class GamePlatformControllerTest {
 
     @MockBean
     GamePlatformRepository repository;
+
+    @MockBean
+    GameRepository gameRepository;
 
     @MockBean
     AppUserRepository appUserRepository;
@@ -62,7 +67,7 @@ public class GamePlatformControllerTest {
     @Test
     void addShouldReturn400WhenEmpty() throws Exception {
 
-        var request = post("/v1/api/game/platform")
+        var request = post("/api/v1/game/platform")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token);
 
@@ -79,7 +84,7 @@ public class GamePlatformControllerTest {
 
         String gamePlatformJson = jsonMapper.writeValueAsString(gamePlatform);
 
-        var request = post("/v1/api/game/platform")
+        var request = post("/api/v1/game/platform")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(gamePlatformJson);
@@ -96,7 +101,7 @@ public class GamePlatformControllerTest {
         GamePlatform gamePlatform = new GamePlatform();
         String gamePlatformJson = jsonMapper.writeValueAsString(gamePlatform);
 
-        var request = post("/v1/api/game/platform")
+        var request = post("/api/v1/game/platform")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + token)
                 .content(gamePlatformJson);
@@ -110,21 +115,27 @@ public class GamePlatformControllerTest {
 
         ObjectMapper jsonMapper = new ObjectMapper();
 
-        GamePlatform gamePlatform = new GamePlatform(1, new Platform(1, "Test"));
+        GamePlatform gamePlatform = new GamePlatform(1, new Platform(40, "Test"));
+        GamePlatform gamePlatformDummy = new GamePlatform(2, new Platform(1, "Dummy"));
+        Developer developer = new Developer(5, "Eidos Montreal");
+        Game game = new Game(1, null, "Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy.",
+                LocalDate.now(), 8.5, 7.9, 10, 30, developer);
 
-        AppUser appUser = new AppUser(1, "test_user1", "85c*98Kd", false,
-                List.of("USER"));
 
-        when(appUserRepository.findById(1)).thenReturn(appUser);
+
+
+
+
+        when(repository.findByGameId(1)).thenReturn(List.of(gamePlatformDummy));
+        when(gameRepository.findById(1)).thenReturn(game);
+        String gamePlatformJson = jsonMapper.writeValueAsString(gamePlatform);
         when(repository.add(any())).thenReturn(true);
 
-        String gameGenreJson = jsonMapper.writeValueAsString(gamePlatform);
 
-
-        var request = post("/v1/api/game/platform")
+        var request = post("/api/v1/game/platform")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
-                .content(gameGenreJson);
+                .content(gamePlatformJson);
 
         mockMvc.perform(request)
                 .andExpect(status().isCreated());
@@ -137,7 +148,7 @@ public class GamePlatformControllerTest {
         when(repository.deleteById(1, 1)).thenReturn(true);
 
 
-        var request = delete("/v1/api/game/platform/1/1")
+        var request = delete("/api/v1/game/platform/1/1")
                 .header("Authorization", "Bearer " + token);
 
         mockMvc.perform(request)
@@ -148,7 +159,7 @@ public class GamePlatformControllerTest {
     void deleteShouldReturn404NotFoundWhenMissing() throws Exception {
         when(repository.deleteById(1, 1)).thenReturn(false);
 
-        var request = delete("/v1/api/game/platform/1/1")
+        var request = delete("/api/v1/game/platform/1/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 404 Not found as response

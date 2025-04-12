@@ -67,7 +67,7 @@ public class ReviewReactionControllerTest {
     @Test
     void addShouldReturn400WhenEmpty() throws Exception {
 
-        var request = post("/v1/api/reactions")
+        var request = post("/api/v1/reactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token);
 
@@ -84,7 +84,7 @@ public class ReviewReactionControllerTest {
         reaction.setUserId(1);
         String reactionJson = jsonMapper.writeValueAsString(reaction);
 
-        var request = post("/v1/api/reactions")
+        var request = post("/api/v1/reactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(reactionJson);
@@ -102,7 +102,7 @@ public class ReviewReactionControllerTest {
         reaction.setUserId(1);
         String reviewJson = jsonMapper.writeValueAsString(reaction);
 
-        var request = post("/v1/api/reactions")
+        var request = post("/api/v1/reactions")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -124,7 +124,7 @@ public class ReviewReactionControllerTest {
         String reactionJson = jsonMapper.writeValueAsString(reviewReaction);
         String expectedJson = jsonMapper.writeValueAsString(expected);
 
-        var request = post("/v1/api/reactions")
+        var request = post("/api/v1/reactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(reactionJson);
@@ -142,7 +142,7 @@ public class ReviewReactionControllerTest {
         when(repository.deleteById(1)).thenReturn(true);
 
 
-        var request = delete("/v1/api/reactions/1")
+        var request = delete("/api/v1/reactions/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 204 No Content as response
@@ -156,7 +156,7 @@ public class ReviewReactionControllerTest {
 
         when(repository.deleteById(1)).thenReturn(false);
 
-        var request = delete("/v1/api/reactions/1")
+        var request = delete("/api/v1/reactions/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 404 Not found as response

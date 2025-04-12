@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
-@RequestMapping("/v1/api/reactions")
+@RequestMapping("/api/v1/reactions")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Review Reaction Controller", description = "Review Reaction Operations")
 public class ReviewReactionController {

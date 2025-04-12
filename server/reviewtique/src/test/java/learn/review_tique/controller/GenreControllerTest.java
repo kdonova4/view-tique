@@ -66,7 +66,7 @@ public class GenreControllerTest {
     @Test
     void addShouldReturn400WhenEmpty() throws Exception {
 
-        var request = post("/v1/api/genres")
+        var request = post("/api/v1/genres")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token);
 
@@ -82,7 +82,7 @@ public class GenreControllerTest {
         Genre genre = new Genre();
         String amenityJson = jsonMapper.writeValueAsString(genre);
 
-        var request = post("/v1/api/genres")
+        var request = post("/api/v1/genres")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(amenityJson);
@@ -107,7 +107,7 @@ public class GenreControllerTest {
         String amenityJson = jsonMapper.writeValueAsString(genre);
         String expectedJson = jsonMapper.writeValueAsString(expected);
 
-        var request = post("/v1/api/genres")
+        var request = post("/api/v1/genres")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(amenityJson);
@@ -124,7 +124,7 @@ public class GenreControllerTest {
         when(repository.deleteById(1)).thenReturn(true);
 
 
-        var request = delete("/v1/api/genres/1")
+        var request = delete("/api/v1/genres/1")
                 .header("Authorization", "Bearer " + token);
 
         mockMvc.perform(request)
@@ -135,7 +135,7 @@ public class GenreControllerTest {
     void deleteShouldReturn404NotFoundWhenMissing() throws Exception {
         when(repository.deleteById(1)).thenReturn(false);
 
-        var request = delete("/v1/api/genres/1")
+        var request = delete("/api/v1/genres/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 404 Not found as response

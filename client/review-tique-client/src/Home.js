@@ -114,6 +114,12 @@ function Home() {
                                 <span>Docker</span>
                             </div>
                         </div>
+                        <div className="tech">
+                            <img className="tech-image" src="https://www.igdb.com/android-chrome-512x512.png" alt="tech Logo" />
+                            <div className="tech-title text-muted">
+                                <span>IGDB API</span>
+                            </div>
+                        </div>
                     </div>
 
 

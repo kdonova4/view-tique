@@ -7,7 +7,7 @@ function TopGames() {
     const [isFetching, setIsFetching] = useState(true);
 
     const { genreId, limit } = useParams();
-    const url = `http://localhost:8080/v1/api/games`
+    const url = `http://localhost:8080/api/v1/games`
     useEffect(() => {
         setIsFetching(true);
 
@@ -66,9 +66,7 @@ function TopGames() {
                                             ))}
                                         </tbody>
                                     </table>
-                    
-                                    
-                                    </section>
+                                </section>
                 ) : (
                     <p>No games</p>
                 )

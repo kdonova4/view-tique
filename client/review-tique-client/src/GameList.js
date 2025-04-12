@@ -15,7 +15,7 @@ function GameList() {
     const [developerId, setDeveloperId] = useState('');
     const [fetching, setFetching] = useState(true);
 
-    const url = 'http://localhost:8080/v1/api/games/search'
+    const url = 'http://localhost:8080/api/v1/games/search'
     const location = useLocation();
     const getQueryParams = () => {
         const urlParams = new URLSearchParams(location.search);
@@ -72,7 +72,7 @@ function GameList() {
             const init = {
                 method: 'DELETE'
             };
-            fetch(`http://localhost:8080/v1/api/games/${gameId}`, init)
+            fetch(`http://localhost:8080/api/v1/games/${gameId}`, init)
                 .then(response => {
                     if (response.status === 204) {
                         // create a copy of the array remove the game

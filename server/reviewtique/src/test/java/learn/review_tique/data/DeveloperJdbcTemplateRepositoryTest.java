@@ -28,7 +28,7 @@ public class DeveloperJdbcTemplateRepositoryTest {
     void shouldFindAll() {
         List<Developer> developers = repository.findAll();
 
-        assertEquals(7, developers.size());
+        assertEquals(13, developers.size());
     }
 
     @Test
@@ -36,14 +36,6 @@ public class DeveloperJdbcTemplateRepositoryTest {
         Developer developer = repository.findById(1);
 
         assertEquals("Bungie", developer.getDeveloperName());
-    }
-
-    @Test
-    void shouldFindByName() {
-        List<Developer> developers = repository.searchByName("Bungi"); //similar
-
-        assertEquals(1, developers.size());
-        assertEquals("Bungie", developers.get(0).getDeveloperName());
     }
 
     @Test

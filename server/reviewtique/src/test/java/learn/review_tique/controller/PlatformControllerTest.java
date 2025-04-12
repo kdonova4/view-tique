@@ -66,7 +66,7 @@ public class PlatformControllerTest {
     @Test
     void addShouldReturn400WhenEmpty() throws Exception {
 
-        var request = post("/v1/api/platforms")
+        var request = post("/api/v1/platforms")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token);
 
@@ -83,7 +83,7 @@ public class PlatformControllerTest {
 
         String platformJson = jsonMapper.writeValueAsString(platform);
 
-        var request = post("/v1/api/platforms")
+        var request = post("/api/v1/platforms")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(platformJson);
@@ -100,7 +100,7 @@ public class PlatformControllerTest {
         Platform platform = new Platform();
         String platformJson = jsonMapper.writeValueAsString(platform);
 
-        var request = post("/v1/api/platforms")
+        var request = post("/api/v1/platforms")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + token)
                 .content(platformJson);
@@ -125,7 +125,7 @@ public class PlatformControllerTest {
         String platformJson = jsonMapper.writeValueAsString(platform);
         String expectedJson = jsonMapper.writeValueAsString(expected);
 
-        var request = post("/v1/api/platforms")
+        var request = post("/api/v1/platforms")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(platformJson);
@@ -142,7 +142,7 @@ public class PlatformControllerTest {
         when(repository.deleteById(1)).thenReturn(true);
 
 
-        var request = delete("/v1/api/platforms/1")
+        var request = delete("/api/v1/platforms/1")
                 .header("Authorization", "Bearer " + token);
 
         mockMvc.perform(request)
@@ -153,7 +153,7 @@ public class PlatformControllerTest {
     void deleteShouldReturn404NotFoundWhenMissing() throws Exception {
         when(repository.deleteById(1)).thenReturn(false);
 
-        var request = delete("/v1/api/platforms/1")
+        var request = delete("/api/v1/platforms/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 404 Not found as response

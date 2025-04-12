@@ -41,10 +41,10 @@ public class GenreJdbcTemplateRepositoryTest {
 
     @Test
     void shouldFindByName() {
-        List<Genre> genres = repository.searchByName("multiplooyer");
+        List<Genre> genres = repository.searchByName("shooter");
 
         assertEquals(1, genres.size());
-        assertEquals("Multiplayer", genres.get(0).getGenreName());
+        assertEquals("Shooter", genres.get(0).getGenreName());
     }
 
     @Test

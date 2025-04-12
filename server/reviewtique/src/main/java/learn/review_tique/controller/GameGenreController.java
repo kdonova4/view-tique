@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
-@RequestMapping("/v1/api/game/genre")
+@RequestMapping("/api/v1/game/genre")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "GameGenre Controller", description = "GameGenre Operations")
 public class GameGenreController {

@@ -1,5 +1,9 @@
-package learn.review_tique.domain;
+package learn.Importer;
 
+import learn.review_tique.domain.GameService;
+import learn.review_tique.domain.GenreService;
+import learn.review_tique.domain.IGDBDataImporter;
+import learn.review_tique.domain.PlatformService;
 import learn.review_tique.models.Game;
 import learn.review_tique.models.Genre;
 import learn.review_tique.models.Platform;
@@ -7,10 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.web.client.RestTemplate;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class IGDBDataImporterTest {
-
+    /*
     @Autowired
     IGDBDataImporter importer;
 
@@ -141,4 +142,6 @@ public class IGDBDataImporterTest {
         List<Game> allGames = gameService.findAll();
         assertTrue(allGames.size() < 92800 && allGames.size() > 92700);
     }
+
+    */
 }

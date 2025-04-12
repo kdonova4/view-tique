@@ -6,17 +6,20 @@ use review_tique_test;
 
 create table genre (
     genre_id int primary key auto_increment,
-    genre_name varchar(50) unique not null
+    genre_name varchar(50) unique not null,
+    fulltext (genre_name)
 );
 
 create table platform (
     platform_id int primary key auto_increment,
-    platform_name varchar(200) unique not null
+    platform_name varchar(200) unique not null,
+    fulltext (platform_name)
 );
 
 create table developer (
     developer_id int primary key auto_increment,
-    developer_name varchar(200) not null
+    developer_name varchar(200) not null,
+    fulltext (developer_name)
 );
 
 create table app_user (
@@ -206,7 +209,13 @@ insert into developer (developer_name) values
 ('CD Project Red'),
 ('Eidos Montreal'),
 ('Arkane'),
-('Looking Glass Studios');
+('Looking Glass Studios'),
+('FromSoftware'),
+('Treyarch'),
+('Respawn Entertainment'),
+('Ubisoft'),
+('Ubisoft Montreal'),
+('Lucasarts');
 
 INSERT INTO app_user (username, password_hash, disabled) VALUES
 ('test_user1', '$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y', false),
@@ -332,4 +341,13 @@ insert into wishlist (game_id, app_user_id) values
 end //
 
 delimiter ;
+select * from developer;
 
+SELECT *
+FROM developer
+WHERE match(developer_name) against('ubiso*' IN BOOLEAN MODE)
+limit 10;
+
+SELECT *
+FROM developer
+WHERE match(developer_name) against('ubisof*' IN BOOLEAN MODE);

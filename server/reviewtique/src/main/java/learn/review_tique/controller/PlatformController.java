@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
-@RequestMapping("/v1/api/platforms")
+@RequestMapping("/api/v1/platforms")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Platform Controller", description = "Platform Operations")
 public class PlatformController {

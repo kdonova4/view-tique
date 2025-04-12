@@ -27,7 +27,7 @@ function ReviewForm({ reviewId, onClose, refreshData, fetchReviews }) {
   const appUserId = decodedToken.appUserId;
   const [review, setReview] = useState(REVIEW_DEFAULT);
   const [errors, setErrors] = useState([]);
-  const url = 'http://localhost:8080/v1/api/reviews';
+  const url = 'http://localhost:8080/api/v1/reviews';
 
   const navigate = useNavigate();
 useEffect(() => {

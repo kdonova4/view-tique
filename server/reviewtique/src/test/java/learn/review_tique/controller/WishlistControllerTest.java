@@ -66,7 +66,7 @@ public class WishlistControllerTest {
     @Test
     void addShouldReturn400WhenEmpty() throws Exception {
 
-        var request = post("/v1/api/wishlists")
+        var request = post("/api/v1/wishlists")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token);
 
@@ -83,7 +83,7 @@ public class WishlistControllerTest {
         wishlist.setUserId(1);
         String amenityJson = jsonMapper.writeValueAsString(wishlist);
 
-        var request = post("/v1/api/wishlists")
+        var request = post("/api/v1/wishlists")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(amenityJson);
@@ -100,7 +100,7 @@ public class WishlistControllerTest {
         Wishlist wishlist = new Wishlist();
         String reviewJson = jsonMapper.writeValueAsString(wishlist);
 
-        var request = post("/v1/api/wishlists")
+        var request = post("/api/v1/wishlists")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -125,7 +125,7 @@ public class WishlistControllerTest {
         String amenityJson = jsonMapper.writeValueAsString(wishlist);
         String expectedJson = jsonMapper.writeValueAsString(expected);
 
-        var request = post("/v1/api/wishlists")
+        var request = post("/api/v1/wishlists")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(amenityJson);
@@ -142,7 +142,7 @@ public class WishlistControllerTest {
         when(repository.deleteById(1)).thenReturn(true);
 
 
-        var request = delete("/v1/api/wishlists/1")
+        var request = delete("/api/v1/wishlists/1")
                 .header("Authorization", "Bearer " + token);
 
         mockMvc.perform(request)
@@ -153,7 +153,7 @@ public class WishlistControllerTest {
     void deleteShouldReturn404NotFoundWhenMissing() throws Exception {
         when(repository.deleteById(1)).thenReturn(false);
 
-        var request = delete("/v1/api/wishlists/1")
+        var request = delete("/api/v1/wishlists/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 404 Not found as response

@@ -11,7 +11,7 @@ function ReviewList({ refreshData }){
     const [reviews, setReviews] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentReviewId, setCurrentReviewId] = useState(null);
-    const url = 'http://localhost:8080/v1/api/reviews/game'
+    const url = 'http://localhost:8080/api/v1/reviews/game'
     const { token, role, appUserId } = useAuth();
 
     const handleOpenModal = (reviewId = null) => {
@@ -65,7 +65,7 @@ function ReviewList({ refreshData }){
                 headers: headers
             }
 
-            fetch(`http://localhost:8080/v1/api/reviews/${reviewId}`, init)
+            fetch(`http://localhost:8080/api/v1/reviews/${reviewId}`, init)
                 .then(response => {
                     if(response.status === 204) {
                         const newReviews = reviews.filter(review => review.reviewId !== reviewId);
@@ -182,57 +182,3 @@ export default ReviewList;
 
 
 
-{/* <table className='table table-striped'>
-                <thead className='thead-dark'>
-                  <tr>
-                    <th>User</th>
-                    <th>Score</th>
-                    <th>Timestamp</th>
-                    <th>Review Body</th>
-                    <th>Likes</th>
-                    <th>Dislikes</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reviews.map((review) => (
-                    <tr key={review.reviewId}>
-                      <td>{review.username}</td>
-                      <td>{review.score}</td>
-                      <td>
-                        {new Date(review.timestamp).toLocaleString(undefined, {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: 'numeric',
-                          minute: '2-digit',
-                        })}
-                      </td>
-                      <td>{review.reviewBody}</td>
-                      <Reactions
-                        likes={review.likes}
-                        dislikes={review.dislikes}
-                        reviewId={review.reviewId}
-                        fetchReviews={fetchReviews}
-                        refreshData={refreshData}
-                        userId={decodedToken ? decodedToken.appUserId : null}
-                        token={token}
-                      />
-                      
-      
-                      {decodedToken && review.userId === decodedToken.appUserId && (
-                        <td>
-                          <Button onClick={() => handleOpenModal(review.reviewId)}>Edit</Button>
-                          <Button
-                            className="ml-4"
-                            variant="danger"
-                            onClick={() => handleDelete(review.reviewId)}
-                          >
-                            Delete
-                          </Button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table> */}

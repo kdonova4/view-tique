@@ -26,7 +26,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
-@RequestMapping("/v1/api/reviews")
+@RequestMapping("/api/v1/reviews")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Review Controller", description = "Review Operations")
 public class ReviewController {

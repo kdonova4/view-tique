@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
-@RequestMapping("/v1/api/wishlists")
+@RequestMapping("/api/v1/wishlists")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Wishlist Controller", description = "Wishlist Operations")
 public class WishlistController {

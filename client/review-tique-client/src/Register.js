@@ -21,7 +21,7 @@ function Register() {
           let response = null;
           if(role === 'user') {
             response = await fetch (
-              "http://localhost:8080/v1/api/user/register/user",
+              "http://localhost:8080/api/v1/user/register/user",
               {
                   method: 'POST',
                   headers: {
@@ -32,7 +32,7 @@ function Register() {
           );
           } else if(role === 'critic') {
             response = await fetch (
-              "http://localhost:8080/v1/api/user/register/critic",
+              "http://localhost:8080/api/v1/user/register/critic",
               {
                   method: 'POST',
                   headers: {

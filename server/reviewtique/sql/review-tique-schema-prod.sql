@@ -152,26 +152,3 @@ insert into app_user_role values
 (3, 1),
 (4, 2),
 (5, 2);
-
-
-
-select * from review;
-select * from game
-where title = 'Star Wars: the force unleashed';
-select * from developer;
-select * from review_reaction;
-select * from game_platform
-where game_id = 6698;
-select * from platform;
-select * from game_genre;
-select * from genre;
-select * from wishlist;
-select * from app_user;
-select * from app_user_role;
-
-alter table genre add fulltext(genre_name);
-alter table platform add fulltext(platform_name);
-alter table developer add fulltext(developer_name);
-
-select * from genre
-where match(genre_name) against('*shoo*' in boolean mode);

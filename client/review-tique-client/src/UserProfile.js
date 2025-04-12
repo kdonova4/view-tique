@@ -14,7 +14,7 @@ function UserProfile() {
     const { token, role } = useAuth();
     const decodedToken = token ? jwtDecode(token) : null;
     const username = decodedToken?.sub;
-    const baseUrl = 'http://localhost:8080/v1/api'
+    const baseUrl = 'http://localhost:8080/api/v1'
     const { wishlist, removeFromWishlist } = useWishlist();
     const fetchData = useCallback(async (type) => {
         if (type === "reviews") {

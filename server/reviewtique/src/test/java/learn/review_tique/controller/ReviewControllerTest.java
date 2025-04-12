@@ -72,7 +72,7 @@ public class ReviewControllerTest {
 
     @Test
     void addShouldReturn400WhenEmpty() throws Exception {
-        var request = post("/v1/api/reviews")
+        var request = post("/api/v1/reviews")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token);
 
@@ -90,7 +90,7 @@ public class ReviewControllerTest {
 
         String reviewJson = jsonMapper.writeValueAsString(review);
 
-        var request = post("/v1/api/reviews")
+        var request = post("/api/v1/reviews")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -106,7 +106,7 @@ public class ReviewControllerTest {
         Review review = new Review(0, 8.0, new Timestamp(System.currentTimeMillis()), "Test review", 0, 0, 1, 1);
         String reviewJson = jsonMapper.writeValueAsString(review);
 
-        var request = post("/v1/api/reviews")
+        var request = post("/api/v1/reviews")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -131,7 +131,7 @@ public class ReviewControllerTest {
         String reviewJson = jsonMapper.writeValueAsString(review);
         String expectedJson = jsonMapper.writeValueAsString(expected);
 
-        var request = post("/v1/api/reviews")
+        var request = post("/api/v1/reviews")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -161,7 +161,7 @@ public class ReviewControllerTest {
 
         String reviewJson = jsonMapper.writeValueAsString(review);
 
-        var request = put("/v1/api/reviews/1")
+        var request = put("/api/v1/reviews/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -177,7 +177,7 @@ public class ReviewControllerTest {
 
         String reviewJson = jsonMapper.writeValueAsString(review);
 
-        var request = put("/v1/api/reviews/1")
+        var request = put("/api/v1/reviews/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -192,7 +192,7 @@ public class ReviewControllerTest {
 
         String reviewJson = jsonMapper.writeValueAsString(review);
 
-        var request = put("/v1/api/reviews/4")
+        var request = put("/api/v1/reviews/4")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -209,7 +209,7 @@ public class ReviewControllerTest {
         when(repository.deleteById(1)).thenReturn(true);
 
 
-        var request = delete("/v1/api/reviews/1")
+        var request = delete("/api/v1/reviews/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 204 No Content as response
@@ -221,7 +221,7 @@ public class ReviewControllerTest {
     void deleteShouldReturn404NotFoundWhenMissing() throws Exception {
         when(repository.deleteById(1)).thenReturn(false);
 
-        var request = delete("/v1/api/reviews/1")
+        var request = delete("/api/v1/reviews/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 404 Not found as response

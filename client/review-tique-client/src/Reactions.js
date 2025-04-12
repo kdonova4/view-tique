@@ -6,7 +6,7 @@ function Reactions({ likes, dislikes, reviewId, userId, token , fetchReviews }) 
 
     const [reaction, setReaction] = useState("");
     const [errors, setErrors] = useState([])
-    const url = 'http://localhost:8080/v1/api/reactions'
+    const url = 'http://localhost:8080/api/v1/reactions'
 
     const handleCreate = (reviewId, userId, reactionType) => {
         const init = {

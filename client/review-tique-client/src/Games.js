@@ -69,7 +69,7 @@ function Games() {
     const[currentView, setCurrentView] = useState('List');
     const [editGameId, setEditGameId] = useState(0);
     const [errors, setErrors] = useState([]);
-    const url = 'http://localhost:8080/v1/api/games'
+    const url = 'http://localhost:8080/api/v1/games'
 
     // use Effect
     useEffect(() =>{

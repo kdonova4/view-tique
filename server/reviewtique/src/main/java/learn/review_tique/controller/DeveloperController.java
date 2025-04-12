@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000"})
-@RequestMapping("/v1/api/developers")
+@RequestMapping("/api/v1/developers")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Developer Controller", description = "Developer Operations")
 public class DeveloperController {
@@ -28,7 +28,7 @@ public class DeveloperController {
     }
 
     @Operation(summary = "Finds a developer", description = "Finds a developer from ID")
-    @GetMapping("{developerId}")
+    @GetMapping("/{developerId}")
     public ResponseEntity<Developer> findById(@PathVariable int developerId) {
         Developer developer = developerService.findById(developerId);
 
@@ -64,7 +64,7 @@ public class DeveloperController {
     }
 
     @Operation(summary = "Delete a developer", description = "Deletes a developer")
-    @DeleteMapping("{developerId}")
+    @DeleteMapping("/{developerId}")
     public ResponseEntity<Object> deleteById(@PathVariable int developerId) {
         if(developerService.deleteById(developerId)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -13,7 +13,7 @@ function GenreFilter() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const url = 'http://localhost:8080/v1/api/genres/searchGenre'
+    const url = 'http://localhost:8080/api/v1/genres/searchGenre'
     useEffect(() => {
         const storedGenres = JSON.parse(localStorage.getItem('allGenres')) || [];
         setAllGenres(storedGenres);

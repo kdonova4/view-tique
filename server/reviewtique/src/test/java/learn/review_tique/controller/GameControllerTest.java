@@ -69,7 +69,7 @@ public class GameControllerTest {
     @Test
     void addShouldReturn400WhenEmpty() throws Exception {
 
-        var request = post("/v1/api/games")
+        var request = post("/api/v1/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token);
 
@@ -87,7 +87,7 @@ public class GameControllerTest {
 
         String gameJson = jsonMapper.writeValueAsString(game);
 
-        var request = post("/v1/api/games")
+        var request = post("/api/v1/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(gameJson);
@@ -105,7 +105,7 @@ public class GameControllerTest {
         Game game = new Game(1, null, "Now an experienced covert operative, Adam Jensen is forced to operate in a world that has grown to despise his kind. Armed with a new arsenal of state-of-the-art weapons and augmentations, he must choose the right approach, along with who to trust, in order to unravel a vast worldwide conspiracy.",
                 LocalDate.now(), 8.5, 7.9, 10, 30, developer);
         String gameJson = jsonMapper.writeValueAsString(game);
-        var request = post("/v1/api/games")
+        var request = post("/api/v1/games")
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + token)
                 .content(gameJson);
@@ -128,7 +128,7 @@ public class GameControllerTest {
         String reviewJson = jsonMapper.writeValueAsString(game);
         String expectedJson = jsonMapper.writeValueAsString(expected);
 
-        var request = post("/v1/api/games")
+        var request = post("/api/v1/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(reviewJson);
@@ -150,7 +150,7 @@ public class GameControllerTest {
 
         String gameJson = jsonMapper.writeValueAsString(game);
 
-        var request = put("/v1/api/games/1")
+        var request = put("/api/v1/games/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(gameJson);
@@ -171,7 +171,7 @@ public class GameControllerTest {
 
         String gameJson = jsonMapper.writeValueAsString(game);
 
-        var request = put("/v1/api/games/1")
+        var request = put("/api/v1/games/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(gameJson);
@@ -189,7 +189,7 @@ public class GameControllerTest {
 
         String gameJson = jsonMapper.writeValueAsString(game);
 
-        var request = put("/v1/api/games/5")
+        var request = put("/api/v1/games/5")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token)
                 .content(gameJson);
@@ -205,7 +205,7 @@ public class GameControllerTest {
         when(repository.deleteById(1)).thenReturn(true);
 
 
-        var request = delete("/v1/api/games/1")
+        var request = delete("/api/v1/games/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 204 No Content as response
@@ -220,7 +220,7 @@ public class GameControllerTest {
         when(repository.deleteById(1)).thenReturn(false);
 
 
-        var request = delete("/v1/api/games/1")
+        var request = delete("/api/v1/games/1")
                 .header("Authorization", "Bearer " + token);
 
         // Assert: Expecting 404 Not Found as response

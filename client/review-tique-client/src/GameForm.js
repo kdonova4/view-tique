@@ -22,7 +22,7 @@ function GameForm(){
     // STATE
     const [game, setGame] = useState(GAME_DEFAULT);
     const [errors, setErrors] = useState([]);
-    const url = 'http://localhost:8080/api/v1/games'
+    const url = 'http://3.13.229.3:8080/api/v1/games'
 
     const navigate = useNavigate();
     const { id } = useParams();

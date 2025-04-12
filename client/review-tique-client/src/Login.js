@@ -21,7 +21,7 @@ function Login() {
 
         try {
             const response = await fetch(
-                "http://localhost:8080/api/v1/user/authenticate",
+                "http://3.13.229.3:8080/api/v1/user/authenticate",
                 {
                     method: 'POST',
                     headers: {

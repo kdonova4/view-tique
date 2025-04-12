@@ -12,7 +12,7 @@ function PlatformFilter() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const url = 'http://localhost:8080/api/v1/platforms/searchPlatform'
+    const url = 'http://3.13.229.3:8080/api/v1/platforms/searchPlatform'
 
     useEffect(() => {
         const storedPlatforms = JSON.parse(localStorage.getItem('allPlatforms')) || [];

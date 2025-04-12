@@ -11,7 +11,7 @@ function ReviewList({ refreshData }){
     const [reviews, setReviews] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentReviewId, setCurrentReviewId] = useState(null);
-    const url = 'http://localhost:8080/api/v1/reviews/game'
+    const url = 'http://3.13.229.3:8080/api/v1/reviews/game'
     const { token, role, appUserId } = useAuth();
 
     const handleOpenModal = (reviewId = null) => {
@@ -65,7 +65,7 @@ function ReviewList({ refreshData }){
                 headers: headers
             }
 
-            fetch(`http://localhost:8080/api/v1/reviews/${reviewId}`, init)
+            fetch(`http://3.13.229.3:8080/api/v1/reviews/${reviewId}`, init)
                 .then(response => {
                     if(response.status === 204) {
                         const newReviews = reviews.filter(review => review.reviewId !== reviewId);

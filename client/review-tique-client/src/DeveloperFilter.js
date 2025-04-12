@@ -12,7 +12,7 @@ function DeveloperFilter() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const url = 'http://localhost:8080/api/v1/developers/searchDeveloper'
+  const url = 'http://3.13.229.3:8080/api/v1/developers/searchDeveloper'
 
 
   useEffect(() => {

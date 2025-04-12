@@ -14,7 +14,7 @@ function UserProfile() {
     const { token, role } = useAuth();
     const decodedToken = token ? jwtDecode(token) : null;
     const username = decodedToken?.sub;
-    const baseUrl = 'http://localhost:8080/api/v1'
+    const baseUrl = 'http://3.13.229.3:8080/api/v1'
     const { wishlist, removeFromWishlist } = useWishlist();
     const fetchData = useCallback(async (type) => {
         if (type === "reviews") {
@@ -175,13 +175,3 @@ function UserProfile() {
 export default UserProfile;
 
 
-
-{/* <Link to={`/games/${wishlistGame.gameId}`}>{games[wishlistGame.gameId]?.title || ""}</Link>
-                                    <h6>{games[wishlistGame.gameId]?.description || ""}</h6>
-                                    <Button
-                                        className="ml-4"
-                                        variant="danger"
-                                        onClick={() => removeFromWishlist(wishlistGame.gameId)}
-                                    >
-                                        Delete
-                                    </Button> */}

@@ -7,7 +7,7 @@ const WishlistContext = createContext();
 export function WishlistProvider({ children }) {
     const [wishlist, setWishlist] = useState([]);
     const { token } = useAuth();
-    const url = 'http://localhost:8080/api/v1/wishlists'
+    const url = 'http://3.13.229.3:8080/api/v1/wishlists'
     
     useEffect(() => {
         

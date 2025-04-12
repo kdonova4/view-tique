@@ -27,7 +27,7 @@ const GAME_DEFAULT = {
 
 function GamePage() {
     const [game, setGame] = useState(null);
-    const url = 'http://18.118.95.252:8080/api/v1/games'
+    const url = 'http://3.13.229.3:8080/api/v1/games'
     const [fetching, setFetching] = useState(true);
     const { gameId } = useParams();
     const { token } = useAuth();

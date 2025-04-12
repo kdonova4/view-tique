@@ -24,9 +24,6 @@ function Home() {
 
                 <p>The reason I opted to build and manage my own database—rather than rely directly on the API—was to deepen my understanding of full-stack development, particularly around data modeling, transformation, and persistence. This project was both a technical challenge and a valuable learning experience.</p>
 
-                <p>The reason I opted to build and manage my own database—rather than rely directly on the API—was to deepen my understanding of full-stack development, particularly around data modeling, transformation, and persistence. This project was both a technical challenge and a valuable learning experience.</p>
-
-
                 <h2 className="mt-5" style={{ borderBottom: `1px solid gray` }}>Technologies Used</h2>
                 <div className="tech-grid">
                     <div className="technologies">

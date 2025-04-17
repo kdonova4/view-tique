@@ -1,6 +1,7 @@
 package learn.review_tique.models;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -14,7 +15,25 @@ public class Game {
     private double avgCriticScore;
     private int userReviewCount;
     private int criticReviewCount;
+    private String cover;
+    private List<Genre> genres = new ArrayList<>();
+    private List<Platform> platforms = new ArrayList<>();
 
+    public Game() {
+
+    }
+
+    public Game(int gameId, String title, String description, LocalDate releaseDate, double avgUserScore, double avgCriticScore, int userReviewCount, int criticReviewCount, Developer developer) {
+        this.gameId = gameId;
+        this.title = title;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.avgUserScore = avgUserScore;
+        this.avgCriticScore = avgCriticScore;
+        this.userReviewCount = userReviewCount;
+        this.criticReviewCount = criticReviewCount;
+        this.developer = developer;
+    }
 
     public int getGameId() {
         return gameId;
@@ -61,11 +80,11 @@ public class Game {
     }
 
     public void setAvgUserScore(double avgUserScore) {
-        this.avgUserScore = avgUserScore;
+        this.avgUserScore = Math.round(avgUserScore * 10.0) / 10.0;
     }
 
     public double getAvgCriticScore() {
-        return avgCriticScore;
+        return avgCriticScore = Math.round(avgCriticScore * 10.0) / 10.0;
     }
 
     public void setAvgCriticScore(double avgCriticScore) {
@@ -86,5 +105,29 @@ public class Game {
 
     public void setCriticReviewCount(int criticReviewCount) {
         this.criticReviewCount = criticReviewCount;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public List<Platform> getPlatforms() {
+        return platforms;
+    }
+
+    public void setPlatforms(List<Platform> platforms) {
+        this.platforms = platforms;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 }

@@ -2,6 +2,7 @@ package learn.review_tique.data;
 
 import learn.review_tique.models.Developer;
 import learn.review_tique.models.Game;
+import learn.review_tique.models.Genre;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class GameJdbcTemplateRepositoryTest {
     void shouldFindAll() {
         List<Game> games = repository.findAll();
 
-        assertEquals(7, games.size());
+        assertEquals(6, games.size());
     }
 
     @Test
@@ -62,7 +63,7 @@ public class GameJdbcTemplateRepositoryTest {
 
     @Test
     void shouldFindGameFromSearch() {
-        List<Game> games = repository.searchGame("battlefeeld", new int[]{6, 8}, null, null);
+        List<Game> games = repository.searchGame("battle", new int[]{6, 8}, null, null);
 
         assertEquals(2, games.size());
 
@@ -74,9 +75,24 @@ public class GameJdbcTemplateRepositoryTest {
 
         assertEquals(1, games.size());
 
-        games = repository.searchGame("witcheeer", null, null, null);
+        games = repository.searchGame("witch", null, null, null);
 
         assertEquals(1, games.size());
+
+    }
+
+    @Test
+    void shouldHaveGenres() {
+        Game game = repository.findById(1);
+
+        assertEquals(3, game.getGenres().size());
+    }
+
+    @Test
+    void shouldHavePlatforms() {
+        Game game = repository.findById(1);
+
+        assertEquals(5, game.getPlatforms().size());
     }
 
     @Test

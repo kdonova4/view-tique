@@ -3,42 +3,18 @@ package learn.review_tique.domain;
 import learn.review_tique.data.AppUserRepository;
 import learn.review_tique.data.GameRepository;
 import learn.review_tique.data.ReviewRepository;
+import learn.review_tique.models.AppUser;
+import learn.review_tique.models.Game;
 import learn.review_tique.models.Review;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
-
-
-@Service
-public class ReviewService {
-
-    private final ReviewRepository repository;
-    private final GameRepository gameRepository;
-    private final AppUserRepository appUserRepository;
-    public ReviewService(ReviewRepository repository, GameRepository gameRepository, AppUserRepository appUserRepository) {
-        this.repository = repository;
-        this.gameRepository = gameRepository;
-        this.appUserRepository = appUserRepository;
-    }
-
-    public List<Review> findAll() {
-        return repository.findAll();
-    }
-
-    public Review findById(int reviewId) {
-        return repository.findById(reviewId);
-    }
-
-    public List<Review> findByUserId(int userId) {
-        return repository.findByUserId(userId);
-    }
-
-    public List<Review> findByGameId(int gameId) {
-        return repository.findByGameId(gameId);
-    }
-
-    /*
+/*
         Review Data
         ============
         - Review Score
@@ -58,6 +34,7 @@ public class ReviewService {
             - NOT NULL
         - Game ID
             - NOT NULL
+            - CANNOT APPEAR MORE THAN ONCE PER USER
 
         public Result<Review> add(Review review)
             // generate timestamp here
@@ -118,6 +95,204 @@ public class ReviewService {
 
      */
 
+@Service
+public class ReviewService {
+
+    private final ReviewRepository repository;
+    private final GameRepository gameRepository;
+    private final AppUserRepository appUserRepository;
+    private final GameService gameService;
+
+    public ReviewService(ReviewRepository repository, GameRepository gameRepository, AppUserRepository appUserRepository, GameService gameService) {
+        this.repository = repository;
+        this.gameRepository = gameRepository;
+        this.appUserRepository = appUserRepository;
+        this.gameService = gameService;
+    }
+
+    public List<Review> findAll() {
+        return repository.findAll();
+    }
+
+    public Review findById(int reviewId) {
+        return repository.findById(reviewId);
+    }
+
+    public List<Review> findByUserId(int userId) {
+        return repository.findByUserId(userId);
+    }
+
+    public List<Review> findByGameId(int gameId) {
+        return repository.findByGameId(gameId);
+    }
+
+    @Transactional
+    public Result<Review> add(Review review) {
+        review.setTimestamp(Timestamp.from(Instant.now()));
+        Result<Review> result = validate(review);
+
+        if(!result.isSuccess()) {
+            return result;
+        }
+
+        if(review.getReviewId() != 0) {
+            result.addMessages("reviewId CANNOT BE SET for 'add' operation", ResultType.INVALID);
+            return result;
+        }
+
+
+        review = repository.add(review);
+        result.setPayload(review);
+        recalculateAddReviewMetrics(review);
+        return result;
+    }
+
+    @Transactional
+    public Result<Review> update(Review review) {
+        Result<Review> result = validate(review);
+
+        if(!result.isSuccess()) {
+            return result;
+        }
+
+        if(review.getReviewId() <= 0) {
+            result.addMessages("reviewId MUST BE SET for `update` operation", ResultType.INVALID);
+            return result;
+        }
+
+        Review oldReview = repository.findById(review.getReviewId());
+
+        if(oldReview == null)
+        {
+            String msg = String.format("reviewId: %s not found", review.getReviewId());
+            result.addMessages(msg, ResultType.NOT_FOUND);
+            return result;
+        }
+
+        recalculateUpdateReviewMetrics(review, oldReview);
+        repository.update(review);
+        return result;
+    }
+
+    @Transactional
+    public Result<Review> deleteById(int reviewId) {
+        Result<Review> result = new Result<>();
+
+        Review review = repository.findById(reviewId);
+        if(review == null) {
+            result.addMessages(String.format("reviewId: %s not found", reviewId), ResultType.NOT_FOUND);
+            return result;
+        }
+
+        recalculateDeleteReviewMetrics(review);
+        repository.deleteById(reviewId);
+
+        return result;
+    }
+
+    private void recalculateAddReviewMetrics(Review review) {
+        if(review == null)
+            return;
+
+        Game game = gameService.findById(review.getGameId());
+        if(game == null)
+            return;
+
+        if(isCritic(review.getUserId())) {
+            double totalScore = game.getAvgCriticScore() * game.getCriticReviewCount();
+            game.setCriticReviewCount(game.getCriticReviewCount() + 1);
+            totalScore += review.getScore();
+            game.setAvgCriticScore(totalScore / game.getCriticReviewCount());
+        } else if(isUser(review.getUserId())){
+            double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
+            game.setUserReviewCount(game.getUserReviewCount() + 1);
+            totalScore += review.getScore();
+            game.setAvgUserScore(totalScore / game.getUserReviewCount());
+        } else {
+            return;
+        }
+
+        gameService.update(game);
+    }
+
+    private void recalculateDeleteReviewMetrics(Review review) {
+        if(review == null)
+            return;
+
+        Game game = gameService.findById(review.getGameId());
+        if(game == null)
+            return;
+
+        if(isCritic(review.getUserId())) {
+            double totalScore = game.getAvgCriticScore() * game.getCriticReviewCount();
+            game.setCriticReviewCount(game.getCriticReviewCount() - 1);
+            totalScore -= review.getScore();
+
+            if(game.getCriticReviewCount() == 0)
+                game.setAvgCriticScore(0.0);
+            else
+                game.setAvgCriticScore(totalScore / game.getCriticReviewCount());
+
+        } else if(isUser(review.getUserId())){
+            double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
+            game.setUserReviewCount(game.getUserReviewCount() - 1);
+            totalScore -= review.getScore();
+
+            if(game.getUserReviewCount() == 0)
+                game.setAvgUserScore(0.0);
+            else
+                game.setAvgUserScore(totalScore / game.getUserReviewCount());
+
+        } else {
+            return;
+        }
+
+        gameService.update(game);
+    }
+
+    private void recalculateUpdateReviewMetrics(Review newReview, Review oldReview) {
+        Game game = gameService.findById(oldReview.getGameId());
+        if(game == null)
+            return;
+        if(isCritic(newReview.getUserId())) {
+            double totalScore = game.getAvgCriticScore() * game.getCriticReviewCount();
+            totalScore -= oldReview.getScore();
+            totalScore += newReview.getScore();
+
+            double newScore = totalScore / game.getCriticReviewCount();
+            game.setAvgCriticScore(newScore);
+        } else if (isUser(newReview.getUserId())) {
+            double totalScore = game.getAvgUserScore() * game.getUserReviewCount();
+            totalScore -= oldReview.getScore();
+            totalScore += newReview.getScore();
+
+            double newScore = totalScore / game.getUserReviewCount();
+            game.setAvgUserScore(newScore);
+        }
+
+
+        gameService.update(game);
+    }
+
+    private boolean isCritic(int userId) {
+        AppUser appUser = appUserRepository.findById(userId);
+        if(appUser == null)
+            return false;
+        List<String> role = AppUser.convertAuthoritiesToRoles(appUser.getAuthorities());
+
+        return role.contains("CRITIC");
+    }
+
+    private boolean isUser(int userId) {
+        AppUser appUser = appUserRepository.findById(userId);
+        if(appUser == null)
+            return false;
+        List<String> role = AppUser.convertAuthoritiesToRoles(appUser.getAuthorities());
+
+        return role.contains("USER");
+    }
+
+
     private Result<Review> validate(Review review) {
         Result<Review> result = new Result<>();
 
@@ -134,7 +309,7 @@ public class ReviewService {
             result.addMessages("Review Time CANNOT be NULL", ResultType.INVALID);
         }
 
-        if(review.getReviewBody().isBlank() || review.getReviewBody() == null) {
+        if(review.getReviewBody() == null || review.getReviewBody().isBlank()) {
             result.addMessages("Review Body is REQUIRED", ResultType.INVALID);
         }
 
@@ -143,23 +318,29 @@ public class ReviewService {
         }
 
         if(review.getDislikes() < 0) {
-            result.addMessages("Likes must be GREATER OR EQUAL THAN 0", ResultType.INVALID);
+            result.addMessages("Dislikes must be GREATER OR EQUAL THAN 0", ResultType.INVALID);
         }
 
-        if(appUserRepository.findById(review.getUserId()) == null) {
+        if (review.getUserId() <= 0) {
             result.addMessages("Valid User ID is REQUIRED", ResultType.INVALID);
+        } else if (appUserRepository.findById(review.getUserId()) == null) {
+            result.addMessages("User does not exist", ResultType.INVALID);
         }
 
-        if(gameRepository.findById(review.getGameId()) == null) {
+        if (review.getGameId() <= 0) {
             result.addMessages("Valid Game ID is REQUIRED", ResultType.INVALID);
+        } else if (gameRepository.findById(review.getGameId()) == null) {
+            result.addMessages("Game does not exist", ResultType.INVALID);
         }
 
-        // check if user has already reviewed this game
-        List<Review> reviews = repository.findByUserId(review.getUserId());
-        for(Review r : reviews) {
-            if(review.getGameId() == r.getGameId()) {
-                result.addMessages("User has already reviewed this game", ResultType.INVALID);
-                return result;
+        // check if user has already reviewed this game, only when adding
+        if(review.getReviewId() == 0) {
+            List<Review> reviews = repository.findByUserId(review.getUserId());
+            for(Review r : reviews) {
+                if(review.getGameId() == r.getGameId()) {
+                    result.addMessages("You have already reviewed this game", ResultType.INVALID);
+                    return result;
+                }
             }
         }
 

@@ -6,9 +6,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -36,12 +38,24 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
     }
 
     @Override
+    public Platform findByName(String platformName) {
+        final String sql = "select platform_id, platform_name" +
+                " from platform" +
+                " where platform_name = ?;";
+
+        return jdbcTemplate.query(sql, new PlatformMapper(), platformName).stream().findFirst().orElse(null);
+    }
+
+    @Override
     public List<Platform> searchByName(String platformName) {
         final String sql = "select platform_id, platform_name"
                 + " from platform"
-                + " where soundex(platform_name) = soundex(?);";
+                + " where match(platform_name) against(? in boolean mode);";
 
-        return jdbcTemplate.query(sql, new PlatformMapper(), platformName);
+        if(platformName != null && !platformName.isBlank())
+            return jdbcTemplate.query(sql, new PlatformMapper(), platformName + "*");
+        else
+            return Collections.emptyList();
     }
 
     @Override
@@ -72,6 +86,7 @@ public class PlatformJdbcTemplateRepository implements PlatformRepository {
     }
 
     @Override
+    @Transactional
     public boolean deleteById(int platformId) {
         final String gamePlatformSql = "delete from game_platform where platform_id = ?;";
 

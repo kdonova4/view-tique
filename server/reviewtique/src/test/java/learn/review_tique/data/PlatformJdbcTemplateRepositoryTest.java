@@ -40,13 +40,6 @@ public class PlatformJdbcTemplateRepositoryTest {
     }
 
     @Test
-    void shouldFindByName() {
-        List<Platform> platforms = repository.searchByName("playstatioon");
-
-        assertEquals(3, platforms.size());
-    }
-
-    @Test
     void shouldAdd() {
         Platform platform = new Platform();
 

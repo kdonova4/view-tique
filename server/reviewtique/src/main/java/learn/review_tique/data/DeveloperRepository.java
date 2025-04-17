@@ -10,6 +10,8 @@ public interface DeveloperRepository {
 
     Developer findById(int developerId);
 
+    Developer findByName (String developerName);
+
     Developer add(Developer developer);
 
     List<Developer> searchByName(String developerName);

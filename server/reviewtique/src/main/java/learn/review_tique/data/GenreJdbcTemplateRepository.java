@@ -1,14 +1,18 @@
 package learn.review_tique.data;
 
 import learn.review_tique.data.mappers.GenreMapper;
+import learn.review_tique.data.mappers.PlatformMapper;
 import learn.review_tique.models.Genre;
+import learn.review_tique.models.Platform;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -35,12 +39,27 @@ public class GenreJdbcTemplateRepository implements GenreRepository {
     }
 
     @Override
+    public Genre findByName(String genreName) {
+        final String sql = "select genre_id, genre_name" +
+                " from genre" +
+                " where genre_name = ?;";
+
+        return jdbcTemplate.query(sql, new GenreMapper(), genreName).stream().findFirst().orElse(null);
+    }
+
+    @Override
     public List<Genre> searchByName(String genreName) {
+
         final String sql = "select genre_id, genre_name"
                 + " from genre"
-                + " where soundex(genre_name) = soundex(?);";
+                + " where MATCH(genre_name) against(? in boolean mode);";
 
-        return jdbcTemplate.query(sql, new GenreMapper(), genreName);
+        if(genreName != null && !genreName.isBlank()) {
+            return jdbcTemplate.query(sql, new GenreMapper(), genreName + "*");
+        } else {
+            return Collections.emptyList();
+        }
+
     }
 
     @Override
@@ -72,6 +91,7 @@ public class GenreJdbcTemplateRepository implements GenreRepository {
     }
 
     @Override
+    @Transactional
     public boolean deleteById(int genreId) {
         final String gameGenreSql = "delete from game_genre where genre_id = ?;";
 

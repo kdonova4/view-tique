@@ -5,6 +5,15 @@ public class Platform {
     private int platformId;
     private String platformName;
 
+    public Platform() {
+
+    }
+
+    public Platform(int platformId, String platformName) {
+        this.platformId = platformId;
+        this.platformName = platformName;
+    }
+
     public int getPlatformId() {
         return platformId;
     }

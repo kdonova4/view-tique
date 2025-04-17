@@ -5,6 +5,15 @@ public class GamePlatform {
     private int gameId;
     private Platform platform;
 
+    public GamePlatform() {
+
+    }
+
+    public GamePlatform(int gameId, Platform platform) {
+        this.gameId = gameId;
+        this.platform = platform;
+    }
+
     public int getGameId() {
         return gameId;
     }

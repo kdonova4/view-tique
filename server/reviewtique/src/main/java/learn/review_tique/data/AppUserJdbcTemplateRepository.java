@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -45,13 +46,17 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
                 + "from app_user "
                 + "where app_user_id = ?;";
 
+        List<AppUser> users = jdbcTemplate.query(sql, new AppUserMapper(roles), userId);
+        System.out.println("Query result size: " + users.size());
         return jdbcTemplate.query(sql, new AppUserMapper(roles), userId)
                 .stream()
                 .findFirst()
                 .orElse(null);
     }
 
+
     @Override
+    @Transactional
     public AppUser create(AppUser user) {
         final String sql = "insert into app_user (username, password_hash) values (?, ?);";
 
@@ -75,6 +80,7 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
     }
 
     @Override
+    @Transactional
     public void update(AppUser user) {
         final String sql = "update app_user set "
                 + "username = ?, "
@@ -119,6 +125,7 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
                 + "inner join app_role r on ur.app_role_id = r.app_role_id "
                 + "inner join app_user au on ur.app_user_id = au.app_user_id "
                 + "where au.app_user_id = ?";
+
         return jdbcTemplate.query(sql, (rs, rowId) -> rs.getString("role_name"), userId);
     }
 }

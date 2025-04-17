@@ -5,6 +5,15 @@ public class GameGenre {
     private int gameId;
     private Genre genre;
 
+    public GameGenre() {
+
+    }
+
+    public GameGenre(int gameId, Genre genre) {
+        this.genre = genre;
+        this.gameId = gameId;
+    }
+
     public int getGameId() {
         return gameId;
     }

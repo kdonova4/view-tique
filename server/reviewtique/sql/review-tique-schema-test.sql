@@ -6,17 +6,20 @@ use review_tique_test;
 
 create table genre (
     genre_id int primary key auto_increment,
-    genre_name varchar(50) not null
+    genre_name varchar(50) unique not null,
+    fulltext (genre_name)
 );
 
 create table platform (
     platform_id int primary key auto_increment,
-    platform_name varchar(50) not null
+    platform_name varchar(200) unique not null,
+    fulltext (platform_name)
 );
 
 create table developer (
     developer_id int primary key auto_increment,
-    developer_name varchar(50) not null
+    developer_name varchar(200) not null,
+    fulltext (developer_name)
 );
 
 create table app_user (
@@ -46,17 +49,19 @@ create table app_user_role (
 
 create table game (
     game_id int primary key auto_increment,
-    title varchar(150) not null,
-    game_description varchar(1000) not null,
+    title varchar(250) not null,
+    game_description TEXT not null,
     release_date date not null,
     avg_user_score decimal(4, 1) not null default(0.0),
     avg_critic_score decimal(4, 1) not null default(0.0),
     user_review_count int default (0), 
     critic_review_count int default (0), 
+    cover varchar(2083),
     developer_id int not null,
     constraint fk_game_developer_id
         foreign key (developer_id)
-        references developer(developer_id)
+        references developer(developer_id),
+	fulltext (title)
 );
 
 create table review (
@@ -128,6 +133,7 @@ create table wishlist (
         references app_user(app_user_id),
     constraint uq_wishlist unique (game_id, app_user_id)
 );
+
 
 
 delimiter //
@@ -203,7 +209,13 @@ insert into developer (developer_name) values
 ('CD Project Red'),
 ('Eidos Montreal'),
 ('Arkane'),
-('Looking Glass Studios');
+('Looking Glass Studios'),
+('FromSoftware'),
+('Treyarch'),
+('Respawn Entertainment'),
+('Ubisoft'),
+('Ubisoft Montreal'),
+('Lucasarts');
 
 INSERT INTO app_user (username, password_hash, disabled) VALUES
 ('test_user1', '$2y$10$5XmabI6UghCVaIDJrvgHxeWe.vhe6Htd.QANZJ4RIkPzPHtpirP0y', false),
@@ -329,5 +341,13 @@ insert into wishlist (game_id, app_user_id) values
 end //
 
 delimiter ;
+select * from developer;
 
-select * from game;
+SELECT *
+FROM developer
+WHERE match(developer_name) against('ubiso*' IN BOOLEAN MODE)
+limit 10;
+
+SELECT *
+FROM developer
+WHERE match(developer_name) against('ubisof*' IN BOOLEAN MODE);

@@ -7,9 +7,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -37,12 +39,23 @@ public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
     }
 
     @Override
+    public Developer findByName(String developerName) {
+        final String sql = "select developer_id, developer_name from developer where developer_name = ?;";
+
+        return jdbcTemplate.query(sql, new DeveloperMapper(), developerName).stream().findFirst().orElse(null);
+    }
+
+    @Override
     public List<Developer> searchByName(String developerName) {
         final String sql = "select developer_id, developer_name"
                 + " from developer"
-                + " where soundex(developer_name) = soundex(?);";
+                + " where match(developer_name) against(? in boolean mode)"
+                + " limit 10;";
 
-        return jdbcTemplate.query(sql, new DeveloperMapper(), developerName);
+        if(developerName != null && !developerName.isBlank())
+            return jdbcTemplate.query(sql, new DeveloperMapper(), developerName + "*");
+        else
+            return Collections.emptyList();
     }
 
     @Override
@@ -73,6 +86,7 @@ public class DeveloperJdbcTemplateRepository implements DeveloperRepository{
     }
 
     @Override
+    @Transactional
     public boolean deleteById(int developerId) {
         final String gameGenreSql = "delete from game_genre where game_id in (select game_id from game where developer_id = ?);";
         final String gamePlatformSql = "delete from game_platform where game_id in (select game_id from game where developer_id = ?);";
